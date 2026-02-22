@@ -306,8 +306,8 @@ export default function DashboardPage() {
                 {/* Profile Incomplete Banner */}
                 {mounted && (!profile.full_name || !profile.avatar_url) && (
                     <div className="fade-in" style={{
-                        background: 'rgba(124, 58, 237, 0.08)',
-                        border: '1px solid rgba(124, 58, 237, 0.2)',
+                        background: 'rgba(59, 130, 246, 0.08)',
+                        border: '1px solid rgba(59, 130, 246, 0.2)',
                         borderRadius: 'var(--radius-lg)',
                         padding: '16px 24px',
                         marginBottom: '32px',
@@ -530,7 +530,7 @@ export default function DashboardPage() {
                                         textAlign: 'center',
                                         cursor: 'pointer',
                                         transition: 'border-color 0.2s',
-                                        background: uploadFile ? 'rgba(124,58,237,0.05)' : 'transparent',
+                                        background: uploadFile ? 'rgba(59, 130, 246, 0.05)' : 'transparent',
                                     }}
                                 >
                                     <Upload size={28} style={{ margin: '0 auto 12px', color: uploadFile ? 'var(--accent-light)' : 'var(--text-muted)' }} />

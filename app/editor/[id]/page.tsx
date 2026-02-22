@@ -300,7 +300,7 @@ export default function EditorPage() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: 'radial-gradient(ellipse at 50% 30%, rgba(124,58,237,0.1) 0%, var(--bg-primary) 60%)',
+                background: 'radial-gradient(ellipse at 50% 30%, rgba(59, 130, 246, 0.1) 0%, var(--bg-primary) 60%)',
             }}>
                 <div className="fade-in" style={{ textAlign: 'center' }}>
                     <div style={{
@@ -308,7 +308,7 @@ export default function EditorPage() {
                         height: '80px',
                         margin: '0 auto 32px',
                         borderRadius: '50%',
-                        background: 'rgba(124,58,237,0.15)',
+                        background: 'rgba(59, 130, 246, 0.15)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',

@@ -38,7 +38,7 @@ export default function RegisterPage() {
             alignItems: 'center',
             justifyContent: 'center',
             padding: '32px',
-            background: 'radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.08) 0%, var(--bg-primary) 60%)',
+            background: 'radial-gradient(ellipse at 50% 0%, rgba(59, 130, 246, 0.08) 0%, var(--bg-primary) 60%)',
         }}>
             <div className="fade-in" style={{ width: '100%', maxWidth: '420px' }}>
                 <div style={{ textAlign: 'center', marginBottom: '40px' }}>
