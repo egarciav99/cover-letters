@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plantilla de Carta de Presentación</title>
+    <style>
+        /* Estilos generales y fondo */
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Contenedor principal simulando una hoja A4 */
+        .page-container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 800px;
+            /* Ancho típico para lectura cómoda */
+            padding: 60px 80px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Líneas decorativas sutiles de fondo (simulando la marca de agua) */
+        .page-container::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            transform: rotate(45deg);
+            z-index: 0;
+        }
+
+        /* Sección del Encabezado */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Estilo de la fotografía circular */
+        .profile-pic {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #e0e0e0;
+            /* Color de fondo si no hay imagen */
+            flex-shrink: 0;
+        }
+
+        /* Información personal */
+        .personal-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .name {
+            font-size: 26px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #000;
+            margin: 0 0 10px 0;
+            font-weight: 700;
+        }
+
+        .contact-detail {
+            font-size: 14px;
+            color: #555;
+            margin: 0;
+        }
+
+        .contact-detail a {
+            color: #555;
+            text-decoration: none;
+        }
+
+        /* Metadatos de la aplicación (Puesto y Fecha) */
+        .application-meta {
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .job-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #222;
+            margin: 0 0 5px 0;
+        }
+
+        .date {
+            font-size: 14px;
+            color: #777;
+            margin: 0;
+        }
+
+        /* Cuerpo de la carta */
+        .body-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .body-text p {
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            text-align: justify;
+            /* Alineación justificada para un look más formal */
+            color: #2b2b2b;
+        }
+
+        /* Firma */
+        .signature {
+            margin-top: 40px;
+        }
+
+        .signature p {
+            margin: 0 0 5px 0;
+        }
+
+        /* Responsividad para móviles */
+        @media (max-width: 600px) {
+            .page-container {
+                padding: 30px 20px;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .body-text p {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-container">
+        <div class="header">
+            <img src="tu-foto.jpg" alt="Fotografía de perfil" class="profile-pic">
+
+            <div class="personal-info">
+                <h1 class="name">NOMBRE APELLIDO</h1>
+                <p class="contact-detail">+00 000000000</p>
+                <p class="contact-detail"><a href="mailto:correo@ejemplo.com">correo@ejemplo.com</a></p>
+                <p class="contact-detail"><a href="https://linkedin.com/in/tu-perfil"
+                        target="_blank">www.linkedin.com/in/tu-perfil</a></p>
+            </div>
+        </div>
+
+        <div class="application-meta">
+            <h2 class="job-title">Application - Puesto - Empresa</h2>
+            <p class="date">Mes Año</p>
+        </div>
+
+        <div class="body-text">
+            <p>Dear Hiring Team,</p>
+
+            <p>Aquí es donde puedes insertar el primer párrafo de tu carta de presentación. El texto tiene un
+                interlineado amplio para garantizar que la lectura sea fluida y profesional.</p>
+
+            <p>En este segundo párrafo puedes desarrollar tu experiencia, asegurándote de que la estructura de bloques
+                se mantenga limpia, tal cual se muestra en el diseño original del PDF.</p>
+
+            <p>Finalmente, un párrafo de cierre donde expreses tu motivación y disposición para una futura entrevista.
+            </p>
+
+            <div class="signature">
+                <p>Kind regards,</p>
+                <p><strong>Nombre Apellido</strong></p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
