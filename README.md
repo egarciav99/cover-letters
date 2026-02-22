@@ -48,13 +48,13 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 npm run dev
 ```
 
-## 🎨 Custom Fixes & Improvements
+## 4. Custom Fixes & Improvements
 
 This version includes several custom visual and logic improvements:
 - **Date Capitalization**: Month names in the PDF are always capitalized (e.g., "Febrero").
 - **Enhanced Signature**: The handwritten signature in the PDF is 3x larger for better visibility.
 - **Full Localization**: Greetings, closings, and subject lines automatically adapt to the user's selected language.
-- **Route Protection**: Middleware implementation for secure dashboard access.
+- **Route Protection**: Implemented via `proxy.ts` (the new Next.js standard for what was formerly `middleware.ts`).
 
 ## 🚢 Deployment
 
