@@ -480,7 +480,7 @@ export default function EditorPage() {
                         <p style={{ margin: '0 0 5px 0' }}>{closing}</p>
                         <p style={{
                             fontFamily: "'Great Vibes', cursive",
-                            fontSize: '300px',
+                            fontSize: '500px',
                             color: '#8b7355',
                             marginTop: '5px',
                             marginBottom: '0px'
