@@ -59,3 +59,5 @@ This version includes several custom visual and logic improvements:
 ## 🚢 Deployment
 
 For deployment instructions on Vercel, please refer to the [Deployment Guide](https://github.com/your-username/your-repo/blob/main/deploy_guide.md) (or the `deploy_guide.md` in this repository).
+
+Vercel
