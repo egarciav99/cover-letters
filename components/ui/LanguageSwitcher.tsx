@@ -7,6 +7,7 @@ const LANGS = [
     { code: 'en', label: 'English', flag: '🇬🇧' },
     { code: 'es', label: 'Español', flag: '🇪🇸' },
     { code: 'fr', label: 'Français', flag: '🇫🇷' },
+    { code: 'nl', label: 'Nederlands', flag: '🇳🇱' },
 ];
 
 export default function LanguageSwitcher() {
