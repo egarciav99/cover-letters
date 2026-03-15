@@ -121,13 +121,6 @@ export default function EditorPage() {
                 .from('cover_letters').select('language').eq('id', id).single();
             const lang = letterData?.language || 'en';
 
-            // Build avatar HTML
-            const avatarHtml = profile.avatar_url
-                ? `<img src="${profile.avatar_url}" crossorigin="anonymous" style="width:140px;height:140px;border-radius:50%;object-fit:cover;background-color:#e0e0e0;flex-shrink:0;" />`
-                : profile.full_name
-                    ? `<div style="width:140px;height:140px;border-radius:50%;background:#e0e0e0;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:700;color:#555;flex-shrink:0;">${profile.full_name.charAt(0).toUpperCase()}</div>`
-                    : '';
-
             const rawMonthYear = new Date().toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-GB', { year: 'numeric', month: 'long' });
             const monthYear = rawMonthYear.charAt(0).toUpperCase() + rawMonthYear.slice(1);
             const appPrefix = t('editor.application') || 'Application';
@@ -136,119 +129,191 @@ export default function EditorPage() {
             const pdfHtml = `
                 <style>
                     @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
+                    * { box-sizing: border-box; margin: 0; padding: 0; }
+
                     .pdf-page {
                         background-color: #ffffff;
                         width: 794px;
                         min-height: 1122px;
-                        padding: 50px 70px;
                         box-sizing: border-box;
                         position: relative;
                         overflow: hidden;
                         font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-                        color: #333;
+                        color: #1a1a1a;
+                        font-size: 12px;
                     }
-                    .pdf-page::before {
-                        content: '';
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 220px;
-                        background-color: #fdfaf2;
-                        border-bottom: 2px solid #eaddca;
-                        z-index: 0;
-                    }
-                    .header {
+
+                    /* ── HEADER BAND ── */
+                    .pdf-header {
+                        background: linear-gradient(135deg, #142D56 0%, #1B3A6B 100%);
+                        border-bottom: 4px solid #2A5298;
+                        padding: 36px 48px 30px 48px;
                         display: flex;
                         align-items: center;
-                        gap: 40px;
-                        margin-bottom: 40px;
-                        position: relative;
-                        z-index: 1;
+                        gap: 36px;
                     }
-                    .personal-info {
+
+                    .pdf-avatar {
+                        width: 110px;
+                        height: 110px;
+                        border-radius: 50%;
+                        object-fit: cover;
+                        flex-shrink: 0;
+                        border: 3px solid #2A5298;
+                        background: #1B3A6B;
+                    }
+
+                    .pdf-avatar-placeholder {
+                        width: 110px;
+                        height: 110px;
+                        border-radius: 50%;
+                        flex-shrink: 0;
+                        border: 3px solid #2A5298;
+                        background: #1e3a70;
                         display: flex;
-                        flex-direction: column;
-                        gap: 5px;
-                    }
-                    .name {
-                        font-size: 24px;
-                        text-transform: uppercase;
-                        letter-spacing: 1px;
-                        color: #000;
-                        margin: 0 0 10px 0;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 42px;
                         font-weight: 700;
+                        color: #F5F0E8;
+                    }
+
+                    .pdf-header-info {
+                        flex: 1;
+                    }
+
+                    .pdf-name {
+                        font-size: 17px;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        letter-spacing: 2px;
+                        color: #F5F0E8;
+                        margin-bottom: 14px;
                         line-height: 1.2;
                     }
-                    .contact-detail {
-                        font-size: 14px;
-                        color: #555;
-                        margin: 0;
+
+                    .pdf-contact-section-label {
+                        font-size: 7px;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        letter-spacing: 1.5px;
+                        color: #F5F0E8;
+                        border-bottom: 1px solid #2A5298;
+                        padding-bottom: 3px;
+                        margin-bottom: 7px;
                     }
-                    .application-meta {
-                        margin-bottom: 30px;
-                        position: relative;
-                        z-index: 1;
+
+                    .pdf-contact-item {
+                        display: flex;
+                        align-items: baseline;
+                        gap: 5px;
+                        margin-bottom: 4px;
                     }
-                    .job-title {
-                        font-size: 16px;
-                        font-weight: 600;
-                        color: #222;
-                        margin: 0 0 5px 0;
+
+                    .pdf-contact-bullet {
+                        font-size: 7.5px;
+                        font-weight: 700;
+                        color: #2A5298;
+                        flex-shrink: 0;
                     }
-                    .date {
-                        font-size: 14px;
-                        color: #777;
-                        margin: 0;
+
+                    .pdf-contact-text {
+                        font-size: 8px;
+                        color: #c8d6f0;
+                        line-height: 1.4;
                     }
-                    .body-text {
-                        position: relative;
-                        z-index: 1;
+
+                    /* ── BODY ── */
+                    .pdf-body {
+                        padding: 32px 48px 40px 48px;
                     }
-                    .body-text p {
-                        font-size: 14px;
+
+                    .pdf-meta {
+                        text-align: right;
+                        margin-bottom: 28px;
+                        padding-bottom: 14px;
+                        border-bottom: 1.5px solid #e8ecf4;
+                    }
+
+                    .pdf-subject {
+                        font-size: 11px;
+                        font-weight: 700;
+                        color: #2E74B5;
+                        font-style: italic;
+                        margin-bottom: 3px;
+                    }
+
+                    .pdf-date {
+                        font-size: 9px;
+                        color: #666;
+                        font-style: italic;
+                    }
+
+                    .pdf-greeting {
+                        font-size: 11.5px;
+                        color: #1a1a1a;
+                        margin-bottom: 18px;
                         line-height: 1.6;
-                        margin-bottom: 20px;
+                    }
+
+                    .pdf-paragraph {
+                        font-size: 11.5px;
+                        line-height: 1.68;
+                        margin-bottom: 14px;
                         text-align: justify;
-                        color: #2b2b2b;
+                        color: #1a1a1a;
                     }
-                    .signature {
-                        margin-top: 40px;
+
+                    .pdf-signature {
+                        margin-top: 32px;
                     }
-                    .signature p {
-                        margin: 0 0 5px 0;
+
+                    .pdf-closing {
+                        font-size: 11.5px;
+                        color: #1a1a1a;
+                        margin-bottom: 2px;
                     }
-                    .handwritten-signature {
+
+                    .pdf-sig-name {
                         font-family: 'Great Vibes', cursive;
-                        font-size: 300px;
-                        color: #8b7355;
-                        margin-top: 5px;
-                        margin-bottom: 0px;
+                        font-size: 52px;
+                        color: #1F4D78;
+                        line-height: 1.1;
+                        margin-top: 4px;
                     }
                 </style>
+
                 <div class="pdf-page">
-                    <div class="header">
-                        ${avatarHtml}
-                        <div class="personal-info">
-                            <h1 class="name">${profile.full_name}</h1>
-                            ${profile.phone ? `<p class="contact-detail">${profile.phone}</p>` : ''}
-                            ${profile.email ? `<p class="contact-detail">${profile.email}</p>` : ''}
-                            ${profile.linkedin ? `<p class="contact-detail">${profile.linkedin.replace('https://', '')}</p>` : ''}
+                    <!-- HEADER -->
+                    <div class="pdf-header">
+                        ${profile.avatar_url
+                            ? `<img src="${profile.avatar_url}" crossorigin="anonymous" class="pdf-avatar" />`
+                            : `<div class="pdf-avatar-placeholder">${profile.full_name ? profile.full_name.charAt(0).toUpperCase() : '?'}</div>`
+                        }
+                        <div class="pdf-header-info">
+                            <div class="pdf-name">${profile.full_name}</div>
+                            <div class="pdf-contact-section-label">Contact</div>
+                            ${profile.phone ? `<div class="pdf-contact-item"><span class="pdf-contact-bullet">▸</span><span class="pdf-contact-text">${profile.phone}</span></div>` : ''}
+                            ${profile.email ? `<div class="pdf-contact-item"><span class="pdf-contact-bullet">▸</span><span class="pdf-contact-text">${profile.email}</span></div>` : ''}
+                            ${profile.linkedin ? `<div class="pdf-contact-item"><span class="pdf-contact-bullet">▸</span><span class="pdf-contact-text">${profile.linkedin.replace('https://', '')}</span></div>` : ''}
                         </div>
                     </div>
 
-                    <div class="application-meta">
-                        <h2 class="job-title">${subjectLine}</h2>
-                        <p class="date">${monthYear}</p>
-                    </div>
+                    <!-- BODY -->
+                    <div class="pdf-body">
+                        <div class="pdf-meta">
+                            <div class="pdf-subject">${subjectLine}</div>
+                            <div class="pdf-date">${monthYear}</div>
+                        </div>
 
-                    <div class="body-text">
-                        <p>${greeting}</p>
-                        ${content.split('\n').filter(p => p.trim()).map(p => `<p>${p}</p>`).join('')}
-                        
-                        <div class="signature">
-                            <p>${closing}</p>
-                            <p class="handwritten-signature">${profile.full_name}</p>
+                        <div class="pdf-greeting">${greeting}</div>
+
+                        ${content.split('\n').filter(p => p.trim()).map(p => `<div class="pdf-paragraph">${p}</div>`).join('')}
+
+                        <div class="pdf-signature">
+                            <div class="pdf-closing">${closing}</div>
+                            <div class="pdf-sig-name">${profile.full_name}</div>
                         </div>
                     </div>
                 </div>
@@ -411,82 +476,98 @@ export default function EditorPage() {
                 top: 0,
                 left: '-9999px',
                 visibility: 'hidden',
-                width: '210mm',
-                minHeight: '297mm',
+                width: '794px',
+                minHeight: '1122px',
                 background: '#ffffff',
-                fontFamily: 'var(--font-geist-sans), "Segoe UI", Roboto, Arial, sans-serif',
-                display: 'flex',
-                flexDirection: 'column',
+                fontFamily: '"Segoe UI", Roboto, Arial, sans-serif',
                 zIndex: -1,
-                padding: '50px 70px',
                 boxSizing: 'border-box',
-                color: '#333',
                 overflow: 'hidden',
+                fontSize: '12px',
+                color: '#1a1a1a',
             }}>
+                {/* HEADER BAND */}
                 <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '220px',
-                    backgroundColor: '#fdfaf2',
-                    borderBottom: '2px solid #eaddca',
-                    zIndex: 0,
-                }} />
-                <div style={{ display: 'flex', alignItems: 'center', gap: '40px', marginBottom: '40px', position: 'relative', zIndex: 1 }}>
+                    background: 'linear-gradient(135deg, #142D56 0%, #1B3A6B 100%)',
+                    borderBottom: '4px solid #2A5298',
+                    padding: '36px 48px 30px 48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '36px',
+                }}>
                     {profile.avatar_url ? (
                         <img
                             src={profile.avatar_url}
                             alt="Profile"
                             crossOrigin="anonymous"
-                            style={{ width: '140px', height: '140px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0, background: '#e0e0e0' }}
+                            style={{ width: '110px', height: '110px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0, border: '3px solid #2A5298', background: '#1B3A6B' }}
                         />
                     ) : (
-                        <div style={{ width: '140px', height: '140px', borderRadius: '50%', background: '#e0e0e0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px', fontWeight: 700, color: '#555', flexShrink: 0 }}>
+                        <div style={{ width: '110px', height: '110px', borderRadius: '50%', background: '#1e3a70', border: '3px solid #2A5298', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '42px', fontWeight: 700, color: '#F5F0E8', flexShrink: 0 }}>
                             {profile.full_name?.charAt(0).toUpperCase()}
                         </div>
                     )}
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                        <h1 style={{ fontSize: '24px', textTransform: 'uppercase', letterSpacing: '1px', color: '#000', margin: '0 0 10px 0', fontWeight: 700 }}>
+                    <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '17px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#F5F0E8', marginBottom: '14px', lineHeight: 1.2 }}>
                             {profile.full_name}
-                        </h1>
-                        {profile.phone && <p style={{ fontSize: '14px', color: '#555', margin: 0 }}>{profile.phone}</p>}
-                        {profile.email && <p style={{ fontSize: '14px', color: '#555', margin: 0 }}>{profile.email}</p>}
-                        {profile.linkedin && <p style={{ fontSize: '14px', color: '#555', margin: 0 }}>{profile.linkedin.replace('https://', '')}</p>}
+                        </div>
+                        <div style={{ fontSize: '7px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#F5F0E8', borderBottom: '1px solid #2A5298', paddingBottom: '3px', marginBottom: '7px' }}>
+                            Contact
+                        </div>
+                        {profile.phone && (
+                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '5px', marginBottom: '4px' }}>
+                                <span style={{ fontSize: '7.5px', fontWeight: 700, color: '#2A5298' }}>▸</span>
+                                <span style={{ fontSize: '8px', color: '#c8d6f0' }}>{profile.phone}</span>
+                            </div>
+                        )}
+                        {profile.email && (
+                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '5px', marginBottom: '4px' }}>
+                                <span style={{ fontSize: '7.5px', fontWeight: 700, color: '#2A5298' }}>▸</span>
+                                <span style={{ fontSize: '8px', color: '#c8d6f0' }}>{profile.email}</span>
+                            </div>
+                        )}
+                        {profile.linkedin && (
+                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '5px', marginBottom: '4px' }}>
+                                <span style={{ fontSize: '7.5px', fontWeight: 700, color: '#2A5298' }}>▸</span>
+                                <span style={{ fontSize: '8px', color: '#c8d6f0' }}>{profile.linkedin.replace('https://', '')}</span>
+                            </div>
+                        )}
                     </div>
                 </div>
 
-                <div style={{ marginBottom: '30px', position: 'relative', zIndex: 1 }}>
-                    <h2 style={{ fontSize: '16px', fontWeight: 600, color: '#222', margin: '0 0 5px 0' }}>
-                        {(() => {
-                            const appPrefix = t('editor.application') || 'Application';
-                            return position ? `${appPrefix} - ${position} - ${company}` : `${appPrefix} - ${company}`;
-                        })()}
-                    </h2>
-                    <p style={{ fontSize: '14px', color: '#777', margin: 0 }}>
-                        {mounted ? (() => {
-                            const raw = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long' });
-                            return raw.charAt(0).toUpperCase() + raw.slice(1);
-                        })() : ''}
-                    </p>
-                </div>
+                {/* BODY */}
+                <div style={{ padding: '32px 48px 40px 48px' }}>
+                    <div style={{ textAlign: 'right', marginBottom: '28px', paddingBottom: '14px', borderBottom: '1.5px solid #e8ecf4' }}>
+                        <div style={{ fontSize: '11px', fontWeight: 700, color: '#2E74B5', fontStyle: 'italic', marginBottom: '3px' }}>
+                            {(() => {
+                                const appPrefix = t('editor.application') || 'Application';
+                                return position ? `${appPrefix} - ${position} - ${company}` : `${appPrefix} - ${company}`;
+                            })()}
+                        </div>
+                        <div style={{ fontSize: '9px', color: '#666', fontStyle: 'italic' }}>
+                            {mounted ? (() => {
+                                const raw = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long' });
+                                return raw.charAt(0).toUpperCase() + raw.slice(1);
+                            })() : ''}
+                        </div>
+                    </div>
 
-                <div style={{ fontSize: '14px', lineHeight: '1.6', color: '#2b2b2b', textAlign: 'justify', position: 'relative', zIndex: 1 }}>
-                    <p style={{ marginBottom: '20px' }}>{greeting}</p>
+                    <div style={{ fontSize: '11.5px', color: '#1a1a1a', marginBottom: '18px', lineHeight: 1.6 }}>{greeting}</div>
+
                     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
-                    <div dangerouslySetInnerHTML={{ __html: content }} />
-                    <div style={{ marginTop: '40px' }}>
-                        <p style={{ margin: '0 0 5px 0' }}>{closing}</p>
-                        <p style={{
+                    <div style={{ fontSize: '11.5px', lineHeight: 1.68, color: '#1a1a1a', textAlign: 'justify' }} dangerouslySetInnerHTML={{ __html: content }} />
+
+                    <div style={{ marginTop: '32px' }}>
+                        <div style={{ fontSize: '11.5px', color: '#1a1a1a', marginBottom: '2px' }}>{closing}</div>
+                        <div style={{
                             fontFamily: "'Great Vibes', cursive",
-                            fontSize: '500px',
-                            color: '#8b7355',
-                            marginTop: '5px',
-                            marginBottom: '0px'
+                            fontSize: '52px',
+                            color: '#1F4D78',
+                            lineHeight: 1.1,
+                            marginTop: '4px',
                         }}>
                             {profile.full_name}
-                        </p>
+                        </div>
                     </div>
                 </div>
             </div>
