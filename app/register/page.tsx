@@ -15,9 +15,12 @@ export default function RegisterPage() {
     const [showPass, setShowPass] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [acceptTerms, setAcceptTerms] = useState(false);
 
     async function handleRegister(e: React.FormEvent) {
         e.preventDefault();
+        if (!acceptTerms) return;
+        
         setError('');
         setLoading(true);
         const supabase = createClient();
@@ -90,7 +93,20 @@ export default function RegisterPage() {
                             </div>
                         </div>
 
-                        <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} disabled={loading}>
+                        <div className="form-group" style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginTop: '16px' }}>
+                            <input
+                                type="checkbox"
+                                id="terms"
+                                checked={acceptTerms}
+                                onChange={e => setAcceptTerms(e.target.checked)}
+                                style={{ marginTop: '4px', cursor: 'pointer' }}
+                            />
+                            <label htmlFor="terms" style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.4', cursor: 'pointer' }}>
+                                {t('auth.terms_agree')} <Link href="/terms" target="_blank" style={{ color: 'var(--accent-light)', textDecoration: 'underline' }}>{t('auth.terms_link')}</Link> {t('auth.terms_suffix')}
+                            </label>
+                        </div>
+
+                        <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} disabled={loading || !acceptTerms}>
                             {loading ? <div className="spinner" /> : t('auth.register_button')}
                         </button>
                     </form>

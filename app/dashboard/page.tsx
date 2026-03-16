@@ -160,6 +160,12 @@ export default function DashboardPage() {
         await fetchCvs(user.id);
     }
 
+    async function handleDeleteHistory(historyId: string) {
+        if (!user || !confirm(t('common.confirm_delete'))) return;
+        await supabase.from('cover_letters').delete().eq('id', historyId);
+        await fetchHistory(user.id);
+    }
+
     async function handleGenerate(e: React.FormEvent) {
         e.preventDefault();
         if (!selectedCvId || !company || !requirements || !user) return;
@@ -396,11 +402,16 @@ export default function DashboardPage() {
                                 </h2>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                     {history.map(cl => (
-                                        <div key={cl.id} className="card" style={{ padding: '12px 16px', cursor: 'pointer' }}
+                                        <div key={cl.id} className="card" style={{ padding: '12px 16px', cursor: 'pointer', position: 'relative' }}
                                             onClick={() => router.push(`/editor/${cl.id}`)}>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <span style={{ fontWeight: 600, fontSize: '14px' }}>{cl.company}</span>
-                                                <span className={`badge ${cl.status === 'done' ? 'badge-green' : 'badge-cyan'}`}>{cl.status}</span>
+                                                <span style={{ fontWeight: 600, fontSize: '14px', maxWidth: '75%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cl.company}</span>
+                                                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                                  <span className={`badge ${cl.status === 'done' ? 'badge-green' : 'badge-cyan'}`}>{cl.status}</span>
+                                                   <button className="btn btn-ghost btn-sm" style={{ padding: '4px', color: 'var(--text-muted)' }} onClick={e => { e.stopPropagation(); handleDeleteHistory(cl.id); }} title={t('common.delete')}>
+                                                       <Trash2 size={14} />
+                                                   </button>
+                                                </div>
                                             </div>
                                             <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
                                                 {langLabel[cl.language as keyof typeof langLabel] || cl.language.toUpperCase()} · {mounted ? new Date(cl.created_at).toLocaleDateString() : ''}
@@ -471,6 +482,7 @@ export default function DashboardPage() {
                                             <option value="en">{t('cv.language_en')}</option>
                                             <option value="es">{t('cv.language_es')}</option>
                                             <option value="fr">{t('cv.language_fr')}</option>
+                                            <option value="nl">{t('cv.language_nl')}</option>
                                         </select>
                                     </div>
                                 </div>

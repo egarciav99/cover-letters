@@ -23,7 +23,10 @@
         "register_button": "Create Account",
         "register_link": "Already have an account? Sign in",
         "error_invalid": "Invalid email or password.",
-        "error_generic": "Something went wrong. Please try again."
+        "error_generic": "Something went wrong. Please try again.",
+        "terms_agree": "I accept the",
+        "terms_link": "Terms and Conditions of Use",
+        "terms_suffix": "and the processing of my data for content generation."
     },
     "dashboard": {
         "title": "Dashboard",
@@ -88,5 +91,19 @@
         "delete": "Delete",
         "confirm_delete": "Are you sure you want to delete this?",
         "company_fallback": "the company"
+    },
+    "terms": {
+        "title": "Terms and Conditions of Use",
+        "last_updated": "Last updated: March 16, 2026",
+        "intro_title": "1. Introduction",
+        "intro_text": "By registering and using CoverCraft, you agree to these Terms and Conditions. This platform allows you to generate and manage cover letters using artificial intelligence.",
+        "data_title": "2. Privacy and AI Data Processing",
+        "data_text": "When using our services, we process your CV data and job descriptions using Artificial Intelligence models (e.g., Google Gemini via n8n) exclusively to generate cover letters. We keep your document history on secure servers (Supabase) but we do not use your confidential information to train our models.",
+        "account_title": "3. User Accounts",
+        "account_text": "You are responsible for keeping your password secret. You are free to delete both uploaded CVs and generated letters at any time from your Dashboard. Upon deletion, documents are permanently removed from our servers.",
+        "changes_title": "4. Changes to Terms",
+        "changes_text": "We reserve the right to modify these terms in the future. You can always check the most updated version on this page.",
+        "back_to_register": "Back to Registration",
+        "back_to_home": "Back to Home"
     }
 }

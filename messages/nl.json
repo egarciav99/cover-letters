@@ -21,9 +21,12 @@
         "register_title": "Account aanmaken",
         "register_subtitle": "Begin binnen enkele minuten met het genereren van sollicitatiebrieven",
         "register_button": "Account Aanmaken",
-        "register_link": "Heb je al een account? Inloggen",
+        "register_link": "Heb je al een account? Log in",
         "error_invalid": "Ongeldig e-mailadres of wachtwoord.",
-        "error_generic": "Er is iets misgegaan. Probeer het opnieuw."
+        "error_generic": "Er is iets misgegaan. Probeer het opnieuw.",
+        "terms_agree": "Ik accepteer de",
+        "terms_link": "Algemene Voorwaarden",
+        "terms_suffix": "en de verwerking van mijn gegevens voor het genereren van inhoud."
     },
     "dashboard": {
         "title": "Dashboard",
@@ -88,5 +91,19 @@
         "delete": "Verwijderen",
         "confirm_delete": "Weet je zeker dat je dit wilt verwijderen?",
         "company_fallback": "het bedrijf"
+    },
+    "terms": {
+        "title": "Algemene Voorwaarden",
+        "last_updated": "Laatst bijgewerkt: 16 Maart 2026",
+        "intro_title": "1. Invoering",
+        "intro_text": "Door je te registreren en CoverCraft te gebruiken, ga je akkoord met deze Algemene Voorwaarden. Dit platform stelt u in staat om sollicitatiebrieven te genereren met behulp van kunstmatige intelligentie.",
+        "data_title": "2. Privacy en AI-gegevensverwerking",
+        "data_text": "Bij gebruik van onze diensten verwerken we uw CV-gegevens en vacatures met behulp van Artificial Intelligence-modellen (bijv. Google Gemini via n8n) uitsluitend om begeleidende brieven te genereren. We bewaren de geschiedenis van uw documenten op beveiligde servers (Supabase), maar we gebruiken uw vertrouwelijke informatie niet om onze eigen modellen te trainen.",
+        "account_title": "3. Gebruikersaccounts",
+        "account_text": "U bent verantwoordelijk voor het geheimhouden van uw wachtwoord. U bent vrij om op elk moment geüploade cv's of gegenereerde brieven van uw Dashboard te verwijderen. Na verwijdering worden deze documenten definitief van onze servers gewist.",
+        "changes_title": "4. Wijzigingen aan Voorwaarden",
+        "changes_text": "We behouden ons het recht voor om deze voorwaarden in de toekomst te wijzigen. Je kunt altijd de meest actuele versie raadplegen op deze pagina.",
+        "back_to_register": "Terug naar registratie",
+        "back_to_home": "Terug naar de startpagina"
     }
 }

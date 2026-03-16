@@ -24,7 +24,10 @@
         "register_button": "Crear Cuenta",
         "register_link": "¿Ya tienes cuenta? Inicia sesión",
         "error_invalid": "Correo o contraseña inválidos.",
-        "error_generic": "Algo salió mal. Por favor intenta de nuevo."
+        "error_generic": "Algo salió mal. Por favor intenta de nuevo.",
+        "terms_agree": "Acepto los",
+        "terms_link": "Términos y Condiciones de Uso",
+        "terms_suffix": "y el procesamiento de mis datos para la generación de contenido."
     },
     "dashboard": {
         "title": "Panel Principal",
@@ -99,5 +102,19 @@
         "delete": "Eliminar",
         "confirm_delete": "¿Estás seguro de que quieres eliminar esto?",
         "company_fallback": "la empresa"
+    },
+    "terms": {
+        "title": "Términos y Condiciones de Uso",
+        "last_updated": "Última actualización: 16 de Marzo de 2026",
+        "intro_title": "1. Introducción",
+        "intro_text": "Al registrarte y utilizar CoverCraft, aceptas cumplir con estos Términos y Condiciones. Esta plataforma te permite generar y gestionar cartas de presentación utilizando inteligencia artificial.",
+        "data_title": "2. Privacidad y Uso de Datos por IA",
+        "data_text": "Al utilizar nuestros servicios, procesaremos los datos de tu CV y de las vacantes utilizando modelos de Inteligencia Artificial (por ejemplo, Google Gemini a través de n8n) exclusivamente para generarte la carta de presentación. Guardamos el historial de tus documentos en servidores seguros (Supabase) pero no usamos tu información confidencial para entrenar modelos propios.",
+        "account_title": "3. Cuentas de Usuario",
+        "account_text": "Eres responsable de mantener en secreto tu contraseña. Eres libre de eliminar en cualquier momento tanto los CV subidos como las cartas generadas desde tu Panel Principal. Al eliminar tu cuenta o los documentos, estos se borrarán permanentemente de nuestros servidores.",
+        "changes_title": "4. Cambios en los Términos",
+        "changes_text": "Nos reservamos el derecho de modificar estos términos en el futuro. Podrás consultar siempre la versión más actualizada en esta página.",
+        "back_to_register": "Volver al Registro",
+        "back_to_home": "Volver al Inicio"
     }
 }

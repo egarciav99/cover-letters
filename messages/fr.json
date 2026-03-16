@@ -21,9 +21,12 @@
         "register_title": "Créer votre compte",
         "register_subtitle": "Commencez à générer des lettres de motivation en quelques minutes",
         "register_button": "Créer un Compte",
-        "register_link": "Déjà un compte ? Se connecter",
-        "error_invalid": "Email ou mot de passe invalide.",
-        "error_generic": "Une erreur s'est produite. Veuillez réessayer."
+        "register_link": "Vous avez déjà un compte ? Connectez-vous",
+        "error_invalid": "E-mail ou mot de passe invalide.",
+        "error_generic": "Un problème est survenu. Veuillez réessayer.",
+        "terms_agree": "J'accepte les",
+        "terms_link": "Conditions Générales d'Utilisation",
+        "terms_suffix": "et le traitement de mes données pour la génération de contenu."
     },
     "dashboard": {
         "title": "Tableau de Bord",
@@ -80,7 +83,21 @@
         "save": "Enregistrer",
         "cancel": "Annuler",
         "delete": "Supprimer",
-        "confirm_delete": "Êtes-vous sûr de vouloir supprimer ceci ?",
+        "confirm_delete": "Voulez-vous vraiment supprimer ceci ?",
         "company_fallback": "l'entreprise"
+    },
+    "terms": {
+        "title": "Conditions Générales d'Utilisation",
+        "last_updated": "Dernière mise à jour : 16 Mars 2026",
+        "intro_title": "1. Introduction",
+        "intro_text": "En vous inscrivant et en utilisant CoverCraft, vous acceptez les présentes Conditions. Cette plateforme vous permet de générer des lettres de motivation grâce à l'intelligence artificielle.",
+        "data_title": "2. Confidentialité et traitement des données par l'IA",
+        "data_text": "Lors de l'utilisation de nos services, nous traitons les données de votre CV et les offres avec des modèles d'Intellegence Artificielle afin de générer votre lettre. Vos documents sont conservés de manière sécurisée (Supabase), et nous n'utilisons pas vos informations pour entraîner d'autres modèles.",
+        "account_title": "3. Comptes Utilisateurs",
+        "account_text": "Vous êtes responsable du maintien du secret de votre mot de passe. Vous êtes libre de supprimer vos CV téléchargés ou lettres de motivation de votre tableau de bord. La suppression est permanente.",
+        "changes_title": "4. Modifications",
+        "changes_text": "Nous nous réservons le droit de modifier les Conditions dans le futur. Vous pourrez les consulter sur cette page.",
+        "back_to_register": "Retour à l'inscription",
+        "back_to_home": "Retour à l'accueil"
     }
 }
