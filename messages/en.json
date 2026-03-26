@@ -4,6 +4,7 @@
         "subtitle": "Upload your CV, paste the job requirements, and let AI craft the perfect cover letter for you.",
         "cta_login": "Sign In",
         "cta_register": "Get Started Free",
+        "cta_dashboard": "Go to Dashboard",
         "feature1_title": "Smart AI Generation",
         "feature1_desc": "Powered by your n8n automation — fully customizable.",
         "feature2_title": "Multiple CVs",
@@ -54,7 +55,10 @@
         "change_photo": "Change Photo",
         "full_name": "Full Name",
         "phone": "Phone",
-        "linkedin": "LinkedIn URL"
+        "linkedin": "LinkedIn URL",
+        "profile_incomplete_title": "Complete your profile",
+        "profile_incomplete_subtitle": "Set your name and photo to make your cover letters look professional.",
+        "complete_profile_cta": "Setup Profile"
     },
     "editor": {
         "title": "Cover Letter",

@@ -4,6 +4,7 @@
         "subtitle": "Upload je CV, plak de functie-eisen en laat AI de perfecte sollicitatiebrief voor je maken.",
         "cta_login": "Inloggen",
         "cta_register": "Gratis Aan de Slag",
+        "cta_dashboard": "Naar Dashboard",
         "feature1_title": "Slimme AI-generatie",
         "feature1_desc": "Aangedreven door je n8n-automatisering — volledig aanpasbaar.",
         "feature2_title": "Meerdere CV's",
@@ -54,7 +55,10 @@
         "change_photo": "Foto Wijzigen",
         "full_name": "Volledige Naam",
         "phone": "Telefoonnummer",
-        "linkedin": "LinkedIn URL"
+        "linkedin": "LinkedIn URL",
+        "profile_incomplete_title": "Voltooi je profiel",
+        "profile_incomplete_subtitle": "Stel je naam en foto in om je brieven er professioneel uit te laten zien.",
+        "complete_profile_cta": "Profiel Instellen"
     },
     "editor": {
         "title": "Sollicitatiebrief",
