@@ -65,6 +65,13 @@
         "back": "Terug naar Dashboard",
         "for_company": "voor",
         "edit_hint": "Klik ergens om te bewerken",
+        "step_analyzing": "Functie-eisen analyseren...",
+        "step_researching": "Bedrijfsprofiel onderzoeken...",
+        "step_drafting": "Je persoonlijke brief opstellen...",
+        "step_polishing": "Structuur & ontwerp verfijnen...",
+        "step_finalizing": "Dynamisch PDF-sjabloon voltooien...",
+        "greeting_label": "Begroeting",
+        "closing_label": "Afsluiting & Ondertekening",
         "application": "Sollicitatie",
         "default_greeting": "Beste Team bij {company},",
         "default_closing": "Met vriendelijke groet,"

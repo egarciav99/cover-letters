@@ -59,6 +59,13 @@
         "back": "Retour au Tableau de Bord",
         "for_company": "pour",
         "edit_hint": "Cliquez pour modifier",
+        "step_analyzing": "Analyse des exigences du poste...",
+        "step_researching": "Recherche sur le profil de l'entreprise...",
+        "step_drafting": "Rédaction de votre lettre personnalisée...",
+        "step_polishing": "Peaufinage de la structure et du design...",
+        "step_finalizing": "Finalisation du modèle PDF dynamique...",
+        "greeting_label": "Salutation",
+        "closing_label": "Conclusion et Signature",
         "application": "Candidature",
         "default_greeting": "Madame, Monsieur, au sein de {company},",
         "default_closing": "Cordialement,"

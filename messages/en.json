@@ -65,6 +65,13 @@
         "back": "Back to Dashboard",
         "for_company": "for",
         "edit_hint": "Click anywhere to edit",
+        "step_analyzing": "Analyzing job requirements...",
+        "step_researching": "Researching company profile...",
+        "step_drafting": "Drafting your personalized letter...",
+        "step_polishing": "Polishing structure & design...",
+        "step_finalizing": "Finalizing dynamic PDF template...",
+        "greeting_label": "Greeting",
+        "closing_label": "Closing & Sign-off",
         "application": "Application",
         "default_greeting": "Dear Hiring Team at {company},",
         "default_closing": "Regards,"
