@@ -3,21 +3,24 @@ import { createClient } from '@supabase/supabase-js';
 
 export async function POST(request: NextRequest) {
     try {
+        const bodyRaw = await request.json();
+        const body = Array.isArray(bodyRaw) ? bodyRaw[0] : bodyRaw;
+
+        const { cover_letter_id, content } = body;
+
         // 1. Force verification of secret token from n8n
         const secret = request.headers.get('x-webhook-secret');
         const expectedSecret = process.env.WEBHOOK_SECRET;
 
         if (!expectedSecret) {
-            console.error('CRITICAL: WEBHOOK_SECRET environment variable is not defined.');
+            console.error('CRITICAL: WEBHOOK_SECRET environment variable is not defined in the server.');
             return NextResponse.json({ error: 'Server security misconfiguration' }, { status: 500 });
         }
 
         if (secret !== expectedSecret) {
+            console.error('Webhook Secret Mismatch:', { received: secret ? '***' : 'missing', expected: '***' });
             return NextResponse.json({ error: 'Invalid webhook secret' }, { status: 401 });
         }
-
-        const body = await request.json();
-        const { cover_letter_id, content } = body;
 
         if (!cover_letter_id || !content) {
             return NextResponse.json({ error: 'Missing cover_letter_id or content' }, { status: 400 });
