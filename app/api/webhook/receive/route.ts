@@ -32,12 +32,19 @@ export async function POST(request: NextRequest) {
         }
 
         const body = Array.isArray(bodyRaw) ? bodyRaw[0] : bodyRaw;
-        const { cover_letter_id, content } = body || {};
+        
+        let { cover_letter_id, content } = body || {};
+
+        // 1. Sanitize UUID (n8n expressions sometimes prepend an '=')
+        if (typeof cover_letter_id === 'string') {
+            cover_letter_id = cover_letter_id.replace(/^=/, '').trim();
+        }
 
         if (!cover_letter_id || !content) {
             return NextResponse.json({ 
                 error: 'Invalid payload', 
                 detail: 'Missing cover_letter_id or content fields',
+                received_id: cover_letter_id,
                 received_keys: body ? Object.keys(body) : []
             }, { status: 400 });
         }
