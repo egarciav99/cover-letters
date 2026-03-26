@@ -70,12 +70,18 @@ export default function DashboardPage() {
 
     useEffect(() => {
         async function load() {
-            setMounted(true);
-            const { data: { user: u } } = await supabase.auth.getUser();
-            if (!u) { router.push('/login'); return; }
-            setUser({ id: u.id, email: u.email! });
-            await Promise.all([fetchCvs(u.id), fetchHistory(u.id), fetchProfile(u.id)]);
-            setLoading(false);
+            try {
+                setMounted(true);
+                const { data: { user: u }, error: authError } = await supabase.auth.getUser();
+                if (authError || !u) { router.push('/login'); return; }
+                setUser({ id: u.id, email: u.email! });
+                await Promise.all([fetchCvs(u.id), fetchHistory(u.id), fetchProfile(u.id)]);
+            } catch (err: any) {
+                console.error('Initial load error:', err);
+                setError(t('common.error') || 'Failed to load dashboard data');
+            } finally {
+                setLoading(false);
+            }
         }
         load();
     }, []);
@@ -121,49 +127,91 @@ export default function DashboardPage() {
     async function handleUploadCV() {
         if (!uploadFile || !uploadLabel || !user) return;
         setUploading(true);
+        setError('');
         const filePath = `${user.id}/${Date.now()}_${uploadFile.name}`;
-        const { error: storageError } = await supabase.storage
-            .from('cvs')
-            .upload(filePath, uploadFile, { contentType: 'application/pdf' });
+        
+        try {
+            const { error: storageError } = await supabase.storage
+                .from('cvs')
+                .upload(filePath, uploadFile, { contentType: 'application/pdf' });
 
-        if (storageError) { setError(storageError.message); setUploading(false); return; }
+            if (storageError) throw storageError;
 
-        const { data: { publicUrl } } = supabase.storage.from('cvs').getPublicUrl(filePath);
+            const { data: { publicUrl } } = supabase.storage.from('cvs').getPublicUrl(filePath);
 
-        const isFirstCV = cvs.length === 0;
-        await supabase.from('cvs').insert({
-            user_id: user.id,
-            label: uploadLabel,
-            language: uploadLang,
-            file_url: publicUrl,
-            file_name: uploadFile.name,
-            is_default: isFirstCV,
-        });
+            const isFirstCV = cvs.length === 0;
+            const { error: dbError } = await supabase.from('cvs').insert({
+                user_id: user.id,
+                label: uploadLabel,
+                language: uploadLang,
+                file_url: publicUrl,
+                file_name: uploadFile.name,
+                is_default: isFirstCV,
+            });
 
-        setShowUpload(false);
-        setUploadLabel('');
-        setUploadFile(null);
-        setUploading(false);
-        await fetchCvs(user.id);
+            if (dbError) throw dbError;
+
+            setShowUpload(false);
+            setUploadLabel('');
+            setUploadFile(null);
+            await fetchCvs(user.id);
+        } catch (err: any) {
+            console.error('Upload CV error:', err);
+            setError(err.message || t('common.error'));
+        } finally {
+            setUploading(false);
+        }
     }
 
     async function handleSetDefault(cvId: string) {
         if (!user) return;
-        await supabase.from('cvs').update({ is_default: false }).eq('user_id', user.id);
-        await supabase.from('cvs').update({ is_default: true }).eq('id', cvId);
-        await fetchCvs(user.id);
+        try {
+            const { error: err1 } = await supabase.from('cvs').update({ is_default: false }).eq('user_id', user.id);
+            if (err1) throw err1;
+            const { error: err2 } = await supabase.from('cvs').update({ is_default: true }).eq('id', cvId);
+            if (err2) throw err2;
+            await fetchCvs(user.id);
+        } catch (err: any) {
+            console.error('Set default CV error:', err);
+            setError(t('common.error'));
+        }
     }
 
     async function handleDeleteCV(cvId: string) {
         if (!user || !confirm(t('common.confirm_delete'))) return;
-        await supabase.from('cvs').delete().eq('id', cvId);
-        await fetchCvs(user.id);
+        
+        try {
+            const cvToDelete = cvs.find(c => c.id === cvId);
+            if (cvToDelete) {
+                // 1. Extract path for storage deletion
+                const storageMatch = cvToDelete.file_url.match(/\/storage\/v1\/object\/(?:public|sign)\/cvs\/(.+)/);
+                if (storageMatch) {
+                    const filePath = storageMatch[1];
+                    await supabase.storage.from('cvs').remove([filePath]);
+                }
+            }
+
+            // 2. Delete DB record
+            const { error } = await supabase.from('cvs').delete().eq('id', cvId);
+            if (error) throw error;
+            
+            await fetchCvs(user.id);
+        } catch (err: any) {
+            console.error('Delete CV error:', err);
+            setError(t('common.error'));
+        }
     }
 
     async function handleDeleteHistory(historyId: string) {
         if (!user || !confirm(t('common.confirm_delete'))) return;
-        await supabase.from('cover_letters').delete().eq('id', historyId);
-        await fetchHistory(user.id);
+        try {
+           const { error } = await supabase.from('cover_letters').delete().eq('id', historyId);
+           if (error) throw error;
+           await fetchHistory(user.id);
+        } catch (err: any) {
+            console.error('Delete history error:', err);
+            setError(t('common.error'));
+        }
     }
 
     async function handleGenerate(e: React.FormEvent) {
@@ -184,7 +232,6 @@ export default function DashboardPage() {
                     cv_id: selectedCvId,
                     cv_url: selectedCV?.file_url,
                     language: outputLang,
-                    user_id: user.id,
                 }),
             });
             const data = await res.json();
@@ -193,10 +240,12 @@ export default function DashboardPage() {
             } else {
                 setError(data.error || t('common.error'));
             }
-        } catch {
+        } catch (err) {
+            console.error('Generate error:', err);
             setError(t('common.error'));
+        } finally {
+            setGenerating(false);
         }
-        setGenerating(false);
     }
 
     async function handleLogout() {
@@ -237,30 +286,43 @@ export default function DashboardPage() {
         if (!user) return;
         setImageToCrop(null);
         setSavingProfile(true);
+        setError('');
 
         const filePath = `${user.id}/avatar_${Date.now()}.jpg`;
 
-        const { error: storageError } = await supabase.storage
-            .from('profiles')
-            .upload(filePath, croppedBlob, { contentType: 'image/jpeg' });
+        try {
+            // 1. Delete old avatar if it exists
+            if (profile.avatar_url) {
+                const storageMatch = profile.avatar_url.match(/\/storage\/v1\/object\/(?:public|sign)\/profiles\/(.+)/);
+                if (storageMatch) {
+                    const oldPath = storageMatch[1];
+                    await supabase.storage.from('profiles').remove([oldPath]);
+                }
+            }
 
-        if (storageError) {
-            setError(storageError.message);
+            // 2. Upload new avatar
+            const { error: storageError } = await supabase.storage
+                .from('profiles')
+                .upload(filePath, croppedBlob, { contentType: 'image/jpeg' });
+
+            if (storageError) throw storageError;
+
+            const { data: { publicUrl } } = supabase.storage.from('profiles').getPublicUrl(filePath);
+
+            const { error: updateError } = await supabase
+                .from('profiles')
+                .update({ avatar_url: publicUrl })
+                .eq('id', user.id);
+
+            if (updateError) throw updateError;
+            
+            setProfile({ ...profile, avatar_url: publicUrl });
+        } catch (err: any) {
+            console.error('Avatar upload error:', err);
+            setError(err.message || t('common.error'));
+        } finally {
             setSavingProfile(false);
-            return;
         }
-
-        const { data: { publicUrl } } = supabase.storage.from('profiles').getPublicUrl(filePath);
-
-        const { error: updateError } = await supabase
-            .from('profiles')
-            .update({ avatar_url: publicUrl })
-            .eq('id', user.id);
-
-        if (updateError) setError(updateError.message);
-        else setProfile({ ...profile, avatar_url: publicUrl });
-
-        setSavingProfile(false);
     }
 
     const langLabel = { en: 'EN', es: 'ES', fr: 'FR' };

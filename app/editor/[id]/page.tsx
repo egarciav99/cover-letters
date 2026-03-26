@@ -63,7 +63,16 @@ export default function EditorPage() {
 
     useEffect(() => {
         setMounted(true);
-        fetchLetter();
+        
+        async function init() {
+            try {
+                await fetchLetter();
+            } catch (err) {
+                console.error('Fetch letter error:', err);
+                setStatus('error');
+            }
+        }
+        init();
 
         // Progress stepper timer
         const progressInterval = setInterval(() => {
@@ -470,107 +479,6 @@ export default function EditorPage() {
                 </div>
             </div>
 
-            {/* Hidden PDF Template — Synchronized with Export Logic */}
-            <div id="pdf-template" style={{
-                position: 'fixed',
-                top: 0,
-                left: '-9999px',
-                visibility: 'hidden',
-                width: '794px',
-                minHeight: '1122px',
-                background: '#ffffff',
-                fontFamily: '"Segoe UI", Roboto, Arial, sans-serif',
-                zIndex: -1,
-                boxSizing: 'border-box',
-                overflow: 'hidden',
-                fontSize: '12px',
-                color: '#1a1a1a',
-            }}>
-                {/* HEADER BAND */}
-                <div style={{
-                    background: 'linear-gradient(135deg, #142D56 0%, #1B3A6B 100%)',
-                    borderBottom: '4px solid #2A5298',
-                    padding: '36px 48px 30px 48px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '36px',
-                }}>
-                    {profile.avatar_url ? (
-                        <img
-                            src={profile.avatar_url}
-                            alt="Profile"
-                            crossOrigin="anonymous"
-                            style={{ width: '110px', height: '110px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0, border: '3px solid #2A5298', background: '#1B3A6B' }}
-                        />
-                    ) : (
-                        <div style={{ width: '110px', height: '110px', borderRadius: '50%', background: '#1e3a70', border: '3px solid #2A5298', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '42px', fontWeight: 700, color: '#F5F0E8', flexShrink: 0 }}>
-                            {profile.full_name?.charAt(0).toUpperCase()}
-                        </div>
-                    )}
-                    <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '17px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', color: '#F5F0E8', marginBottom: '14px', lineHeight: 1.2 }}>
-                            {profile.full_name}
-                        </div>
-                        <div style={{ fontSize: '7px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#F5F0E8', borderBottom: '1px solid #2A5298', paddingBottom: '3px', marginBottom: '7px' }}>
-                            Contact
-                        </div>
-                        {profile.phone && (
-                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '5px', marginBottom: '4px' }}>
-                                <span style={{ fontSize: '7.5px', fontWeight: 700, color: '#2A5298' }}>▸</span>
-                                <span style={{ fontSize: '8px', color: '#c8d6f0' }}>{profile.phone}</span>
-                            </div>
-                        )}
-                        {profile.email && (
-                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '5px', marginBottom: '4px' }}>
-                                <span style={{ fontSize: '7.5px', fontWeight: 700, color: '#2A5298' }}>▸</span>
-                                <span style={{ fontSize: '8px', color: '#c8d6f0' }}>{profile.email}</span>
-                            </div>
-                        )}
-                        {profile.linkedin && (
-                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '5px', marginBottom: '4px' }}>
-                                <span style={{ fontSize: '7.5px', fontWeight: 700, color: '#2A5298' }}>▸</span>
-                                <span style={{ fontSize: '8px', color: '#c8d6f0' }}>{profile.linkedin.replace('https://', '')}</span>
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* BODY */}
-                <div style={{ padding: '32px 48px 40px 48px' }}>
-                    <div style={{ textAlign: 'right', marginBottom: '28px', paddingBottom: '14px', borderBottom: '1.5px solid #e8ecf4' }}>
-                        <div style={{ fontSize: '11px', fontWeight: 700, color: '#2E74B5', fontStyle: 'italic', marginBottom: '3px' }}>
-                            {(() => {
-                                const appPrefix = t('editor.application') || 'Application';
-                                return position ? `${appPrefix} - ${position} - ${company}` : `${appPrefix} - ${company}`;
-                            })()}
-                        </div>
-                        <div style={{ fontSize: '9px', color: '#666', fontStyle: 'italic' }}>
-                            {mounted ? (() => {
-                                const raw = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long' });
-                                return raw.charAt(0).toUpperCase() + raw.slice(1);
-                            })() : ''}
-                        </div>
-                    </div>
-
-                    <div style={{ fontSize: '11.5px', color: '#1a1a1a', marginBottom: '18px', lineHeight: 1.6 }}>{greeting}</div>
-
-                    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
-                    <div style={{ fontSize: '11.5px', lineHeight: 1.68, color: '#1a1a1a', textAlign: 'justify' }} dangerouslySetInnerHTML={{ __html: content }} />
-
-                    <div style={{ marginTop: '32px' }}>
-                        <div style={{ fontSize: '11.5px', color: '#1a1a1a', marginBottom: '2px' }}>{closing}</div>
-                        <div style={{
-                            fontFamily: "'Great Vibes', cursive",
-                            fontSize: '52px',
-                            color: '#1F4D78',
-                            lineHeight: 1.1,
-                            marginTop: '4px',
-                        }}>
-                            {profile.full_name}
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     );
 }
