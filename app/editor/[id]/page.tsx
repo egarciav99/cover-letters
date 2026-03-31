@@ -130,10 +130,31 @@ export default function EditorPage() {
                 .from('cover_letters').select('language').eq('id', id).single();
             const lang = letterData?.language || 'en';
 
-            const rawMonthYear = new Date().toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-GB', { year: 'numeric', month: 'long' });
+            const localeMap: Record<string, string> = { es: 'es-ES', nl: 'nl-NL', fr: 'fr-FR', en: 'en-GB' };
+            const rawMonthYear = new Date().toLocaleDateString(localeMap[lang] || 'en-GB', { year: 'numeric', month: 'long' });
             const monthYear = rawMonthYear.charAt(0).toUpperCase() + rawMonthYear.slice(1);
             const appPrefix = t('editor.application') || 'Application';
-            const subjectLine = position ? `${appPrefix} - ${position} - ${company}` : `${appPrefix} - ${company}`;
+            const subjectLine = position ? `${appPrefix} – ${position} – ${company}` : `${appPrefix} – ${company}`;
+
+            // ── Parse the HTML content from TipTap into proper paragraphs ──
+            const parser = new DOMParser();
+            const parsed = parser.parseFromString(content, 'text/html');
+            const bodyParagraphs: string[] = [];
+            parsed.body.childNodes.forEach(node => {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    const el = node as HTMLElement;
+                    const text = el.innerHTML?.trim();
+                    if (text) bodyParagraphs.push(text);
+                } else if (node.nodeType === Node.TEXT_NODE) {
+                    const text = node.textContent?.trim();
+                    if (text) bodyParagraphs.push(text);
+                }
+            });
+
+            // Fallback: if content has no HTML tags, split by newlines
+            if (bodyParagraphs.length === 0) {
+                content.split('\n').filter(p => p.trim()).forEach(p => bodyParagraphs.push(p));
+            }
 
             const pdfHtml = `
                 <style>
@@ -149,41 +170,41 @@ export default function EditorPage() {
                         position: relative;
                         overflow: hidden;
                         font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-                        color: #1a1a1a;
+                        color: #1e1e1e;
                         font-size: 12px;
                     }
 
                     /* ── HEADER BAND ── */
                     .pdf-header {
                         background: linear-gradient(135deg, #142D56 0%, #1B3A6B 100%);
-                        border-bottom: 4px solid #2A5298;
-                        padding: 36px 48px 30px 48px;
+                        border-bottom: 3px solid #2A5298;
+                        padding: 32px 52px 28px 52px;
                         display: flex;
                         align-items: center;
-                        gap: 36px;
+                        gap: 32px;
                     }
 
                     .pdf-avatar {
-                        width: 110px;
-                        height: 110px;
+                        width: 100px;
+                        height: 100px;
                         border-radius: 50%;
                         object-fit: cover;
                         flex-shrink: 0;
-                        border: 3px solid #2A5298;
+                        border: 3px solid rgba(255,255,255,0.2);
                         background: #1B3A6B;
                     }
 
                     .pdf-avatar-placeholder {
-                        width: 110px;
-                        height: 110px;
+                        width: 100px;
+                        height: 100px;
                         border-radius: 50%;
                         flex-shrink: 0;
-                        border: 3px solid #2A5298;
+                        border: 3px solid rgba(255,255,255,0.2);
                         background: #1e3a70;
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        font-size: 42px;
+                        font-size: 38px;
                         font-weight: 700;
                         color: #F5F0E8;
                     }
@@ -193,12 +214,12 @@ export default function EditorPage() {
                     }
 
                     .pdf-name {
-                        font-size: 17px;
+                        font-size: 18px;
                         font-weight: 700;
                         text-transform: uppercase;
-                        letter-spacing: 2px;
+                        letter-spacing: 2.5px;
                         color: #F5F0E8;
-                        margin-bottom: 14px;
+                        margin-bottom: 12px;
                         line-height: 1.2;
                     }
 
@@ -207,42 +228,42 @@ export default function EditorPage() {
                         font-weight: 700;
                         text-transform: uppercase;
                         letter-spacing: 1.5px;
-                        color: #F5F0E8;
-                        border-bottom: 1px solid #2A5298;
-                        padding-bottom: 3px;
-                        margin-bottom: 7px;
+                        color: rgba(245, 240, 232, 0.7);
+                        border-bottom: 1px solid rgba(255,255,255,0.15);
+                        padding-bottom: 4px;
+                        margin-bottom: 8px;
                     }
 
                     .pdf-contact-item {
                         display: flex;
                         align-items: baseline;
-                        gap: 5px;
+                        gap: 6px;
                         margin-bottom: 4px;
                     }
 
                     .pdf-contact-bullet {
-                        font-size: 7.5px;
+                        font-size: 7px;
                         font-weight: 700;
-                        color: #2A5298;
+                        color: #5B8FD4;
                         flex-shrink: 0;
                     }
 
                     .pdf-contact-text {
-                        font-size: 8px;
+                        font-size: 8.5px;
                         color: #c8d6f0;
                         line-height: 1.4;
                     }
 
                     /* ── BODY ── */
                     .pdf-body {
-                        padding: 32px 48px 40px 48px;
+                        padding: 36px 52px 48px 52px;
                     }
 
                     .pdf-meta {
                         text-align: right;
-                        margin-bottom: 28px;
-                        padding-bottom: 14px;
-                        border-bottom: 1.5px solid #e8ecf4;
+                        margin-bottom: 32px;
+                        padding-bottom: 16px;
+                        border-bottom: 1px solid #d8dfe8;
                     }
 
                     .pdf-subject {
@@ -250,46 +271,57 @@ export default function EditorPage() {
                         font-weight: 700;
                         color: #2E74B5;
                         font-style: italic;
-                        margin-bottom: 3px;
+                        margin-bottom: 4px;
                     }
 
                     .pdf-date {
                         font-size: 9px;
-                        color: #666;
+                        color: #888;
                         font-style: italic;
                     }
 
                     .pdf-greeting {
                         font-size: 11.5px;
-                        color: #1a1a1a;
-                        margin-bottom: 18px;
+                        color: #1e1e1e;
+                        margin-bottom: 22px;
                         line-height: 1.6;
+                        font-weight: 500;
+                    }
+
+                    .pdf-content-block {
+                        margin-bottom: 0;
                     }
 
                     .pdf-paragraph {
                         font-size: 11.5px;
-                        line-height: 1.68;
-                        margin-bottom: 14px;
+                        line-height: 1.75;
+                        margin-bottom: 18px;
                         text-align: justify;
-                        color: #1a1a1a;
+                        color: #2b2b2b;
+                    }
+
+                    .pdf-paragraph:last-child {
+                        margin-bottom: 0;
                     }
 
                     .pdf-signature {
-                        margin-top: 32px;
+                        margin-top: 36px;
+                        padding-top: 4px;
                     }
 
                     .pdf-closing {
                         font-size: 11.5px;
-                        color: #1a1a1a;
-                        margin-bottom: 2px;
+                        color: #1e1e1e;
+                        margin-bottom: 4px;
+                        font-weight: 500;
                     }
 
                     .pdf-sig-name {
                         font-family: 'Great Vibes', cursive;
-                        font-size: 52px;
+                        font-size: 48px;
                         color: #1F4D78;
                         line-height: 1.1;
-                        margin-top: 4px;
+                        margin-top: 6px;
                     }
                 </style>
 
@@ -318,7 +350,9 @@ export default function EditorPage() {
 
                         <div class="pdf-greeting">${greeting}</div>
 
-                        ${content.split('\n').filter(p => p.trim()).map(p => `<div class="pdf-paragraph">${p}</div>`).join('')}
+                        <div class="pdf-content-block">
+                            ${bodyParagraphs.map(p => `<div class="pdf-paragraph">${p}</div>`).join('\n')}
+                        </div>
 
                         <div class="pdf-signature">
                             <div class="pdf-closing">${closing}</div>
