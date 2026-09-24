@@ -18,6 +18,14 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
+        // The callback URL must come from configuration, never from request headers:
+        // n8n sends the webhook secret to it.
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+        if (!appUrl) {
+            console.error('NEXT_PUBLIC_APP_URL is not configured');
+            return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+        }
+
         // 2. Validate CV ownership
         const { data: cv, error: cvError } = await supabase
             .from('cvs')
@@ -51,7 +59,6 @@ export async function POST(request: NextRequest) {
         }
 
         // 4. Build the callback URL for n8n to call back
-        const appUrl = process.env.NEXT_PUBLIC_APP_URL || request.headers.get('origin') || '';
         const callbackUrl = `${appUrl}/api/webhook/receive`;
 
         // 5. Generate a signed URL so n8n can download the private CV
