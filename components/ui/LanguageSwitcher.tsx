@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
+import { useLocale } from 'next-intl';
 
 const LANGS = [
     { code: 'en', label: 'English', flag: '🇬🇧' },
@@ -12,13 +13,8 @@ const LANGS = [
 
 export default function LanguageSwitcher() {
     const [open, setOpen] = useState(false);
-    const [current, setCurrent] = useState(() => {
-        if (typeof document !== 'undefined') {
-            const cookie = document.cookie.split(';').find(c => c.trim().startsWith('locale='));
-            return cookie?.split('=')?.[1]?.trim() || 'en';
-        }
-        return 'en';
-    });
+    // El idioma activo viene de next-intl: igual en servidor y cliente (evita errores de hidratación).
+    const [current, setCurrent] = useState(useLocale());
 
     function switchLang(code: string) {
         document.cookie = `locale=${code};path=/;max-age=31536000`;

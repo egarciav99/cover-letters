@@ -3,9 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { FileText, Zap, Download, ArrowRight } from 'lucide-react';
+import { FileText, Zap, Download, ArrowRight, Upload, ClipboardPaste, FileCheck } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
+import SiteFooter from '@/components/SiteFooter';
+import AdSlot from '@/components/AdSlot';
+
+const FAQ_KEYS = ['faq1', 'faq2', 'faq3', 'faq4', 'faq5'] as const;
 
 export default function LandingPage() {
     const t = useTranslations();
@@ -26,6 +30,7 @@ export default function LandingPage() {
             <header className="page-header">
                 <span className="logo">CoverCraft</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Link href="/pricing" className="btn btn-ghost btn-sm hide-mobile">{t('footer.pricing')}</Link>
                     <LanguageSwitcher />
                     {!loading && (
                         user ? (
@@ -63,7 +68,7 @@ export default function LandingPage() {
                         fontWeight: 600,
                         marginBottom: '32px',
                     }}>
-                        <Zap size={14} /> Powered by n8n AI Automation
+                        <Zap size={14} /> {t('landing.badge')}
                     </div>
 
                     <h1 style={{
@@ -115,7 +120,7 @@ export default function LandingPage() {
                     top: '10%',
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    width: '600px',
+                    width: 'min(600px, 100%)',
                     height: '400px',
                     background: 'radial-gradient(ellipse, rgba(59, 130, 246, 0.12) 0%, transparent 70%)',
                     pointerEvents: 'none',
@@ -172,16 +177,65 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Footer */}
-            <footer style={{
-                borderTop: '1px solid var(--border)',
-                padding: '24px 32px',
-                textAlign: 'center',
-                color: 'var(--text-muted)',
-                fontSize: '14px',
-            }}>
-                CoverCraft © {new Date().getFullYear()}
-            </footer>
+            {/* How it works */}
+            <section className="section" aria-labelledby="how-title">
+                <h2 id="how-title" className="section-title">{t('landing.how_title')}</h2>
+                <div className="steps-grid">
+                    {[
+                        { icon: <Upload size={22} />, title: t('landing.how1_title'), desc: t('landing.how1_desc') },
+                        { icon: <ClipboardPaste size={22} />, title: t('landing.how2_title'), desc: t('landing.how2_desc') },
+                        { icon: <FileCheck size={22} />, title: t('landing.how3_title'), desc: t('landing.how3_desc') },
+                    ].map((step) => (
+                        <div key={step.title} className="card" style={{ padding: '24px' }}>
+                            <div style={{ color: 'var(--accent-light)', marginBottom: '12px' }}>{step.icon}</div>
+                            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '6px' }}>{step.title}</h3>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '15px', lineHeight: 1.6 }}>{step.desc}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* Pricing teaser */}
+            <section className="section" aria-labelledby="pricing-title">
+                <div className="card" style={{ padding: '36px', textAlign: 'center', borderColor: 'var(--accent)' }}>
+                    <h2 id="pricing-title" style={{ fontSize: '26px', fontWeight: 800, marginBottom: '10px' }}>{t('landing.pricing_title')}</h2>
+                    <p style={{ color: 'var(--text-secondary)', maxWidth: '560px', margin: '0 auto 24px', lineHeight: 1.7 }}>{t('landing.pricing_desc')}</p>
+                    <Link href="/pricing" className="btn btn-primary" id="landing-pricing-cta">
+                        {t('landing.pricing_cta')} <ArrowRight size={16} />
+                    </Link>
+                </div>
+            </section>
+
+            {/* FAQ */}
+            <section className="section faq" aria-labelledby="faq-title">
+                <h2 id="faq-title" className="section-title">{t('landing.faq_title')}</h2>
+                {FAQ_KEYS.map((k) => (
+                    <details key={k}>
+                        <summary>{t(`landing.${k}_q`)}</summary>
+                        <p>{t(`landing.${k}_a`)}</p>
+                    </details>
+                ))}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            '@context': 'https://schema.org',
+                            '@type': 'FAQPage',
+                            mainEntity: FAQ_KEYS.map((k) => ({
+                                '@type': 'Question',
+                                name: t(`landing.${k}_q`),
+                                acceptedAnswer: { '@type': 'Answer', text: t(`landing.${k}_a`) },
+                            })),
+                        }),
+                    }}
+                />
+            </section>
+
+            <div className="section" style={{ paddingBottom: '40px' }}>
+                <AdSlot slotKey="landing" />
+            </div>
+
+            <SiteFooter />
         </div>
     );
 }

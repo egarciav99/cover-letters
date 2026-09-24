@@ -4,7 +4,10 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import Link from 'next/link';
 import { Upload, Trash2, Star, FileText, LogOut, Plus, X, Clock, AlertCircle, ArrowRight } from 'lucide-react';
+import AdSlot from '@/components/AdSlot';
+import SiteFooter from '@/components/SiteFooter';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import ProfilePhotoCropper from '@/components/ProfilePhotoCropper';
 
@@ -24,6 +27,13 @@ interface CoverLetterHistory {
     language: string;
     status: string;
     created_at: string;
+}
+
+interface Usage {
+    plan: 'free' | 'pro';
+    used: number;
+    limit: number;
+    resetsAt: string;
 }
 
 interface Profile {
@@ -46,6 +56,9 @@ export default function DashboardPage() {
     const [generating, setGenerating] = useState(false);
     const [error, setError] = useState('');
     const [mounted, setMounted] = useState(false);
+    const [usage, setUsage] = useState<Usage | null>(null);
+    const [quotaHit, setQuotaHit] = useState(false);
+    const [deletingAccount, setDeletingAccount] = useState(false);
 
     // Profile modal state
     const [showProfile, setShowProfile] = useState(false);
@@ -75,7 +88,7 @@ export default function DashboardPage() {
                 const { data: { user: u }, error: authError } = await supabase.auth.getUser();
                 if (authError || !u) { router.push('/login'); return; }
                 setUser({ id: u.id, email: u.email! });
-                await Promise.all([fetchCvs(u.id), fetchHistory(u.id), fetchProfile(u.id)]);
+                await Promise.all([fetchCvs(u.id), fetchHistory(u.id), fetchProfile(u.id), fetchUsage()]);
             } catch (err: any) {
                 console.error('Initial load error:', err);
                 setError(t('common.error') || 'Failed to load dashboard data');
@@ -85,6 +98,15 @@ export default function DashboardPage() {
         }
         load();
     }, []);
+
+    async function fetchUsage() {
+        try {
+            const res = await fetch('/api/usage');
+            if (res.ok) setUsage(await res.json());
+        } catch {
+            // El contador es informativo: si falla, el servidor sigue aplicando el límite.
+        }
+    }
 
     async function fetchProfile(userId: string) {
         const { data } = await supabase
@@ -218,6 +240,7 @@ export default function DashboardPage() {
         e.preventDefault();
         if (!selectedCvId || !company || !requirements || !user) return;
         setError('');
+        setQuotaHit(false);
         setGenerating(true);
 
         const selectedCV = cvs.find(c => c.id === selectedCvId);
@@ -235,6 +258,11 @@ export default function DashboardPage() {
                 }),
             });
             const data = await res.json();
+            if (res.status === 402) {
+                setQuotaHit(true);
+                setUsage({ plan: data.plan, used: data.used, limit: data.limit, resetsAt: data.resetsAt });
+                return;
+            }
             if (data.cover_letter_id) {
                 router.push(`/editor/${data.cover_letter_id}`);
             } else {
@@ -251,6 +279,27 @@ export default function DashboardPage() {
     async function handleLogout() {
         await supabase.auth.signOut();
         router.push('/');
+    }
+
+    async function handleDeleteAccount() {
+        if (!window.confirm(t('account.delete_confirm'))) return;
+        setDeletingAccount(true);
+        setError('');
+        try {
+            const res = await fetch('/api/account/delete', { method: 'POST' });
+            if (res.ok) {
+                await supabase.auth.signOut();
+                router.push('/');
+                return;
+            }
+            const data = await res.json().catch(() => ({}));
+            setError(data.error === 'active_subscription' ? t('account.delete_active_subscription') : t('common.error'));
+            setShowProfile(false);
+        } catch {
+            setError(t('common.error'));
+        } finally {
+            setDeletingAccount(false);
+        }
     }
 
     async function handleUpdateProfile(e: React.FormEvent) {
@@ -403,7 +452,7 @@ export default function DashboardPage() {
                     </div>
                 )}
 
-                <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: '32px' }}>
+                <div className="dashboard-grid">
 
                     {/* LEFT: CV Manager */}
                     <div>
@@ -483,11 +532,46 @@ export default function DashboardPage() {
                                 </div>
                             </div>
                         )}
+
+                        {usage?.plan === 'free' && <AdSlot slotKey="dashboard" style={{ marginTop: '32px' }} />}
                     </div>
 
                     {/* RIGHT: Generate Form */}
                     <div>
-                        <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px' }}>{t('dashboard.generate_title')}</h2>
+                        <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '16px' }}>{t('dashboard.generate_title')}</h2>
+
+                        {usage && (
+                            <div className="usage-bar" style={{ marginBottom: '20px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap', fontSize: '14px' }}>
+                                    <span>
+                                        <span className={`badge ${usage.plan === 'pro' ? 'badge-purple' : 'badge-cyan'}`} style={{ marginRight: '8px' }}>
+                                            {usage.plan === 'pro' ? 'Pro' : t('billing.free_plan')}
+                                        </span>
+                                        {t('billing.usage', { used: Math.min(usage.used, usage.limit), limit: usage.limit })}
+                                    </span>
+                                    <span style={{ color: 'var(--text-muted)' }}>
+                                        {t('billing.resets', { date: mounted ? new Date(usage.resetsAt).toLocaleDateString() : '' })}
+                                        {usage.plan === 'free' && (
+                                            <> · <Link href="/pricing" style={{ color: 'var(--accent-light)' }}>{t('billing.see_plans')}</Link></>
+                                        )}
+                                    </span>
+                                </div>
+                                <div style={{ height: '6px', background: 'var(--bg-secondary)', borderRadius: '3px', marginTop: '10px', overflow: 'hidden' }}>
+                                    <div style={{
+                                        width: `${Math.min(100, (usage.used / usage.limit) * 100)}%`,
+                                        height: '100%',
+                                        background: usage.used >= usage.limit ? 'var(--error, #ef4444)' : 'var(--accent)',
+                                    }} />
+                                </div>
+                            </div>
+                        )}
+
+                        {quotaHit && usage && (
+                            <div className="error-msg" style={{ marginBottom: '20px' }}>
+                                {t('billing.quota_reached', { limit: usage.limit })}{' '}
+                                <Link href="/pricing" style={{ color: 'inherit', fontWeight: 700 }}>{t('billing.see_plans')} →</Link>
+                            </div>
+                        )}
 
                         <div className="card fade-in">
                             <form onSubmit={handleGenerate}>
@@ -722,6 +806,21 @@ export default function DashboardPage() {
                                     {savingProfile ? <div className="spinner" /> : t('common.save')}
                                 </button>
                             </form>
+
+                            <div style={{ marginTop: '28px', paddingTop: '20px', borderTop: '1px solid var(--border)' }}>
+                                <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                                    {t('account.delete_hint')}
+                                </p>
+                                <button
+                                    type="button"
+                                    className="btn btn-danger btn-sm"
+                                    onClick={handleDeleteAccount}
+                                    disabled={deletingAccount}
+                                    id="btn-delete-account"
+                                >
+                                    {deletingAccount ? <div className="spinner" /> : <><Trash2 size={14} /> {t('account.delete_button')}</>}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}
@@ -734,6 +833,7 @@ export default function DashboardPage() {
                     />
                 )}
             </div>
+            <SiteFooter />
         </div>
     );
 }
