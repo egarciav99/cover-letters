@@ -101,7 +101,11 @@
         "closing_label": "Afsluiting & Ondertekening",
         "application": "Sollicitatie",
         "default_greeting": "Beste Team bij {company},",
-        "default_closing": "Met vriendelijke groet,"
+        "default_closing": "Met vriendelijke groet,",
+        "error_title": "We konden deze brief niet maken",
+        "error_generic": "Er ging iets mis bij het schrijven van je brief. Probeer het zo opnieuw.",
+        "error_cv_unreadable": "We konden de tekst van je cv niet lezen. Het is waarschijnlijk een gescande afbeelding: upload een pdf die je uit Word, Google Docs of iets vergelijkbaars hebt geëxporteerd.",
+        "error_not_counted": "Hij telt niet mee voor je maandelijkse limiet."
     },
     "cv": {
         "label_placeholder": "bijv. Engels CV, CV Senior Dev...",
@@ -191,5 +195,24 @@
         "back_to_home": "Terug naar home",
         "updated": "Laatst bijgewerkt: {date}",
         "english_only": "Dit document is beschikbaar in het Engels en Spaans."
+    },
+    "design": {
+        "title": "Pdf-ontwerp",
+        "template": "Sjabloon",
+        "tpl_executive": "Executive",
+        "tpl_classic": "Klassiek",
+        "tpl_modern": "Modern",
+        "tpl_minimal": "Minimalistisch",
+        "color": "Kleur",
+        "custom_color": "Eigen kleur",
+        "font": "Lettertype",
+        "font_sans": "Modern (schreefloos)",
+        "font_serif": "Klassiek (schreef)",
+        "font_elegant": "Elegant",
+        "show_photo": "Foto tonen",
+        "photo_hint": "In het VK, de VS en Ierland gaan brieven meestal zonder foto.",
+        "preview": "Pdf-voorbeeld",
+        "show_preview": "Voorbeeld tonen",
+        "hide_preview": "Voorbeeld verbergen"
     }
 }

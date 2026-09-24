@@ -101,7 +101,11 @@
         "closing_label": "Closing & Sign-off",
         "application": "Application",
         "default_greeting": "Dear Hiring Team at {company},",
-        "default_closing": "Regards,"
+        "default_closing": "Regards,",
+        "error_title": "We couldn't generate this letter",
+        "error_generic": "Something went wrong while writing your letter. Please try again in a moment.",
+        "error_cv_unreadable": "We couldn't read the text of your CV. It is probably a scanned image: upload a PDF exported from Word, Google Docs or similar.",
+        "error_not_counted": "It hasn't been counted towards your monthly limit."
     },
     "cv": {
         "label_placeholder": "e.g. English CV, CV Senior Dev...",
@@ -191,5 +195,24 @@
         "back_to_home": "Back to Home",
         "updated": "Last updated: {date}",
         "english_only": ""
+    },
+    "design": {
+        "title": "PDF design",
+        "template": "Template",
+        "tpl_executive": "Executive",
+        "tpl_classic": "Classic",
+        "tpl_modern": "Modern",
+        "tpl_minimal": "Minimal",
+        "color": "Colour",
+        "custom_color": "Custom",
+        "font": "Font",
+        "font_sans": "Modern (sans)",
+        "font_serif": "Classic (serif)",
+        "font_elegant": "Elegant",
+        "show_photo": "Show photo",
+        "photo_hint": "In the UK, US and Ireland, letters usually go without a photo.",
+        "preview": "PDF preview",
+        "show_preview": "Show preview",
+        "hide_preview": "Hide preview"
     }
 }

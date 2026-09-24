@@ -101,7 +101,11 @@
         "closing_label": "Conclusion et Signature",
         "application": "Candidature",
         "default_greeting": "Madame, Monsieur, au sein de {company},",
-        "default_closing": "Cordialement,"
+        "default_closing": "Cordialement,",
+        "error_title": "Nous n'avons pas pu générer cette lettre",
+        "error_generic": "Un problème est survenu lors de la rédaction. Réessayez dans un instant.",
+        "error_cv_unreadable": "Nous n'avons pas pu lire le texte de votre CV. C'est sans doute une image scannée : importez un PDF exporté depuis Word, Google Docs ou similaire.",
+        "error_not_counted": "Elle n'a pas été décomptée de votre limite mensuelle."
     },
     "cv": {
         "label_placeholder": "ex. CV Français, CV Développeur Senior...",
@@ -191,5 +195,24 @@
         "back_to_home": "Retour à l'accueil",
         "updated": "Dernière mise à jour : {date}",
         "english_only": "Ce document est disponible en anglais et en espagnol."
+    },
+    "design": {
+        "title": "Mise en page du PDF",
+        "template": "Modèle",
+        "tpl_executive": "Exécutif",
+        "tpl_classic": "Classique",
+        "tpl_modern": "Moderne",
+        "tpl_minimal": "Minimaliste",
+        "color": "Couleur",
+        "custom_color": "Personnalisée",
+        "font": "Police",
+        "font_sans": "Moderne (sans)",
+        "font_serif": "Classique (serif)",
+        "font_elegant": "Élégante",
+        "show_photo": "Afficher la photo",
+        "photo_hint": "Au Royaume-Uni, aux États-Unis et en Irlande, les lettres se font généralement sans photo.",
+        "preview": "Aperçu du PDF",
+        "show_preview": "Voir l'aperçu",
+        "hide_preview": "Masquer l'aperçu"
     }
 }

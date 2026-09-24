@@ -101,7 +101,11 @@
         "closing_label": "Despedida y Firma",
         "application": "Candidatura",
         "default_greeting": "Estimado/a equipo de selección de {company},",
-        "default_closing": "Atentamente,"
+        "default_closing": "Atentamente,",
+        "error_title": "No hemos podido generar esta carta",
+        "error_generic": "Algo ha fallado al redactar tu carta. Vuelve a intentarlo en un momento.",
+        "error_cv_unreadable": "No hemos podido leer el texto de tu CV. Seguramente es una imagen escaneada: sube un PDF exportado desde Word, Google Docs o similar.",
+        "error_not_counted": "No se ha descontado de tu límite mensual."
     },
     "cv": {
         "label_placeholder": "ej. CV en Español, CV Senior Dev...",
@@ -191,5 +195,24 @@
         "back_to_home": "Volver al inicio",
         "updated": "Última actualización: {date}",
         "english_only": ""
+    },
+    "design": {
+        "title": "Diseño del PDF",
+        "template": "Plantilla",
+        "tpl_executive": "Ejecutiva",
+        "tpl_classic": "Clásica",
+        "tpl_modern": "Moderna",
+        "tpl_minimal": "Minimalista",
+        "color": "Color",
+        "custom_color": "Personalizado",
+        "font": "Tipo de letra",
+        "font_sans": "Moderna (sans)",
+        "font_serif": "Clásica (serif)",
+        "font_elegant": "Elegante",
+        "show_photo": "Mostrar foto",
+        "photo_hint": "En Reino Unido, EE. UU. e Irlanda las cartas suelen ir sin foto.",
+        "preview": "Vista previa del PDF",
+        "show_preview": "Ver vista previa",
+        "hide_preview": "Ocultar vista previa"
     }
 }

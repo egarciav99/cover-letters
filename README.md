@@ -41,7 +41,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role
 N8N_WEBHOOK_URL=your_n8n_webhook_url
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-WEBHOOK_SECRET=shared_secret_with_n8n
+WEBHOOK_SECRET=shared_secret_with_n8n        # n8n → app (callback)
+N8N_WEBHOOK_SECRET=another_long_secret       # app → n8n (Webhook node Header Auth)
 
 # Legal notice (shown only when set)
 NEXT_PUBLIC_CONTACT_EMAIL=you@example.com
@@ -67,6 +68,8 @@ npm run dev
 - **Plans** live in `lib/plans.ts`: Free = 3 letters per calendar month (UTC), Pro = €4.99/month with a fair-use cap of 100.
 - **Quota is enforced server-side** in `/api/generate` through the `consume_generation` Postgres function (atomic, per-user lock). Failed generations are refunded. Deleting letters does not give quota back.
 - **Database:** run `supabase/migrations/002_freemium.sql` once in the Supabase SQL editor. Until it runs, the app keeps working but the quota is not enforced (a warning is logged).
+- **Letter errors:** run `supabase/migrations/003_letter_errors.sql` too. n8n reports failures to the callback with `{ cover_letter_id, status: 'error', error_code }`; the app marks the letter as failed and gives the quota back.
+- **PDF templates** live in `lib/letterTemplates.ts` (Executive, Classic, Modern, Minimal) with accent colour, font and photo options. The editor preview and the PDF use the same HTML.
 - **Account deletion** (`/api/account/delete`) removes storage files and the auth user; the database cascades the rest.
 - **Public pages:** `/pricing`, `/terms`, `/privacy`, `/cookies`, `/legal` (ES/EN; FR and NL show the English text), plus `robots.txt`, `sitemap.xml` and `ads.txt`.
 - **Analytics:** Vercel Web Analytics (cookie-free). Enable it in the Vercel project.
