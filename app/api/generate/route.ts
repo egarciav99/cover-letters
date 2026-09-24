@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
+import { PLANS } from '@/lib/plans';
+import { getUserPlan, getUsageSummary } from '@/lib/usage';
+
+// Límites de tamaño: protegen el coste de la IA y el payload hacia n8n.
+const MAX_SHORT_FIELD = 200;
+const MAX_REQUIREMENTS = 15000;
 
 export async function POST(request: NextRequest) {
     try {
@@ -16,6 +23,13 @@ export async function POST(request: NextRequest) {
 
         if (!company || !position || !job_requirements || !cv_id) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+        }
+        if (
+            String(company).length > MAX_SHORT_FIELD ||
+            String(position).length > MAX_SHORT_FIELD ||
+            String(job_requirements).length > MAX_REQUIREMENTS
+        ) {
+            return NextResponse.json({ error: 'Input too long' }, { status: 400 });
         }
 
         // The callback URL must come from configuration, never from request headers:
@@ -38,7 +52,31 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'CV not found or unauthorized' }, { status: 403 });
         }
 
-        // 3. Create a pending cover letter record
+        // 3. Consume one generation from this month's quota (atomic, server-side)
+        const admin = createAdminClient();
+        const plan = await getUserPlan(admin, user.id);
+        const { data: usageId, error: usageError } = await admin.rpc('consume_generation', {
+            p_user: user.id,
+            p_limit: PLANS[plan].monthlyLimit,
+        });
+        // Si aún no se ha ejecutado supabase/migrations/002_freemium.sql, no se bloquea a nadie.
+        const migrationMissing = usageError && ['PGRST202', '42883', '42P01', 'PGRST205'].includes(usageError.code ?? '');
+        if (usageError && !migrationMissing) {
+            console.error('Quota check error:', usageError);
+            return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        }
+        if (migrationMissing) {
+            console.error('Freemium migration not applied: quota is NOT enforced. Run supabase/migrations/002_freemium.sql');
+        } else if (!usageId) {
+            const usage = await getUsageSummary(admin, user.id);
+            return NextResponse.json({ error: 'quota_exceeded', ...usage }, { status: 402 });
+        }
+        // If anything below fails, the generation doesn't count.
+        const refund = async () => {
+            if (usageId) await admin.from('generation_usage').delete().eq('id', usageId);
+        };
+
+        // 4. Create a pending cover letter record
         const { data: coverLetter, error: dbError } = await supabase
             .from('cover_letters')
             .insert({
@@ -55,13 +93,18 @@ export async function POST(request: NextRequest) {
 
         if (dbError || !coverLetter) {
             console.error('DB Insert Error:', dbError);
+            await refund();
             return NextResponse.json({ error: 'Failed to create record' }, { status: 500 });
         }
 
-        // 4. Build the callback URL for n8n to call back
+        if (usageId) {
+            await admin.from('generation_usage').update({ cover_letter_id: coverLetter.id }).eq('id', usageId);
+        }
+
+        // 5. Build the callback URL for n8n to call back
         const callbackUrl = `${appUrl}/api/webhook/receive`;
 
-        // 5. Generate a signed URL so n8n can download the private CV
+        // 6. Generate a signed URL so n8n can download the private CV
         let signedCvUrl = cv_url;
         if (cv_url) {
             const storageMatch = cv_url.match(/\/storage\/v1\/object\/(?:public|sign)\/cvs\/(.+)/);
@@ -76,7 +119,7 @@ export async function POST(request: NextRequest) {
             }
         }
 
-        // 6. Send webhook to n8n with timeout
+        // 7. Send webhook to n8n with timeout
         const n8nPayload = {
             cover_letter_id: coverLetter.id,
             company,
@@ -101,11 +144,13 @@ export async function POST(request: NextRequest) {
             if (!n8nResponse.ok) {
                 console.error(`n8n Error [${n8nResponse.status}]:`, await n8nResponse.text());
                 await supabase.from('cover_letters').update({ status: 'error' }).eq('id', coverLetter.id);
+                await refund();
                 return NextResponse.json({ error: 'External automation failed' }, { status: 502 });
             }
         } catch (err: any) {
             console.error('Webhook Fetch Error:', err.name === 'AbortError' ? 'Timeout' : err);
             await supabase.from('cover_letters').update({ status: 'error' }).eq('id', coverLetter.id);
+            await refund();
             return NextResponse.json({ error: err.name === 'AbortError' ? 'Generation timed out' : 'Failed to reach automation' }, { status: 504 });
         } finally {
             clearTimeout(timeoutId);

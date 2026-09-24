@@ -102,7 +102,7 @@ export default function RegisterPage() {
                                 style={{ marginTop: '4px', cursor: 'pointer' }}
                             />
                             <label htmlFor="terms" style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.4', cursor: 'pointer' }}>
-                                {t('auth.terms_agree')} <Link href="/terms" target="_blank" style={{ color: 'var(--accent-light)', textDecoration: 'underline' }}>{t('auth.terms_link')}</Link> {t('auth.terms_suffix')}
+                                {t('auth.terms_agree')} <Link href="/terms" target="_blank" style={{ color: 'var(--accent-light)', textDecoration: 'underline' }}>{t('auth.terms_link')}</Link> {t('auth.terms_suffix')} <Link href="/privacy" target="_blank" style={{ color: 'var(--accent-light)', textDecoration: 'underline' }}>{t('auth.privacy_link')}</Link>.
                             </label>
                         </div>
 

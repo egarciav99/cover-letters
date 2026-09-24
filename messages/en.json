@@ -6,11 +6,33 @@
         "cta_register": "Get Started Free",
         "cta_dashboard": "Go to Dashboard",
         "feature1_title": "Smart AI Generation",
-        "feature1_desc": "Powered by your n8n automation — fully customizable.",
+        "feature1_desc": "Your letter mirrors the key words of the job offer and your real experience, without generic filler.",
         "feature2_title": "Multiple CVs",
         "feature2_desc": "Upload different CVs per language and job type.",
         "feature3_title": "Edit & Download",
-        "feature3_desc": "Edit the result and export as a professional PDF."
+        "feature3_desc": "Edit the result and export as a professional PDF.",
+        "badge": "AI cover letters, tailored to each job",
+        "how_title": "How it works",
+        "how1_title": "1. Upload your CV",
+        "how1_desc": "PDF, in English, Spanish, French or Dutch. Keep one per language or role.",
+        "how2_title": "2. Paste the job offer",
+        "how2_desc": "Company, position and the full description.",
+        "how3_title": "3. Review and download",
+        "how3_desc": "Edit anything you like and export a clean PDF with your photo and signature.",
+        "pricing_title": "Start free",
+        "pricing_desc": "3 cover letters every month for free. Need more? Pro gives you unlimited letters and no ads.",
+        "pricing_cta": "See plans",
+        "faq_title": "Frequently asked questions",
+        "faq1_q": "Is it really free?",
+        "faq1_a": "Yes. The free plan includes 3 cover letters per month, with no card required. The counter resets on the 1st of each month.",
+        "faq2_q": "What do you do with my CV?",
+        "faq2_a": "We use it only to write your letters. It is stored privately in your account and you can delete it, or your whole account, at any time. It is not used to train AI models.",
+        "faq3_q": "Which languages are supported?",
+        "faq3_a": "You can write letters in English, Spanish, French and Dutch, whatever the language of your CV.",
+        "faq4_q": "Can I edit the letter?",
+        "faq4_a": "Yes. The letter opens in an editor where you can change any part before downloading it as a PDF.",
+        "faq5_q": "Will the letter be perfect?",
+        "faq5_a": "It is a strong first draft written by AI. Always read it before sending it: you are the one applying."
     },
     "auth": {
         "email": "Email address",
@@ -27,7 +49,8 @@
         "error_generic": "Something went wrong. Please try again.",
         "terms_agree": "I accept the",
         "terms_link": "Terms and Conditions of Use",
-        "terms_suffix": "and the processing of my data for content generation."
+        "terms_suffix": "and I have read the",
+        "privacy_link": "Privacy policy"
     },
     "dashboard": {
         "title": "Dashboard",
@@ -116,5 +139,57 @@
         "changes_text": "We reserve the right to modify these terms in the future. You can always check the most updated version on this page.",
         "back_to_register": "Back to Registration",
         "back_to_home": "Back to Home"
+    },
+    "billing": {
+        "free_plan": "Free plan",
+        "usage": "{used} of {limit} letters this month",
+        "resets": "Renews on {date}",
+        "see_plans": "See plans",
+        "quota_reached": "You have used your {limit} cover letters this month. Your quota renews on the 1st, or you can upgrade to Pro."
+    },
+    "account": {
+        "delete_hint": "Delete your account and all your data (CVs, letters and profile). This cannot be undone.",
+        "delete_button": "Delete my account",
+        "delete_confirm": "Delete your account and all your data permanently? This cannot be undone.",
+        "delete_active_subscription": "Cancel your Pro subscription before deleting your account."
+    },
+    "pricing": {
+        "meta_title": "Pricing",
+        "title": "Simple pricing",
+        "subtitle": "Start free. Upgrade only if you need more letters.",
+        "free_name": "Free",
+        "free_price": "€0",
+        "per_month": "/month",
+        "free_f1": "3 cover letters per month",
+        "free_f2": "Multiple CVs and 4 languages",
+        "free_f3": "Editor and PDF download",
+        "free_f4": "Includes ads (never inside the editor)",
+        "free_cta": "Start free",
+        "pro_name": "Pro",
+        "pro_price": "€4.99",
+        "pro_f1": "Unlimited cover letters*",
+        "pro_f2": "Everything in Free",
+        "pro_f3": "No ads",
+        "pro_f4": "Cancel anytime",
+        "pro_cta": "Upgrade to Pro",
+        "pro_soon": "Coming soon",
+        "pro_soon_desc": "Pro payments are not open yet. Write to us if you want to be notified.",
+        "fair_use": "*Fair use: up to 100 letters per month.",
+        "vat": "Prices include VAT where applicable."
+    },
+    "footer": {
+        "aria": "Legal and help",
+        "pricing": "Pricing",
+        "terms": "Terms",
+        "privacy": "Privacy",
+        "cookies": "Cookies",
+        "legal": "Legal notice",
+        "contact": "Contact",
+        "cookie_settings": "Cookie settings"
+    },
+    "legal_ui": {
+        "back_to_home": "Back to Home",
+        "updated": "Last updated: {date}",
+        "english_only": ""
     }
 }

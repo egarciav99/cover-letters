@@ -6,11 +6,33 @@
         "cta_register": "Commencer Gratuitement",
         "cta_dashboard": "Aller au Tableau de Bord",
         "feature1_title": "Génération par IA",
-        "feature1_desc": "Propulsé par votre automatisation n8n — entièrement personnalisable.",
+        "feature1_desc": "Votre lettre reprend les mots clés de l'offre et votre expérience réelle, sans remplissage générique.",
         "feature2_title": "CVs Multiples",
         "feature2_desc": "Téléchargez différents CVs par langue et type de poste.",
         "feature3_title": "Modifier et Télécharger",
-        "feature3_desc": "Modifiez le résultat et exportez en PDF professionnel."
+        "feature3_desc": "Modifiez le résultat et exportez en PDF professionnel.",
+        "badge": "Lettres de motivation par IA, adaptées à chaque offre",
+        "how_title": "Comment ça marche",
+        "how1_title": "1. Importez votre CV",
+        "how1_desc": "En PDF, en français, anglais, espagnol ou néerlandais. Gardez-en un par langue ou par poste.",
+        "how2_title": "2. Collez l'offre",
+        "how2_desc": "Entreprise, poste et description complète.",
+        "how3_title": "3. Relisez et téléchargez",
+        "how3_desc": "Modifiez ce que vous voulez et exportez un PDF propre avec votre photo et votre signature.",
+        "pricing_title": "Commencez gratuitement",
+        "pricing_desc": "3 lettres par mois, gratuitement. Besoin de plus ? Pro vous offre des lettres illimitées et sans publicité.",
+        "pricing_cta": "Voir les offres",
+        "faq_title": "Questions fréquentes",
+        "faq1_q": "C'est vraiment gratuit ?",
+        "faq1_a": "Oui. L'offre gratuite comprend 3 lettres par mois, sans carte bancaire. Le compteur se remet à zéro le 1er de chaque mois.",
+        "faq2_q": "Que faites-vous de mon CV ?",
+        "faq2_a": "Il sert uniquement à rédiger vos lettres. Il est stocké de façon privée dans votre compte et vous pouvez le supprimer, ou supprimer tout votre compte, à tout moment. Il n'est pas utilisé pour entraîner des modèles d'IA.",
+        "faq3_q": "Quelles langues ?",
+        "faq3_a": "Vous pouvez générer des lettres en français, anglais, espagnol et néerlandais, quelle que soit la langue de votre CV.",
+        "faq4_q": "Puis-je modifier la lettre ?",
+        "faq4_a": "Oui. La lettre s'ouvre dans un éditeur où vous pouvez tout modifier avant de la télécharger en PDF.",
+        "faq5_q": "La lettre sera-t-elle parfaite ?",
+        "faq5_a": "C'est un premier jet solide rédigé par IA. Relisez-la toujours avant de l'envoyer : c'est vous qui postulez."
     },
     "auth": {
         "email": "Adresse e-mail",
@@ -27,7 +49,8 @@
         "error_generic": "Un problème est survenu. Veuillez réessayer.",
         "terms_agree": "J'accepte les",
         "terms_link": "Conditions Générales d'Utilisation",
-        "terms_suffix": "et le traitement de mes données pour la génération de contenu."
+        "terms_suffix": "et j'ai lu la",
+        "privacy_link": "Politique de confidentialité"
     },
     "dashboard": {
         "title": "Tableau de Bord",
@@ -52,7 +75,13 @@
         "logout": "Se Déconnecter",
         "profile_incomplete_title": "Complétez votre profil",
         "profile_incomplete_subtitle": "Configurez votre nom et votre photo pour que vos lettres soient professionnelles.",
-        "complete_profile_cta": "Configurer le Profil"
+        "complete_profile_cta": "Configurer le Profil",
+        "change_photo": "Changer la photo",
+        "full_name": "Nom complet",
+        "linkedin": "URL LinkedIn",
+        "phone": "Téléphone",
+        "profile_settings": "Paramètres du profil",
+        "set_profile": "Configurer le profil"
     },
     "editor": {
         "title": "Lettre de Motivation",
@@ -110,5 +139,57 @@
         "changes_text": "Nous nous réservons le droit de modifier les Conditions dans le futur. Vous pourrez les consulter sur cette page.",
         "back_to_register": "Retour à l'inscription",
         "back_to_home": "Retour à l'accueil"
+    },
+    "billing": {
+        "free_plan": "Offre gratuite",
+        "usage": "{used} sur {limit} lettres ce mois-ci",
+        "resets": "Renouvellement le {date}",
+        "see_plans": "Voir les offres",
+        "quota_reached": "Vous avez utilisé vos {limit} lettres ce mois-ci. Le quota se renouvelle le 1er, ou passez à Pro."
+    },
+    "account": {
+        "delete_hint": "Supprimez votre compte et toutes vos données (CV, lettres et profil). Action irréversible.",
+        "delete_button": "Supprimer mon compte",
+        "delete_confirm": "Supprimer définitivement votre compte et toutes vos données ? Action irréversible.",
+        "delete_active_subscription": "Annulez votre abonnement Pro avant de supprimer votre compte."
+    },
+    "pricing": {
+        "meta_title": "Tarifs",
+        "title": "Des tarifs simples",
+        "subtitle": "Commencez gratuitement. Passez à Pro seulement si vous avez besoin de plus de lettres.",
+        "free_name": "Gratuit",
+        "free_price": "0 €",
+        "per_month": "/mois",
+        "free_f1": "3 lettres par mois",
+        "free_f2": "Plusieurs CV et 4 langues",
+        "free_f3": "Éditeur et téléchargement PDF",
+        "free_f4": "Avec publicité (jamais dans l'éditeur)",
+        "free_cta": "Commencer gratuitement",
+        "pro_name": "Pro",
+        "pro_price": "4,99 €",
+        "pro_f1": "Lettres illimitées*",
+        "pro_f2": "Tout l'offre gratuite",
+        "pro_f3": "Sans publicité",
+        "pro_f4": "Résiliable à tout moment",
+        "pro_cta": "Passer à Pro",
+        "pro_soon": "Bientôt disponible",
+        "pro_soon_desc": "Le paiement Pro n'est pas encore ouvert. Écrivez-nous pour être prévenu.",
+        "fair_use": "*Usage raisonnable : jusqu'à 100 lettres par mois.",
+        "vat": "Prix TVA incluse le cas échéant."
+    },
+    "footer": {
+        "aria": "Informations légales et aide",
+        "pricing": "Tarifs",
+        "terms": "Conditions",
+        "privacy": "Confidentialité",
+        "cookies": "Cookies",
+        "legal": "Mentions légales",
+        "contact": "Contact",
+        "cookie_settings": "Paramètres des cookies"
+    },
+    "legal_ui": {
+        "back_to_home": "Retour à l'accueil",
+        "updated": "Dernière mise à jour : {date}",
+        "english_only": "Ce document est disponible en anglais et en espagnol."
     }
 }

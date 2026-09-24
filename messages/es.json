@@ -6,11 +6,33 @@
         "cta_register": "Comenzar Gratis",
         "cta_dashboard": "Ir al Panel",
         "feature1_title": "Generación con IA",
-        "feature1_desc": "Impulsado por tu automatización n8n — completamente personalizable.",
+        "feature1_desc": "Tu carta refleja las palabras clave de la oferta y tu experiencia real, sin relleno genérico.",
         "feature2_title": "Múltiples CVs",
         "feature2_desc": "Sube diferentes CVs por idioma y tipo de trabajo.",
         "feature3_title": "Edita y Descarga",
-        "feature3_desc": "Edita el resultado y exporta como PDF profesional."
+        "feature3_desc": "Edita el resultado y exporta como PDF profesional.",
+        "badge": "Cartas de presentación con IA, a medida de cada oferta",
+        "how_title": "Cómo funciona",
+        "how1_title": "1. Sube tu CV",
+        "how1_desc": "En PDF, en español, inglés, francés o neerlandés. Guarda uno por idioma o por tipo de puesto.",
+        "how2_title": "2. Pega la oferta",
+        "how2_desc": "Empresa, puesto y la descripción completa.",
+        "how3_title": "3. Revisa y descarga",
+        "how3_desc": "Cambia lo que quieras y exporta un PDF limpio con tu foto y tu firma.",
+        "pricing_title": "Empieza gratis",
+        "pricing_desc": "3 cartas cada mes, gratis. ¿Necesitas más? Con Pro tienes cartas ilimitadas y sin anuncios.",
+        "pricing_cta": "Ver planes",
+        "faq_title": "Preguntas frecuentes",
+        "faq1_q": "¿Es gratis de verdad?",
+        "faq1_a": "Sí. El plan gratis incluye 3 cartas al mes y no pide tarjeta. El contador se renueva el día 1 de cada mes.",
+        "faq2_q": "¿Qué hacéis con mi CV?",
+        "faq2_a": "Solo lo usamos para escribir tus cartas. Se guarda de forma privada en tu cuenta y puedes borrarlo, o borrar tu cuenta entera, cuando quieras. No se usa para entrenar modelos de IA.",
+        "faq3_q": "¿En qué idiomas funciona?",
+        "faq3_a": "Puedes generar cartas en español, inglés, francés y neerlandés, sea cual sea el idioma de tu CV.",
+        "faq4_q": "¿Puedo editar la carta?",
+        "faq4_a": "Sí. La carta se abre en un editor donde puedes cambiar cualquier parte antes de descargarla en PDF.",
+        "faq5_q": "¿La carta saldrá perfecta?",
+        "faq5_a": "Es un primer borrador sólido escrito con IA. Léela siempre antes de enviarla: quien se presenta eres tú."
     },
     "auth": {
         "email": "Correo electrónico",
@@ -27,7 +49,8 @@
         "error_generic": "Algo salió mal. Por favor intenta de nuevo.",
         "terms_agree": "Acepto los",
         "terms_link": "Términos y Condiciones de Uso",
-        "terms_suffix": "y el procesamiento de mis datos para la generación de contenido."
+        "terms_suffix": "y he leído la",
+        "privacy_link": "Política de privacidad"
     },
     "dashboard": {
         "title": "Panel Principal",
@@ -116,5 +139,57 @@
         "changes_text": "Nos reservamos el derecho de modificar estos términos en el futuro. Podrás consultar siempre la versión más actualizada en esta página.",
         "back_to_register": "Volver al Registro",
         "back_to_home": "Volver al Inicio"
+    },
+    "billing": {
+        "free_plan": "Plan gratis",
+        "usage": "{used} de {limit} cartas este mes",
+        "resets": "Se renueva el {date}",
+        "see_plans": "Ver planes",
+        "quota_reached": "Ya has usado tus {limit} cartas de este mes. El cupo se renueva el día 1, o puedes pasarte a Pro."
+    },
+    "account": {
+        "delete_hint": "Borra tu cuenta y todos tus datos (CV, cartas y perfil). No se puede deshacer.",
+        "delete_button": "Eliminar mi cuenta",
+        "delete_confirm": "¿Borrar tu cuenta y todos tus datos para siempre? No se puede deshacer.",
+        "delete_active_subscription": "Cancela tu suscripción Pro antes de borrar la cuenta."
+    },
+    "pricing": {
+        "meta_title": "Precios",
+        "title": "Precios sencillos",
+        "subtitle": "Empieza gratis. Pásate a Pro solo si necesitas más cartas.",
+        "free_name": "Gratis",
+        "free_price": "0 €",
+        "per_month": "/mes",
+        "free_f1": "3 cartas al mes",
+        "free_f2": "Varios CV y 4 idiomas",
+        "free_f3": "Editor y descarga en PDF",
+        "free_f4": "Con anuncios (nunca dentro del editor)",
+        "free_cta": "Empezar gratis",
+        "pro_name": "Pro",
+        "pro_price": "4,99 €",
+        "pro_f1": "Cartas ilimitadas*",
+        "pro_f2": "Todo lo del plan gratis",
+        "pro_f3": "Sin anuncios",
+        "pro_f4": "Cancela cuando quieras",
+        "pro_cta": "Pasarme a Pro",
+        "pro_soon": "Próximamente",
+        "pro_soon_desc": "El pago de Pro aún no está abierto. Escríbenos si quieres que te avisemos.",
+        "fair_use": "*Uso razonable: hasta 100 cartas al mes.",
+        "vat": "Precios con IVA incluido cuando corresponda."
+    },
+    "footer": {
+        "aria": "Información legal y ayuda",
+        "pricing": "Precios",
+        "terms": "Condiciones",
+        "privacy": "Privacidad",
+        "cookies": "Cookies",
+        "legal": "Aviso legal",
+        "contact": "Contacto",
+        "cookie_settings": "Configuración de cookies"
+    },
+    "legal_ui": {
+        "back_to_home": "Volver al inicio",
+        "updated": "Última actualización: {date}",
+        "english_only": ""
     }
 }

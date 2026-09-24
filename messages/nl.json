@@ -6,11 +6,33 @@
         "cta_register": "Gratis Aan de Slag",
         "cta_dashboard": "Naar Dashboard",
         "feature1_title": "Slimme AI-generatie",
-        "feature1_desc": "Aangedreven door je n8n-automatisering — volledig aanpasbaar.",
+        "feature1_desc": "Je brief neemt de kernwoorden van de vacature en je echte ervaring over, zonder algemene opvulling.",
         "feature2_title": "Meerdere CV's",
         "feature2_desc": "Upload verschillende CV's per taal en functietype.",
         "feature3_title": "Bewerken & Downloaden",
-        "feature3_desc": "Bewerk het resultaat en exporteer als een professionele PDF."
+        "feature3_desc": "Bewerk het resultaat en exporteer als een professionele PDF.",
+        "badge": "Sollicitatiebrieven met AI, afgestemd op elke vacature",
+        "how_title": "Hoe het werkt",
+        "how1_title": "1. Upload je cv",
+        "how1_desc": "Als pdf, in het Nederlands, Engels, Spaans of Frans. Bewaar er één per taal of functie.",
+        "how2_title": "2. Plak de vacature",
+        "how2_desc": "Bedrijf, functie en de volledige omschrijving.",
+        "how3_title": "3. Controleer en download",
+        "how3_desc": "Pas aan wat je wilt en exporteer een nette pdf met je foto en handtekening.",
+        "pricing_title": "Begin gratis",
+        "pricing_desc": "3 brieven per maand, gratis. Meer nodig? Met Pro krijg je onbeperkt brieven en geen advertenties.",
+        "pricing_cta": "Bekijk abonnementen",
+        "faq_title": "Veelgestelde vragen",
+        "faq1_q": "Is het echt gratis?",
+        "faq1_a": "Ja. Het gratis abonnement bevat 3 brieven per maand, zonder creditcard. De teller wordt op de 1e van elke maand vernieuwd.",
+        "faq2_q": "Wat doen jullie met mijn cv?",
+        "faq2_a": "We gebruiken het alleen om je brieven te schrijven. Het wordt privé in je account bewaard en je kunt het, of je hele account, altijd verwijderen. Het wordt niet gebruikt om AI-modellen te trainen.",
+        "faq3_q": "Welke talen?",
+        "faq3_a": "Je kunt brieven maken in het Nederlands, Engels, Spaans en Frans, ongeacht de taal van je cv.",
+        "faq4_q": "Kan ik de brief bewerken?",
+        "faq4_a": "Ja. De brief opent in een editor waarin je alles kunt aanpassen voordat je hem als pdf downloadt.",
+        "faq5_q": "Is de brief perfect?",
+        "faq5_a": "Het is een sterk eerste concept geschreven met AI. Lees hem altijd na voordat je hem verstuurt: jij solliciteert."
     },
     "auth": {
         "email": "E-mailadres",
@@ -27,7 +49,8 @@
         "error_generic": "Er is iets misgegaan. Probeer het opnieuw.",
         "terms_agree": "Ik accepteer de",
         "terms_link": "Algemene Voorwaarden",
-        "terms_suffix": "en de verwerking van mijn gegevens voor het genereren van inhoud."
+        "terms_suffix": "en ik heb het",
+        "privacy_link": "Privacybeleid gelezen"
     },
     "dashboard": {
         "title": "Dashboard",
@@ -116,5 +139,57 @@
         "changes_text": "We behouden ons het recht voor om deze voorwaarden in de toekomst te wijzigen. Je kunt altijd de meest actuele versie raadplegen op deze pagina.",
         "back_to_register": "Terug naar registratie",
         "back_to_home": "Terug naar de startpagina"
+    },
+    "billing": {
+        "free_plan": "Gratis abonnement",
+        "usage": "{used} van {limit} brieven deze maand",
+        "resets": "Vernieuwt op {date}",
+        "see_plans": "Bekijk abonnementen",
+        "quota_reached": "Je hebt je {limit} brieven van deze maand gebruikt. Je tegoed wordt op de 1e vernieuwd, of stap over op Pro."
+    },
+    "account": {
+        "delete_hint": "Verwijder je account en al je gegevens (cv's, brieven en profiel). Dit kan niet ongedaan worden gemaakt.",
+        "delete_button": "Mijn account verwijderen",
+        "delete_confirm": "Je account en al je gegevens definitief verwijderen? Dit kan niet ongedaan worden gemaakt.",
+        "delete_active_subscription": "Zeg je Pro-abonnement op voordat je je account verwijdert."
+    },
+    "pricing": {
+        "meta_title": "Prijzen",
+        "title": "Eenvoudige prijzen",
+        "subtitle": "Begin gratis. Stap alleen over op Pro als je meer brieven nodig hebt.",
+        "free_name": "Gratis",
+        "free_price": "€ 0",
+        "per_month": "/maand",
+        "free_f1": "3 brieven per maand",
+        "free_f2": "Meerdere cv's en 4 talen",
+        "free_f3": "Editor en pdf-download",
+        "free_f4": "Met advertenties (nooit in de editor)",
+        "free_cta": "Gratis beginnen",
+        "pro_name": "Pro",
+        "pro_price": "€ 4,99",
+        "pro_f1": "Onbeperkt brieven*",
+        "pro_f2": "Alles uit Gratis",
+        "pro_f3": "Geen advertenties",
+        "pro_f4": "Altijd opzegbaar",
+        "pro_cta": "Overstappen op Pro",
+        "pro_soon": "Binnenkort",
+        "pro_soon_desc": "Betalen voor Pro is nog niet mogelijk. Mail ons als je bericht wilt krijgen.",
+        "fair_use": "*Redelijk gebruik: tot 100 brieven per maand.",
+        "vat": "Prijzen inclusief btw waar van toepassing."
+    },
+    "footer": {
+        "aria": "Juridische informatie en hulp",
+        "pricing": "Prijzen",
+        "terms": "Voorwaarden",
+        "privacy": "Privacy",
+        "cookies": "Cookies",
+        "legal": "Juridische informatie",
+        "contact": "Contact",
+        "cookie_settings": "Cookie-instellingen"
+    },
+    "legal_ui": {
+        "back_to_home": "Terug naar home",
+        "updated": "Laatst bijgewerkt: {date}",
+        "english_only": "Dit document is beschikbaar in het Engels en Spaans."
     }
 }

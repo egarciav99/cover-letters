@@ -1,11 +1,36 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getLocale } from 'next-intl/server';
+import { Analytics } from '@vercel/analytics/next';
+import { SITE, ADSENSE_CLIENT } from '@/lib/site';
 import './globals.css';
 
+const DESCRIPTION =
+    'Generate personalized cover letters with AI. Upload your CV, paste the job offer and get a tailored letter in seconds. 3 free letters every month.';
+
 export const metadata: Metadata = {
-    title: 'CoverCraft — AI Cover Letter Generator',
-    description: 'Generate personalized cover letters with AI. Upload your CV, paste job requirements, and get a professional cover letter in seconds.',
+    metadataBase: new URL(SITE.url),
+    title: {
+        default: 'CoverCraft — AI Cover Letter Generator',
+        template: '%s · CoverCraft',
+    },
+    description: DESCRIPTION,
+    alternates: { canonical: '/' },
+    openGraph: {
+        type: 'website',
+        siteName: SITE.name,
+        title: 'CoverCraft — AI Cover Letter Generator',
+        description: DESCRIPTION,
+        url: SITE.url,
+    },
+    twitter: {
+        card: 'summary',
+        title: 'CoverCraft — AI Cover Letter Generator',
+        description: DESCRIPTION,
+    },
+    // AdSense pide esta etiqueta para verificar el sitio.
+    other: ADSENSE_CLIENT ? { 'google-adsense-account': ADSENSE_CLIENT } : {},
 };
 
 export default async function RootLayout({
@@ -27,6 +52,17 @@ export default async function RootLayout({
                 <NextIntlClientProvider messages={messages}>
                     {children}
                 </NextIntlClientProvider>
+                <Analytics />
+                {ADSENSE_CLIENT && (
+                    // Carga AdSense y su CMP (mensaje de consentimiento de Google, configurado en AdSense).
+                    <Script
+                        id="adsense"
+                        async
+                        strategy="afterInteractive"
+                        crossOrigin="anonymous"
+                        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
+                    />
+                )}
             </body>
         </html>
     );
