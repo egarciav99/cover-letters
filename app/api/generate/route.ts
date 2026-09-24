@@ -11,7 +11,7 @@ const MAX_REQUIREMENTS = 15000;
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { company, position, job_requirements, cv_id, cv_url, language } = body;
+        const { company, position, job_requirements, cv_id, language } = body;
 
         const supabase = await createClient();
 
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
         // 2. Validate CV ownership
         const { data: cv, error: cvError } = await supabase
             .from('cvs')
-            .select('id')
+            .select('id, file_url')
             .eq('id', cv_id)
             .eq('user_id', user.id)
             .single();
@@ -104,20 +104,19 @@ export async function POST(request: NextRequest) {
         // 5. Build the callback URL for n8n to call back
         const callbackUrl = `${appUrl}/api/webhook/receive`;
 
-        // 6. Generate a signed URL so n8n can download the private CV
-        let signedCvUrl = cv_url;
-        if (cv_url) {
-            const storageMatch = cv_url.match(/\/storage\/v1\/object\/(?:public|sign)\/cvs\/(.+)/);
-            if (storageMatch) {
-                const filePath = storageMatch[1];
-                const { data: signedData } = await supabase.storage
-                    .from('cvs')
-                    .createSignedUrl(filePath, 3600);
-                if (signedData?.signedUrl) {
-                    signedCvUrl = signedData.signedUrl;
-                }
-            }
+        // 6. Signed URL so n8n can download the private CV. The path comes from the DB record
+        //    (ownership already checked), never from the request body.
+        const storageMatch = String(cv.file_url || '').match(/\/storage\/v1\/object\/(?:public|sign)\/cvs\/([^?]+)/);
+        const { data: signedData } = storageMatch
+            ? await supabase.storage.from('cvs').createSignedUrl(decodeURIComponent(storageMatch[1]), 3600)
+            : { data: null };
+        if (!signedData?.signedUrl) {
+            console.error('Could not sign CV URL for', cv.id);
+            await supabase.from('cover_letters').update({ status: 'error' }).eq('id', coverLetter.id);
+            await refund();
+            return NextResponse.json({ error: 'CV file not available' }, { status: 500 });
         }
+        const signedCvUrl = signedData.signedUrl;
 
         // 7. Send webhook to n8n with timeout
         const n8nPayload = {
@@ -136,7 +135,11 @@ export async function POST(request: NextRequest) {
         try {
             const n8nResponse = await fetch(process.env.N8N_WEBHOOK_URL!, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Secreto compartido con el nodo Webhook de n8n (Header Auth).
+                    ...(process.env.N8N_WEBHOOK_SECRET ? { 'x-webhook-secret': process.env.N8N_WEBHOOK_SECRET } : {}),
+                },
                 body: JSON.stringify(n8nPayload),
                 signal: controller.signal,
             });

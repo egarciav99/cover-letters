@@ -1,73 +1,99 @@
+import { timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createAdminClient } from '@/lib/supabase/admin';
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const ERROR_CODES = new Set(['cv_unreadable', 'generation_failed']);
+
+function secretMatches(received: string | null, expected: string): boolean {
+    if (!received) return false;
+    const a = Buffer.from(received);
+    const b = Buffer.from(expected);
+    return a.length === b.length && timingSafeEqual(a, b);
+}
+
+/**
+ * Callback de n8n.
+ * - Éxito: { cover_letter_id, content } → guarda la carta y la marca como `done`.
+ * - Error: { cover_letter_id, status: 'error', error_code } → la marca como `error` y devuelve el cupo.
+ * Un aviso de error solo afecta a cartas en `pending`; una carta ya entregada nunca se sobrescribe.
+ */
 export async function POST(request: NextRequest) {
     try {
-        // 1. Verify environment variable
         const expectedSecret = process.env.WEBHOOK_SECRET;
         if (!expectedSecret) {
-            console.error('DEBUG: WEBHOOK_SECRET is NOT defined in process.env');
-            return NextResponse.json({ 
-                error: 'Server misconfiguration', 
-                detail: 'WEBHOOK_SECRET missing in environment variables' 
-            }, { status: 500 });
+            console.error('WEBHOOK_SECRET is not configured');
+            return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 });
+        }
+        if (!secretMatches(request.headers.get('x-webhook-secret'), expectedSecret)) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        // 2. Verify incoming header
-        const secret = request.headers.get('x-webhook-secret');
-        if (secret !== expectedSecret) {
-            console.error('DEBUG: Secret mismatch', { received: secret ? 'provided' : 'missing' });
-            return NextResponse.json({ 
-                error: 'Unauthorized', 
-                detail: secret ? 'Secret mismatch' : 'Missing x-webhook-secret header' 
-            }, { status: 401 });
-        }
-
-        // 3. Parse and validate body
-        let bodyRaw;
+        let bodyRaw: unknown;
         try {
             bodyRaw = await request.json();
-        } catch (e) {
-            return NextResponse.json({ error: 'Malformed JSON', detail: 'Could not parse request body' }, { status: 400 });
+        } catch {
+            return NextResponse.json({ error: 'Malformed JSON' }, { status: 400 });
+        }
+        const body = (Array.isArray(bodyRaw) ? bodyRaw[0] : bodyRaw) as Record<string, unknown> | undefined;
+
+        // n8n expressions sometimes prepend an '='
+        const coverLetterId = typeof body?.cover_letter_id === 'string' ? body.cover_letter_id.replace(/^=/, '').trim() : '';
+        if (!UUID_RE.test(coverLetterId)) {
+            return NextResponse.json({ error: 'Invalid cover_letter_id' }, { status: 400 });
         }
 
-        const body = Array.isArray(bodyRaw) ? bodyRaw[0] : bodyRaw;
-        
-        let { cover_letter_id, content } = body || {};
+        const admin = createAdminClient();
+        const isError = body?.status === 'error';
 
-        // 1. Sanitize UUID (n8n expressions sometimes prepend an '=')
-        if (typeof cover_letter_id === 'string') {
-            cover_letter_id = cover_letter_id.replace(/^=/, '').trim();
+        if (isError) {
+            const errorCode = typeof body?.error_code === 'string' && ERROR_CODES.has(body.error_code) ? body.error_code : 'generation_failed';
+            let { data, error } = await admin
+                .from('cover_letters')
+                .update({ status: 'error', error_code: errorCode })
+                .eq('id', coverLetterId)
+                .eq('status', 'pending')
+                .select('id');
+            if (error?.code === 'PGRST204' || error?.code === '42703') {
+                // Migración 003 aún sin ejecutar: se guarda sin el código de error.
+                ({ data, error } = await admin
+                    .from('cover_letters')
+                    .update({ status: 'error' })
+                    .eq('id', coverLetterId)
+                    .eq('status', 'pending')
+                    .select('id'));
+            }
+            if (error) {
+                console.error('Supabase DB error:', error);
+                return NextResponse.json({ error: 'Database error' }, { status: 500 });
+            }
+            if (data && data.length > 0) {
+                // La generación falló: no cuenta para el límite del mes.
+                await admin.from('generation_usage').delete().eq('cover_letter_id', coverLetterId);
+            }
+            return NextResponse.json({ success: true });
         }
 
-        if (!cover_letter_id || !content) {
-            return NextResponse.json({ 
-                error: 'Invalid payload', 
-                detail: 'Missing cover_letter_id or content fields',
-                received_id: cover_letter_id,
-                received_keys: body ? Object.keys(body) : []
-            }, { status: 400 });
+        const content = typeof body?.content === 'string' ? body.content : '';
+        if (!content.trim()) {
+            return NextResponse.json({ error: 'Missing content' }, { status: 400 });
         }
 
-        // 4. Update Database
-        const supabase = createClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        );
-
-        const { error } = await supabase
+        const { error } = await admin
             .from('cover_letters')
             .update({ content, status: 'done' })
-            .eq('id', cover_letter_id);
+            .eq('id', coverLetterId)
+            // `error` también: si la app dio la petición por perdida (timeout) pero n8n terminó, la carta se entrega.
+            .in('status', ['pending', 'error']);
 
         if (error) {
             console.error('Supabase DB error:', error);
-            return NextResponse.json({ error: 'Database error', detail: error.message }, { status: 500 });
+            return NextResponse.json({ error: 'Database error' }, { status: 500 });
         }
 
-        return NextResponse.json({ success: true, message: 'Cover letter updated successfully' });
-    } catch (error: any) {
-        console.error('Global Webhook Error:', error);
-        return NextResponse.json({ error: 'Internal server error', detail: error.message }, { status: 500 });
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error('Webhook error:', error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

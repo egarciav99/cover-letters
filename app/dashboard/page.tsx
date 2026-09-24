@@ -243,7 +243,6 @@ export default function DashboardPage() {
         setQuotaHit(false);
         setGenerating(true);
 
-        const selectedCV = cvs.find(c => c.id === selectedCvId);
         try {
             const res = await fetch('/api/generate', {
                 method: 'POST',
@@ -253,7 +252,6 @@ export default function DashboardPage() {
                     position,
                     job_requirements: requirements,
                     cv_id: selectedCvId,
-                    cv_url: selectedCV?.file_url,
                     language: outputLang,
                 }),
             });
