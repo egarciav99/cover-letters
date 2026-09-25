@@ -12,8 +12,11 @@ export async function GET() {
     try {
         const admin = createAdminClient();
         // Cartas atascadas: se marcan como fallidas y se devuelve el cupo antes de contar.
-        await expireStaleLetters(admin, user.id);
-        return NextResponse.json(await getUsageSummary(admin, user.id));
+        const expired = await expireStaleLetters(admin, user.id).catch((err) => {
+            console.error('Expire stale letters error:', err);
+            return 0;
+        });
+        return NextResponse.json({ ...(await getUsageSummary(admin, user.id)), expired });
     } catch (err) {
         console.error('Usage error:', err);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
