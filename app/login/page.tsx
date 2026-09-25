@@ -98,6 +98,10 @@ export default function LoginPage() {
                 <p style={{ textAlign: 'center', marginTop: '20px', color: 'var(--text-secondary)', fontSize: '14px' }}>
                     <Link href="/register" style={{ color: 'var(--accent-light)', textDecoration: 'none' }}>{t('auth.login_link')}</Link>
                 </p>
+                <p className="site-credit" style={{ textAlign: 'center', marginTop: '24px' }}>
+                    {t('footer.created_by')}{' '}
+                    <a href="https://www.egsolutions.tech/?utm_source=covercraft&utm_medium=footer" target="_blank" rel="noopener">EG Solutions</a>
+                </p>
             </div>
         </div>
     );
