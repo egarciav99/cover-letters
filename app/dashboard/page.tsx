@@ -88,9 +88,9 @@ export default function DashboardPage() {
                 const { data: { user: u }, error: authError } = await supabase.auth.getUser();
                 if (authError || !u) { router.push('/login'); return; }
                 setUser({ id: u.id, email: u.email! });
-                // El contador primero: marca como fallidas las cartas atascadas antes de listar el historial.
-                await fetchUsage();
-                await Promise.all([fetchCvs(u.id), fetchHistory(u.id), fetchProfile(u.id)]);
+                // Todo en paralelo; si el contador caducó cartas atascadas, se recarga el historial.
+                const [expired] = await Promise.all([fetchUsage(), fetchCvs(u.id), fetchHistory(u.id), fetchProfile(u.id)]);
+                if (expired > 0) await fetchHistory(u.id);
             } catch (err: any) {
                 console.error('Initial load error:', err);
                 setError(t('common.error') || 'Failed to load dashboard data');
@@ -101,12 +101,16 @@ export default function DashboardPage() {
         load();
     }, []);
 
-    async function fetchUsage() {
+    async function fetchUsage(): Promise<number> {
         try {
-            const res = await fetch('/api/usage');
-            if (res.ok) setUsage(await res.json());
+            const res = await fetch('/api/usage', { signal: AbortSignal.timeout(10000) });
+            if (!res.ok) return 0;
+            const data = await res.json();
+            setUsage(data);
+            return Number(data.expired) || 0;
         } catch {
             // El contador es informativo: si falla, el servidor sigue aplicando el límite.
+            return 0;
         }
     }
 
@@ -256,6 +260,8 @@ export default function DashboardPage() {
                     cv_id: selectedCvId,
                     language: outputLang,
                 }),
+                // Nunca dejar el botón girando: /api/generate responde en unos 15 s como mucho.
+                signal: AbortSignal.timeout(45000),
             });
             const data = await res.json();
             if (res.status === 402) {
