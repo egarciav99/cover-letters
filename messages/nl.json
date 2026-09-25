@@ -105,7 +105,9 @@
         "error_title": "We konden deze brief niet maken",
         "error_generic": "Er ging iets mis bij het schrijven van je brief. Probeer het zo opnieuw.",
         "error_cv_unreadable": "We konden de tekst van je cv niet lezen. Het is waarschijnlijk een gescande afbeelding: upload een pdf die je uit Word, Google Docs of iets vergelijkbaars hebt geëxporteerd.",
-        "error_not_counted": "Hij telt niet mee voor je maandelijkse limiet."
+        "error_not_counted": "Hij telt niet mee voor je maandelijkse limiet.",
+        "waiting_can_leave": "Je kunt deze pagina verlaten: de brief verschijnt in je geschiedenis zodra hij klaar is.",
+        "error_timeout": "Het duurde te lang voordat de brief klaar was, dus we zijn gestopt met wachten. Probeer het opnieuw."
     },
     "cv": {
         "label_placeholder": "bijv. Engels CV, CV Senior Dev...",

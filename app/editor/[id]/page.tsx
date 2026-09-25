@@ -11,6 +11,7 @@ import {
     type LetterStyle,
 } from '@/lib/letterTemplates';
 import dynamic from 'next/dynamic';
+import { LETTER_TIMEOUT_SECONDS } from '@/lib/letters';
 
 const CoverLetterEditor = dynamic(() => import('@/components/editor/CoverLetterEditor'), { ssr: false });
 
@@ -35,6 +36,7 @@ export default function EditorPage() {
     const [progressStep, setProgressStep] = useState(0);
     const [letterLang, setLetterLang] = useState('en');
     const [errorCode, setErrorCode] = useState('');
+    const [createdAt, setCreatedAt] = useState<string | null>(null);
     const [letterStyle, setLetterStyle] = useState<LetterStyle>(DEFAULT_STYLE);
 
     useEffect(() => {
@@ -69,6 +71,7 @@ export default function EditorPage() {
         if (data) {
             setStatus(data.status as 'pending' | 'done' | 'error');
             setErrorCode(data.error_code || '');
+            setCreatedAt(data.created_at || null);
             setLetterLang(data.language || 'en');
             setContent(data.content || '');
             setCompany(data.company || '');
@@ -219,6 +222,21 @@ export default function EditorPage() {
         }
     }
 
+    // Si n8n no responde a tiempo, la carta se da por fallida y se devuelve el cupo (en el servidor).
+    useEffect(() => {
+        if (status !== 'pending' || !createdAt) return;
+        const deadline = new Date(createdAt).getTime() + (LETTER_TIMEOUT_SECONDS + 5) * 1000;
+        const timer = setTimeout(async () => {
+            await fetch('/api/letters/expire', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id }),
+            }).catch(() => undefined);
+            fetchLetter().catch(() => undefined);
+        }, Math.max(0, deadline - Date.now()));
+        return () => clearTimeout(timer);
+    }, [status, createdAt, id, fetchLetter]);
+
     if (status === 'pending') {
         return (
             <div style={{
@@ -269,6 +287,13 @@ export default function EditorPage() {
                             })}
                         </div>
                     </div>
+
+                    <p style={{ color: 'var(--text-muted)', fontSize: '13px', margin: '24px auto 12px', maxWidth: '400px' }}>
+                        {t('editor.waiting_can_leave')}
+                    </p>
+                    <button className="btn btn-ghost btn-sm" onClick={() => router.push('/dashboard')} id="btn-waiting-back">
+                        <ArrowLeft size={15} /> {t('editor.back')}
+                    </button>
                 </div>
             </div>
         );
@@ -281,7 +306,7 @@ export default function EditorPage() {
                     <AlertCircle size={40} style={{ color: 'var(--error)', margin: '0 auto 16px' }} />
                     <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '10px' }}>{t('editor.error_title')}</h2>
                     <p style={{ color: 'var(--text-secondary)', marginBottom: '8px', lineHeight: 1.6 }}>
-                        {errorCode === 'cv_unreadable' ? t('editor.error_cv_unreadable') : t('editor.error_generic')}
+                        {errorCode === 'cv_unreadable' ? t('editor.error_cv_unreadable') : errorCode === 'timeout' ? t('editor.error_timeout') : t('editor.error_generic')}
                     </p>
                     <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '24px' }}>{t('editor.error_not_counted')}</p>
                     <button className="btn btn-primary" onClick={() => router.push('/dashboard')} id="btn-error-back">

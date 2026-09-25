@@ -105,7 +105,9 @@
         "error_title": "No hemos podido generar esta carta",
         "error_generic": "Algo ha fallado al redactar tu carta. Vuelve a intentarlo en un momento.",
         "error_cv_unreadable": "No hemos podido leer el texto de tu CV. Seguramente es una imagen escaneada: sube un PDF exportado desde Word, Google Docs o similar.",
-        "error_not_counted": "No se ha descontado de tu límite mensual."
+        "error_not_counted": "No se ha descontado de tu límite mensual.",
+        "waiting_can_leave": "Puedes salir de esta página: la carta aparecerá en tu historial cuando esté lista.",
+        "error_timeout": "La carta tardó demasiado en llegar y hemos dejado de esperar. Vuelve a intentarlo."
     },
     "cv": {
         "label_placeholder": "ej. CV en Español, CV Senior Dev...",
