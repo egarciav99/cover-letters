@@ -19,6 +19,12 @@ export default function SiteFooter() {
                     <a href={`mailto:${SITE.contactEmail}`}>{t('contact')}</a>
                 </nav>
             </div>
+            <p className="site-credit">
+                {t('created_by')}{' '}
+                <a href="https://www.egsolutions.tech/?utm_source=covercraft&utm_medium=footer" target="_blank" rel="noopener">
+                    EG Solutions
+                </a>
+            </p>
         </footer>
     );
 }

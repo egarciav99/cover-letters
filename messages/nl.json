@@ -189,7 +189,8 @@
         "cookies": "Cookies",
         "legal": "Juridische informatie",
         "contact": "Contact",
-        "cookie_settings": "Cookie-instellingen"
+        "cookie_settings": "Cookie-instellingen",
+        "created_by": "Gemaakt door"
     },
     "legal_ui": {
         "back_to_home": "Terug naar home",

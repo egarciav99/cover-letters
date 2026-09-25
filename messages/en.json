@@ -189,7 +189,8 @@
         "cookies": "Cookies",
         "legal": "Legal notice",
         "contact": "Contact",
-        "cookie_settings": "Cookie settings"
+        "cookie_settings": "Cookie settings",
+        "created_by": "Created by"
     },
     "legal_ui": {
         "back_to_home": "Back to Home",
