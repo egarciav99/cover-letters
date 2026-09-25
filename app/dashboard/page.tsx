@@ -88,7 +88,9 @@ export default function DashboardPage() {
                 const { data: { user: u }, error: authError } = await supabase.auth.getUser();
                 if (authError || !u) { router.push('/login'); return; }
                 setUser({ id: u.id, email: u.email! });
-                await Promise.all([fetchCvs(u.id), fetchHistory(u.id), fetchProfile(u.id), fetchUsage()]);
+                // El contador primero: marca como fallidas las cartas atascadas antes de listar el historial.
+                await fetchUsage();
+                await Promise.all([fetchCvs(u.id), fetchHistory(u.id), fetchProfile(u.id)]);
             } catch (err: any) {
                 console.error('Initial load error:', err);
                 setError(t('common.error') || 'Failed to load dashboard data');

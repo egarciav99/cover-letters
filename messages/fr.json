@@ -105,7 +105,9 @@
         "error_title": "Nous n'avons pas pu générer cette lettre",
         "error_generic": "Un problème est survenu lors de la rédaction. Réessayez dans un instant.",
         "error_cv_unreadable": "Nous n'avons pas pu lire le texte de votre CV. C'est sans doute une image scannée : importez un PDF exporté depuis Word, Google Docs ou similaire.",
-        "error_not_counted": "Elle n'a pas été décomptée de votre limite mensuelle."
+        "error_not_counted": "Elle n'a pas été décomptée de votre limite mensuelle.",
+        "waiting_can_leave": "Vous pouvez quitter cette page : la lettre apparaîtra dans votre historique quand elle sera prête.",
+        "error_timeout": "La lettre a mis trop de temps à arriver, nous avons arrêté d'attendre. Réessayez."
     },
     "cv": {
         "label_placeholder": "ex. CV Français, CV Développeur Senior...",

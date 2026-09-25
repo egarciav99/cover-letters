@@ -105,7 +105,9 @@
         "error_title": "We couldn't generate this letter",
         "error_generic": "Something went wrong while writing your letter. Please try again in a moment.",
         "error_cv_unreadable": "We couldn't read the text of your CV. It is probably a scanned image: upload a PDF exported from Word, Google Docs or similar.",
-        "error_not_counted": "It hasn't been counted towards your monthly limit."
+        "error_not_counted": "It hasn't been counted towards your monthly limit.",
+        "waiting_can_leave": "You can leave this page: the letter will appear in your history when it is ready.",
+        "error_timeout": "The letter took too long to arrive, so we stopped waiting. Please try again."
     },
     "cv": {
         "label_placeholder": "e.g. English CV, CV Senior Dev...",
