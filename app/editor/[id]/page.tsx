@@ -156,7 +156,7 @@ export default function EditorPage() {
                 phone: profile.phone,
                 linkedin: profile.linkedin,
                 avatarUrl: profile.avatar_url,
-                subject: position ? `${labels.application} – ${position} – ${company}` : `${labels.application} – ${company}`,
+                subject: position ? `${labels.application}: ${position} · ${company}` : `${labels.application}: ${company}`,
                 date: rawMonthYear.charAt(0).toUpperCase() + rawMonthYear.slice(1),
                 greeting,
                 paragraphs: toParagraphs(content),
