@@ -4,12 +4,14 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { ArrowLeft, Download, RefreshCw, Loader2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Download, RefreshCw, Loader2, AlertCircle, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 import DesignPanel from '@/components/editor/DesignPanel';
 import {
-    DEFAULT_STYLE, LETTER_LABELS, fontFamilies, fontsHref, loadStyle, renderLetterHtml, saveStyle, toParagraphs,
+    DEFAULT_STYLE, LETTER_LABELS, loadStyle, renderLetterHtml, saveStyle, toParagraphs,
     type LetterStyle,
 } from '@/lib/letterTemplates';
+import { ensureFonts } from '@/lib/pdfExport';
 import dynamic from 'next/dynamic';
 import { LETTER_TIMEOUT_SECONDS } from '@/lib/letters';
 
@@ -38,10 +40,27 @@ export default function EditorPage() {
     const [errorCode, setErrorCode] = useState('');
     const [createdAt, setCreatedAt] = useState<string | null>(null);
     const [letterStyle, setLetterStyle] = useState<LetterStyle>(DEFAULT_STYLE);
+    const [tailoredCv, setTailoredCv] = useState<{ id: string; status: string } | null>(null);
 
     useEffect(() => {
         setLetterStyle(loadStyle());
     }, []);
+
+    // CV adaptado a esta oferta (plan Pro), si se pidió al generar la carta.
+    useEffect(() => {
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        let stopped = false;
+        async function check() {
+            const { data } = await supabase.from('resumes').select('id, status').eq('cover_letter_id', id)
+                .order('created_at', { ascending: false }).limit(1).maybeSingle();
+            if (stopped) return;
+            setTailoredCv(data ?? null);
+            if (data?.status === 'pending') timer = setTimeout(check, 4000);
+        }
+        check().catch(() => undefined);
+        return () => { stopped = true; if (timer) clearTimeout(timer); };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id]);
 
     function updateStyle(style: LetterStyle) {
         setLetterStyle(style);
@@ -167,29 +186,12 @@ export default function EditorPage() {
         );
     }, [mounted, labels, profile, position, company, greeting, content, closing, letterStyle]);
 
-    /** Carga las fuentes del estilo en la página y espera a que estén listas antes de capturar. */
-    async function ensureFonts(style: LetterStyle) {
-        const href = fontsHref(style.font);
-        if (!document.querySelector(`link[data-letter-font="${style.font}"]`)) {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = href;
-            link.dataset.letterFont = style.font;
-            document.head.appendChild(link);
-            await new Promise((resolve) => { link.onload = resolve; link.onerror = resolve; });
-        }
-        await Promise.all(fontFamilies(style.font).flatMap((f) => [
-            document.fonts.load(`400 16px "${f}"`),
-            document.fonts.load(`700 16px "${f}"`),
-        ])).catch(() => undefined);
-    }
-
     async function handleDownloadPDF() {
         setDownloading(true);
         let tmp: HTMLDivElement | null = null;
         try {
             const html2pdf = (await import('html2pdf.js')).default;
-            await ensureFonts(letterStyle);
+            await ensureFonts(letterStyle.font);
 
             const opt = {
                 margin: [0, 0, 0, 0] as [number, number, number, number],
@@ -343,6 +345,17 @@ export default function EditorPage() {
             </header>
 
             <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '40px 32px' }}>
+                {tailoredCv && tailoredCv.status !== 'error' && (
+                    <div className="card fade-in" style={{ padding: '14px 18px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap', borderColor: 'rgba(59, 130, 246, 0.35)' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
+                            {tailoredCv.status === 'pending' ? <Loader2 size={16} style={{ animation: 'spin 1.2s linear infinite' }} /> : <Sparkles size={16} style={{ color: 'var(--accent-light)' }} />}
+                            {tailoredCv.status === 'pending' ? t('tailor.banner_pending') : t('tailor.banner_ready')}
+                        </span>
+                        {tailoredCv.status === 'done' && (
+                            <Link href={`/dashboard/cv/tailored/${tailoredCv.id}`} className="btn btn-primary btn-sm">{t('tailor.banner_cta')}</Link>
+                        )}
+                    </div>
+                )}
                 <DesignPanel value={letterStyle} onChange={updateStyle} previewHtml={letterHtml} />
                 <div className="fade-in" style={{ maxWidth: '800px', margin: '0 auto' }}>
                     <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '16px' }}>

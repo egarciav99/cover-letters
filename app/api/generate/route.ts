@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { PLANS } from '@/lib/plans';
 import { getUserPlan, getUsageSummary } from '@/lib/usage';
+import { resumeToText, isResumeLanguage, sanitizeResumeData } from '@/lib/resume';
 
 // Límites de tamaño: protegen el coste de la IA y el payload hacia n8n.
 const MAX_SHORT_FIELD = 200;
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
 
         const supabase = await createClient();
 
-        // 1. Get the authenticated user from the session — DO NOT TRUST body.user_id
+        // 1. Get the authenticated user from the session. DO NOT TRUST body.user_id
         const { data: { user }, error: authError } = await supabase.auth.getUser();
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -43,7 +44,8 @@ export async function POST(request: NextRequest) {
         // 2. Validate CV ownership
         const { data: cv, error: cvError } = await supabase
             .from('cvs')
-            .select('id, file_url')
+            // '*' y no una lista: resume_id solo existe tras la migración 004.
+            .select('*')
             .eq('id', cv_id)
             .eq('user_id', user.id)
             .single();
@@ -118,6 +120,18 @@ export async function POST(request: NextRequest) {
         }
         const signedCvUrl = signedData.signedUrl;
 
+        // CV creado en la web: además del PDF, el texto limpio (más fiable y barato para la IA).
+        let cvText: string | undefined;
+        if (cv.resume_id) {
+            const { data: resume } = await admin
+                .from('resumes')
+                .select('data, language')
+                .eq('id', cv.resume_id)
+                .eq('user_id', user.id)
+                .maybeSingle();
+            if (resume) cvText = resumeToText(sanitizeResumeData(resume.data), isResumeLanguage(resume.language) ? resume.language : 'en');
+        }
+
         // 7. Send webhook to n8n with timeout
         const n8nPayload = {
             cover_letter_id: coverLetter.id,
@@ -125,6 +139,7 @@ export async function POST(request: NextRequest) {
             position,
             job_requirements,
             cv_url: signedCvUrl,
+            ...(cvText ? { cv_text: cvText } : {}),
             language,
             callback_url: callbackUrl,
         };

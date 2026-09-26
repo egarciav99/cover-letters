@@ -18,7 +18,7 @@ export default async function PrivacyPage() {
                 <ul>
                     <li><strong>Cuenta:</strong> correo electrónico y contraseña (la contraseña se guarda cifrada por nuestro proveedor de autenticación; nunca la vemos).</li>
                     <li><strong>Perfil:</strong> nombre, teléfono, URL de LinkedIn y foto, si decides añadirlos.</li>
-                    <li><strong>CV:</strong> los archivos PDF que subes, con los datos que contengan.</li>
+                    <li><strong>CV:</strong> los archivos PDF que subes, con los datos que contengan, y el CV que crees con nuestro editor (experiencia, formación, habilidades, idiomas y datos de contacto). Del CV creado generamos un PDF de texto que se guarda de forma privada para usarlo en tus cartas.</li>
                     <li><strong>Ofertas y cartas:</strong> empresa, puesto, descripción de la oferta y las cartas generadas.</li>
                     <li><strong>Uso:</strong> fecha de cada carta generada, para aplicar el límite de tu plan.</li>
                     <li><strong>Datos técnicos:</strong> registros del servidor (dirección IP, navegador) necesarios para la seguridad del servicio.</li>
@@ -45,6 +45,12 @@ export default async function PrivacyPage() {
                     privado a tu CV y los datos de la oferta. El texto de tu CV y de la oferta se envía a la API de
                     Google Gemini para redactar la carta, que vuelve a tu cuenta. La IA solo redacta un borrador: no toma
                     decisiones sobre ti.
+                </p>
+                <p>
+                    Si usas la puntuación de encaje o el CV adaptado a una oferta, nuestro servidor envía el texto del CV
+                    que has creado y el de la oferta directamente a la API de Google Gemini. El resultado (la puntuación y
+                    la versión adaptada) se guarda en tu cuenta y puedes borrarlo cuando quieras. Es una ayuda: tú decides
+                    qué cambios usar.
                 </p>
 
                 <h2>5. Con quién compartimos datos</h2>
@@ -105,7 +111,7 @@ export default async function PrivacyPage() {
             <ul>
                 <li><strong>Account:</strong> email address and password (the password is stored hashed by our authentication provider; we never see it).</li>
                 <li><strong>Profile:</strong> name, phone, LinkedIn URL and photo, if you choose to add them.</li>
-                <li><strong>CV:</strong> the PDF files you upload and the data they contain.</li>
+                <li><strong>CV:</strong> the PDF files you upload and the data they contain, and the CV you build with our editor (experience, education, skills, languages and contact details). From the CV you build we create a plain-text PDF, stored privately, to use for your letters.</li>
                 <li><strong>Job offers and letters:</strong> company, position, job description and the generated letters.</li>
                 <li><strong>Usage:</strong> the date of each generated letter, to apply your plan&apos;s limit.</li>
                 <li><strong>Technical data:</strong> server logs (IP address, browser) needed to keep the service secure.</li>
@@ -131,6 +137,11 @@ export default async function PrivacyPage() {
                 When you request a letter, we send our automation platform (n8n) a temporary private link to your CV and
                 the job details. The text of your CV and the job offer is sent to the Google Gemini API to draft the
                 letter, which is then saved to your account. The AI only drafts text: it does not make decisions about you.
+            </p>
+            <p>
+                If you use the fit score or the CV tailored to a job, our server sends the text of the CV you built and of
+                the job offer directly to the Google Gemini API. The result (the score and the tailored version) is saved to
+                your account and you can delete it at any time. It is an aid: you decide which changes to use.
             </p>
 
             <h2>5. Who we share data with</h2>

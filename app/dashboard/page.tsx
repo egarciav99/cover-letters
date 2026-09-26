@@ -1,15 +1,16 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
-import { Upload, Trash2, Star, FileText, LogOut, Plus, X, Clock, AlertCircle, ArrowRight } from 'lucide-react';
+import { Upload, Trash2, Star, FileText, LogOut, Plus, X, Clock, AlertCircle, ArrowRight, PenLine, Sparkles } from 'lucide-react';
 import AdSlot from '@/components/AdSlot';
 import SiteFooter from '@/components/SiteFooter';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import ProfilePhotoCropper from '@/components/ProfilePhotoCropper';
+import ScoreBadge from '@/components/resume/ScoreBadge';
 
 interface CV {
     id: string;
@@ -19,6 +20,8 @@ interface CV {
     file_name: string;
     is_default: boolean;
     created_at: string;
+    /** Solo en el CV creado con el editor. */
+    resume_id?: string | null;
 }
 
 interface CoverLetterHistory {
@@ -36,6 +39,16 @@ interface Usage {
     resetsAt: string;
 }
 
+interface MatchResponse {
+    plan: 'free' | 'pro';
+    score: number;
+    locked: boolean;
+    matched?: string[];
+    missing?: string[];
+    tips?: string[];
+    missing_count?: number;
+}
+
 interface Profile {
     full_name: string;
     phone: string;
@@ -45,6 +58,7 @@ interface Profile {
 
 export default function DashboardPage() {
     const t = useTranslations();
+    const locale = useLocale();
     const router = useRouter();
     const supabase = createClient();
 
@@ -59,6 +73,7 @@ export default function DashboardPage() {
     const [usage, setUsage] = useState<Usage | null>(null);
     const [quotaHit, setQuotaHit] = useState(false);
     const [deletingAccount, setDeletingAccount] = useState(false);
+    const [resume, setResume] = useState<{ id: string; updated_at: string } | null>(null);
 
     // Profile modal state
     const [showProfile, setShowProfile] = useState(false);
@@ -80,6 +95,11 @@ export default function DashboardPage() {
     const [requirements, setRequirements] = useState('');
     const [selectedCvId, setSelectedCvId] = useState('');
     const [outputLang, setOutputLang] = useState('en');
+    const [tailorToo, setTailorToo] = useState(false);
+    const [match, setMatch] = useState<MatchResponse | null>(null);
+    const [matching, setMatching] = useState(false);
+    const [matchError, setMatchError] = useState('');
+    const [tailoring, setTailoring] = useState(false);
 
     useEffect(() => {
         async function load() {
@@ -89,7 +109,7 @@ export default function DashboardPage() {
                 if (authError || !u) { router.push('/login'); return; }
                 setUser({ id: u.id, email: u.email! });
                 // Todo en paralelo; si el contador caducó cartas atascadas, se recarga el historial.
-                const [expired] = await Promise.all([fetchUsage(), fetchCvs(u.id), fetchHistory(u.id), fetchProfile(u.id)]);
+                const [expired] = await Promise.all([fetchUsage(), fetchCvs(u.id), fetchHistory(u.id), fetchProfile(u.id), fetchResume()]);
                 if (expired > 0) await fetchHistory(u.id);
             } catch (err: any) {
                 console.error('Initial load error:', err);
@@ -112,6 +132,12 @@ export default function DashboardPage() {
             // El contador es informativo: si falla, el servidor sigue aplicando el límite.
             return 0;
         }
+    }
+
+    async function fetchResume() {
+        // Si la migración 004 aún no está aplicada, la consulta falla y simplemente no se muestra.
+        const { data } = await supabase.from('resumes').select('id, updated_at').is('parent_id', null).maybeSingle();
+        setResume(data ?? null);
     }
 
     async function fetchProfile(userId: string) {
@@ -270,6 +296,15 @@ export default function DashboardPage() {
                 return;
             }
             if (data.cover_letter_id) {
+                if (tailorToo && canTailor) {
+                    // La adaptación sigue en el servidor; el editor de la carta enlaza al CV cuando esté listo.
+                    await fetch('/api/resume/tailor', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ company, position, requirements, cover_letter_id: data.cover_letter_id }),
+                        signal: AbortSignal.timeout(20000),
+                    }).catch(() => undefined);
+                }
                 router.push(`/editor/${data.cover_letter_id}`);
             } else {
                 setError(data.error || t('common.error'));
@@ -279,6 +314,56 @@ export default function DashboardPage() {
             setError(t('common.error'));
         } finally {
             setGenerating(false);
+        }
+    }
+
+    function aiErrorMessage(status: number, code: string): string {
+        if (code === 'no_resume') return t('match.error_no_resume');
+        if (code === 'requirements_too_short') return t('match.error_short');
+        if (code === 'quota_exceeded') return t('match.error_quota');
+        if (code === 'pro_required') return t('match.error_pro');
+        if (status === 503) return t('match.error_unavailable');
+        return t('common.error');
+    }
+
+    async function handleMatch() {
+        setMatching(true);
+        setMatchError('');
+        setMatch(null);
+        try {
+            const res = await fetch('/api/resume/match', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ company, position, requirements, locale }),
+                signal: AbortSignal.timeout(60000),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) setMatchError(aiErrorMessage(res.status, data.error));
+            else setMatch(data);
+        } catch {
+            setMatchError(t('common.error'));
+        } finally {
+            setMatching(false);
+        }
+    }
+
+    async function handleTailorOnly() {
+        setTailoring(true);
+        setMatchError('');
+        try {
+            const res = await fetch('/api/resume/tailor', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ company, position, requirements }),
+                signal: AbortSignal.timeout(20000),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (res.ok && data.id) router.push(`/dashboard/cv/tailored/${data.id}`);
+            else setMatchError(aiErrorMessage(res.status, data.error));
+        } catch {
+            setMatchError(t('common.error'));
+        } finally {
+            setTailoring(false);
         }
     }
 
@@ -381,6 +466,9 @@ export default function DashboardPage() {
     }
 
     const langLabel = { en: 'EN', es: 'ES', fr: 'FR' };
+    const hasBuiltCv = cvs.some(c => c.resume_id);
+    const isPro = usage?.plan === 'pro';
+    const canTailor = isPro && hasBuiltCv;
 
     if (loading) return (
         <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -462,6 +550,22 @@ export default function DashboardPage() {
 
                     {/* LEFT: CV Manager */}
                     <div>
+                        {/* Mi CV (creado en la web) */}
+                        <div className="card" style={{ padding: '20px', marginBottom: '28px', borderColor: 'rgba(59, 130, 246, 0.35)', background: 'rgba(59, 130, 246, 0.06)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                                <Sparkles size={16} style={{ color: 'var(--accent-light)' }} />
+                                <h2 style={{ fontSize: '16px', fontWeight: 700 }}>{resume ? t('resume.card_title_existing') : t('resume.card_title')}</h2>
+                            </div>
+                            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '14px' }}>
+                                {resume
+                                    ? t('resume.card_updated', { date: mounted ? new Date(resume.updated_at).toLocaleDateString() : '' })
+                                    : t('resume.card_desc')}
+                            </p>
+                            <Link href="/dashboard/cv" className="btn btn-primary btn-sm" id="btn-open-resume">
+                                <PenLine size={14} /> {resume ? t('resume.card_edit') : t('resume.card_cta')}
+                            </Link>
+                        </div>
+
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                             <h2 style={{ fontSize: '18px', fontWeight: 700 }}>{t('dashboard.my_cvs')}</h2>
                             <button className="btn btn-primary btn-sm" onClick={() => setShowUpload(true)}>
@@ -488,6 +592,7 @@ export default function DashboardPage() {
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
                                                     <span style={{ fontWeight: 600, fontSize: '15px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{cv.label}</span>
                                                     {cv.is_default && <span className="badge badge-purple">{t('cv.default_badge')}</span>}
+                                                    {cv.resume_id && <span className="badge badge-green">{t('resume.built_badge')}</span>}
                                                 </div>
                                                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                                                     <span className="badge badge-cyan">{langLabel[cv.language as keyof typeof langLabel] || cv.language.toUpperCase()}</span>
@@ -500,9 +605,15 @@ export default function DashboardPage() {
                                                         <Star size={14} />
                                                     </button>
                                                 )}
-                                                <button className="btn btn-danger btn-sm" onClick={e => { e.stopPropagation(); handleDeleteCV(cv.id); }}>
-                                                    <Trash2 size={14} />
-                                                </button>
+                                                {cv.resume_id ? (
+                                                    <button className="btn btn-ghost btn-sm" title={t('resume.card_edit')} aria-label={t('resume.card_edit')} onClick={e => { e.stopPropagation(); router.push('/dashboard/cv'); }}>
+                                                        <PenLine size={14} />
+                                                    </button>
+                                                ) : (
+                                                    <button className="btn btn-danger btn-sm" onClick={e => { e.stopPropagation(); handleDeleteCV(cv.id); }}>
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -617,11 +728,72 @@ export default function DashboardPage() {
                                     />
                                 </div>
 
+                                {/* Encaje del CV con la oferta */}
+                                <div className="match-box" style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '16px', marginBottom: '20px', background: 'rgba(255,255,255,0.02)' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                                        <div>
+                                            <div style={{ fontWeight: 600, fontSize: '14px' }}>{t('match.title')}</div>
+                                            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                                                {hasBuiltCv ? t('match.subtitle') : <>{t('match.needs_cv')} <Link href="/dashboard/cv" style={{ color: 'var(--accent-light)' }}>{t('resume.card_cta')} →</Link></>}
+                                            </div>
+                                        </div>
+                                        <button type="button" className="btn btn-secondary btn-sm" onClick={handleMatch}
+                                            disabled={!hasBuiltCv || matching || requirements.trim().length < 30} id="btn-match">
+                                            {matching ? <div className="spinner" /> : <Sparkles size={14} />} {t('match.button')}
+                                        </button>
+                                    </div>
+
+                                    {matchError && <div className="error-msg" style={{ marginTop: '12px' }}>{matchError}</div>}
+
+                                    {match && (
+                                        <div className="fade-in" style={{ marginTop: '16px' }}>
+                                            <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+                                                <ScoreBadge score={match.score} />
+                                                <div style={{ flex: 1, minWidth: '200px' }}>
+                                                    <div style={{ fontWeight: 600, fontSize: '14px', marginBottom: '4px' }}>
+                                                        {t(`match.level_${match.score >= 85 ? 'excellent' : match.score >= 65 ? 'good' : match.score >= 40 ? 'partial' : 'low'}`)}
+                                                    </div>
+                                                    {match.locked && (
+                                                        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                                                            {t('match.locked', { count: match.missing_count ?? 0 })}{' '}
+                                                            <Link href="/pricing" style={{ color: 'var(--accent-light)', fontWeight: 600 }}>{t('billing.see_plans')} →</Link>
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            {!match.locked && (
+                                                <div style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                                    {!!match.matched?.length && (
+                                                        <div>
+                                                            <div className="input-label" style={{ fontSize: '12px' }}>{t('match.matched')}</div>
+                                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>{match.matched.map(k => <span key={k} className="badge badge-green">{k}</span>)}</div>
+                                                        </div>
+                                                    )}
+                                                    {!!match.missing?.length && (
+                                                        <div>
+                                                            <div className="input-label" style={{ fontSize: '12px' }}>{t('match.missing')}</div>
+                                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>{match.missing.map(k => <span key={k} className="badge badge-cyan">{k}</span>)}</div>
+                                                        </div>
+                                                    )}
+                                                    {!!match.tips?.length && (
+                                                        <ul style={{ paddingLeft: '18px', fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                                                            {match.tips.map((tip, i) => <li key={i}>{tip}</li>)}
+                                                        </ul>
+                                                    )}
+                                                    <button type="button" className="btn btn-primary btn-sm" style={{ alignSelf: 'flex-start' }} onClick={handleTailorOnly} disabled={tailoring} id="btn-tailor-only">
+                                                        {tailoring ? <div className="spinner" /> : <Sparkles size={14} />} {t('match.tailor_button')}
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
                                 <div className="form-row">
                                     <div className="form-group">
                                         <label className="input-label">{t('dashboard.select_cv')}</label>
                                         <select className="input" value={selectedCvId} onChange={e => setSelectedCvId(e.target.value)} required>
-                                            <option value="">—</option>
+                                            <option value="">-</option>
                                             {cvs.map(cv => (
                                                 <option key={cv.id} value={cv.id}>{cv.label} ({langLabel[cv.language as keyof typeof langLabel] || cv.language})</option>
                                             ))}
@@ -638,6 +810,18 @@ export default function DashboardPage() {
                                         </select>
                                     </div>
                                 </div>
+
+                                {hasBuiltCv && (
+                                    <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontSize: '14px', marginBottom: '16px', cursor: isPro ? 'pointer' : 'default', opacity: isPro ? 1 : 0.75 }}>
+                                        <input type="checkbox" checked={tailorToo && isPro} disabled={!isPro} onChange={e => setTailorToo(e.target.checked)} id="toggle-tailor-too" style={{ marginTop: '3px' }} />
+                                        <span>
+                                            {t('match.tailor_too')} <span className="badge badge-purple">Pro</span>
+                                            <span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>
+                                                {isPro ? t('match.tailor_too_hint') : <>{t('match.tailor_too_free')} <Link href="/pricing" style={{ color: 'var(--accent-light)' }}>{t('billing.see_plans')}</Link></>}
+                                            </span>
+                                        </span>
+                                    </label>
+                                )}
 
                                 <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '16px' }} disabled={generating || cvs.length === 0}>
                                     {generating ? <><div className="spinner" /> {t('dashboard.generating')}</> : t('dashboard.generate_button')}
