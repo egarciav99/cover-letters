@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
@@ -10,6 +10,7 @@ import AdSlot from '@/components/AdSlot';
 import SiteFooter from '@/components/SiteFooter';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import ProfilePhotoCropper from '@/components/ProfilePhotoCropper';
+import ScoreBadge from '@/components/resume/ScoreBadge';
 
 interface CV {
     id: string;
@@ -38,6 +39,16 @@ interface Usage {
     resetsAt: string;
 }
 
+interface MatchResponse {
+    plan: 'free' | 'pro';
+    score: number;
+    locked: boolean;
+    matched?: string[];
+    missing?: string[];
+    tips?: string[];
+    missing_count?: number;
+}
+
 interface Profile {
     full_name: string;
     phone: string;
@@ -47,6 +58,7 @@ interface Profile {
 
 export default function DashboardPage() {
     const t = useTranslations();
+    const locale = useLocale();
     const router = useRouter();
     const supabase = createClient();
 
@@ -83,6 +95,11 @@ export default function DashboardPage() {
     const [requirements, setRequirements] = useState('');
     const [selectedCvId, setSelectedCvId] = useState('');
     const [outputLang, setOutputLang] = useState('en');
+    const [tailorToo, setTailorToo] = useState(false);
+    const [match, setMatch] = useState<MatchResponse | null>(null);
+    const [matching, setMatching] = useState(false);
+    const [matchError, setMatchError] = useState('');
+    const [tailoring, setTailoring] = useState(false);
 
     useEffect(() => {
         async function load() {
@@ -279,6 +296,15 @@ export default function DashboardPage() {
                 return;
             }
             if (data.cover_letter_id) {
+                if (tailorToo && canTailor) {
+                    // La adaptación sigue en el servidor; el editor de la carta enlaza al CV cuando esté listo.
+                    await fetch('/api/resume/tailor', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ company, position, requirements, cover_letter_id: data.cover_letter_id }),
+                        signal: AbortSignal.timeout(20000),
+                    }).catch(() => undefined);
+                }
                 router.push(`/editor/${data.cover_letter_id}`);
             } else {
                 setError(data.error || t('common.error'));
@@ -288,6 +314,56 @@ export default function DashboardPage() {
             setError(t('common.error'));
         } finally {
             setGenerating(false);
+        }
+    }
+
+    function aiErrorMessage(status: number, code: string): string {
+        if (code === 'no_resume') return t('match.error_no_resume');
+        if (code === 'requirements_too_short') return t('match.error_short');
+        if (code === 'quota_exceeded') return t('match.error_quota');
+        if (code === 'pro_required') return t('match.error_pro');
+        if (status === 503) return t('match.error_unavailable');
+        return t('common.error');
+    }
+
+    async function handleMatch() {
+        setMatching(true);
+        setMatchError('');
+        setMatch(null);
+        try {
+            const res = await fetch('/api/resume/match', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ company, position, requirements, locale }),
+                signal: AbortSignal.timeout(60000),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) setMatchError(aiErrorMessage(res.status, data.error));
+            else setMatch(data);
+        } catch {
+            setMatchError(t('common.error'));
+        } finally {
+            setMatching(false);
+        }
+    }
+
+    async function handleTailorOnly() {
+        setTailoring(true);
+        setMatchError('');
+        try {
+            const res = await fetch('/api/resume/tailor', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ company, position, requirements }),
+                signal: AbortSignal.timeout(20000),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (res.ok && data.id) router.push(`/dashboard/cv/tailored/${data.id}`);
+            else setMatchError(aiErrorMessage(res.status, data.error));
+        } catch {
+            setMatchError(t('common.error'));
+        } finally {
+            setTailoring(false);
         }
     }
 
@@ -390,6 +466,9 @@ export default function DashboardPage() {
     }
 
     const langLabel = { en: 'EN', es: 'ES', fr: 'FR' };
+    const hasBuiltCv = cvs.some(c => c.resume_id);
+    const isPro = usage?.plan === 'pro';
+    const canTailor = isPro && hasBuiltCv;
 
     if (loading) return (
         <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -649,6 +728,67 @@ export default function DashboardPage() {
                                     />
                                 </div>
 
+                                {/* Encaje del CV con la oferta */}
+                                <div className="match-box" style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '16px', marginBottom: '20px', background: 'rgba(255,255,255,0.02)' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                                        <div>
+                                            <div style={{ fontWeight: 600, fontSize: '14px' }}>{t('match.title')}</div>
+                                            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                                                {hasBuiltCv ? t('match.subtitle') : <>{t('match.needs_cv')} <Link href="/dashboard/cv" style={{ color: 'var(--accent-light)' }}>{t('resume.card_cta')} →</Link></>}
+                                            </div>
+                                        </div>
+                                        <button type="button" className="btn btn-secondary btn-sm" onClick={handleMatch}
+                                            disabled={!hasBuiltCv || matching || requirements.trim().length < 30} id="btn-match">
+                                            {matching ? <div className="spinner" /> : <Sparkles size={14} />} {t('match.button')}
+                                        </button>
+                                    </div>
+
+                                    {matchError && <div className="error-msg" style={{ marginTop: '12px' }}>{matchError}</div>}
+
+                                    {match && (
+                                        <div className="fade-in" style={{ marginTop: '16px' }}>
+                                            <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+                                                <ScoreBadge score={match.score} />
+                                                <div style={{ flex: 1, minWidth: '200px' }}>
+                                                    <div style={{ fontWeight: 600, fontSize: '14px', marginBottom: '4px' }}>
+                                                        {t(`match.level_${match.score >= 85 ? 'excellent' : match.score >= 65 ? 'good' : match.score >= 40 ? 'partial' : 'low'}`)}
+                                                    </div>
+                                                    {match.locked && (
+                                                        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                                                            {t('match.locked', { count: match.missing_count ?? 0 })}{' '}
+                                                            <Link href="/pricing" style={{ color: 'var(--accent-light)', fontWeight: 600 }}>{t('billing.see_plans')} →</Link>
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            {!match.locked && (
+                                                <div style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                                    {!!match.matched?.length && (
+                                                        <div>
+                                                            <div className="input-label" style={{ fontSize: '12px' }}>{t('match.matched')}</div>
+                                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>{match.matched.map(k => <span key={k} className="badge badge-green">{k}</span>)}</div>
+                                                        </div>
+                                                    )}
+                                                    {!!match.missing?.length && (
+                                                        <div>
+                                                            <div className="input-label" style={{ fontSize: '12px' }}>{t('match.missing')}</div>
+                                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>{match.missing.map(k => <span key={k} className="badge badge-cyan">{k}</span>)}</div>
+                                                        </div>
+                                                    )}
+                                                    {!!match.tips?.length && (
+                                                        <ul style={{ paddingLeft: '18px', fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                                                            {match.tips.map((tip, i) => <li key={i}>{tip}</li>)}
+                                                        </ul>
+                                                    )}
+                                                    <button type="button" className="btn btn-primary btn-sm" style={{ alignSelf: 'flex-start' }} onClick={handleTailorOnly} disabled={tailoring} id="btn-tailor-only">
+                                                        {tailoring ? <div className="spinner" /> : <Sparkles size={14} />} {t('match.tailor_button')}
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
                                 <div className="form-row">
                                     <div className="form-group">
                                         <label className="input-label">{t('dashboard.select_cv')}</label>
@@ -670,6 +810,18 @@ export default function DashboardPage() {
                                         </select>
                                     </div>
                                 </div>
+
+                                {hasBuiltCv && (
+                                    <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontSize: '14px', marginBottom: '16px', cursor: isPro ? 'pointer' : 'default', opacity: isPro ? 1 : 0.75 }}>
+                                        <input type="checkbox" checked={tailorToo && isPro} disabled={!isPro} onChange={e => setTailorToo(e.target.checked)} id="toggle-tailor-too" style={{ marginTop: '3px' }} />
+                                        <span>
+                                            {t('match.tailor_too')} <span className="badge badge-purple">Pro</span>
+                                            <span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>
+                                                {isPro ? t('match.tailor_too_hint') : <>{t('match.tailor_too_free')} <Link href="/pricing" style={{ color: 'var(--accent-light)' }}>{t('billing.see_plans')}</Link></>}
+                                            </span>
+                                        </span>
+                                    </label>
+                                )}
 
                                 <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '16px' }} disabled={generating || cvs.length === 0}>
                                     {generating ? <><div className="spinner" /> {t('dashboard.generating')}</> : t('dashboard.generate_button')}

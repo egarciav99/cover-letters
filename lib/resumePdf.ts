@@ -38,7 +38,7 @@ export async function renderResumeTextPdf(d: ResumeData, lang: ResumeLanguage, a
                 if (okChars.get(ch)) return ch;
                 // Emojis y símbolos se quitan; otras letras (p. ej. chino) quedan como "?".
                 if (/[\p{Extended_Pictographic}‍️]/u.test(ch)) return '';
-                const plain = ch.normalize('NFD').replace(/[̀-ͯ]/g, '');
+                const plain = ch.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
                 return plain && plain !== ch && okChars.get(plain) !== false ? plain : '?';
             })
             .join('');

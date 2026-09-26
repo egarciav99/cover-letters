@@ -46,6 +46,12 @@ export default async function PrivacyPage() {
                     Google Gemini para redactar la carta, que vuelve a tu cuenta. La IA solo redacta un borrador: no toma
                     decisiones sobre ti.
                 </p>
+                <p>
+                    Si usas la puntuación de encaje o el CV adaptado a una oferta, nuestro servidor envía el texto del CV
+                    que has creado y el de la oferta directamente a la API de Google Gemini. El resultado (la puntuación y
+                    la versión adaptada) se guarda en tu cuenta y puedes borrarlo cuando quieras. Es una ayuda: tú decides
+                    qué cambios usar.
+                </p>
 
                 <h2>5. Con quién compartimos datos</h2>
                 <p>Solo con proveedores que nos prestan el servicio (encargados del tratamiento), con contrato conforme al RGPD:</p>
@@ -131,6 +137,11 @@ export default async function PrivacyPage() {
                 When you request a letter, we send our automation platform (n8n) a temporary private link to your CV and
                 the job details. The text of your CV and the job offer is sent to the Google Gemini API to draft the
                 letter, which is then saved to your account. The AI only drafts text: it does not make decisions about you.
+            </p>
+            <p>
+                If you use the fit score or the CV tailored to a job, our server sends the text of the CV you built and of
+                the job offer directly to the Google Gemini API. The result (the score and the tailored version) is saved to
+                your account and you can delete it at any time. It is an aid: you decide which changes to use.
             </p>
 
             <h2>5. Who we share data with</h2>

@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowDown, ArrowUp, CheckCircle2, Download, FileText, Plus, Save, Trash2, X } from 'lucide-react';
+import { ArrowLeft, ArrowDown, ArrowUp, CheckCircle2, Download, FileText, Plus, Save, Sparkles, Trash2, X } from 'lucide-react';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import DesignPanel from '@/components/editor/DesignPanel';
 import { DEFAULT_STYLE, loadStyle, type LetterStyle } from '@/lib/letterTemplates';
@@ -11,8 +12,16 @@ import {
     EMPTY_RESUME, RESUME_LANGUAGES, isResumeLanguage, isResumeUsable, newId,
     type ResumeData, type ResumeLanguage,
 } from '@/lib/resume';
-import { paginateMeasured, renderResumeHtml, renderResumeMeasureHtml } from '@/lib/resumeTemplates';
-import { downloadPagesPdf, ensureFonts, mountOffscreen, waitForImages } from '@/lib/pdfExport';
+import { downloadPagesPdf } from '@/lib/pdfExport';
+import { resumeFileName, useResumeHtml } from '@/components/resume/useResumeHtml';
+
+interface TailoredItem {
+    id: string;
+    title: string;
+    status: string;
+    created_at: string;
+    match: { before: { score: number } | null; after: { score: number } | null } | null;
+}
 
 type ListKey = 'experience' | 'education' | 'languages' | 'certifications';
 
@@ -38,13 +47,17 @@ export default function ResumeBuilderPage() {
     const [savedAt, setSavedAt] = useState<string | null>(null);
     const [downloading, setDownloading] = useState(false);
     const [error, setError] = useState('');
-    const [pages, setPages] = useState<number[][]>([]);
+    const [versions, setVersions] = useState<TailoredItem[]>([]);
 
     useEffect(() => {
         async function load() {
             try {
                 const { data: { user } } = await supabase.auth.getUser();
                 if (!user) { router.push('/login'); return; }
+                // Versiones adaptadas (plan Pro). Sin la migración 005 la consulta falla y no se muestran.
+                supabase.from('resumes').select('id, title, status, created_at, match').not('parent_id', 'is', null)
+                    .order('created_at', { ascending: false }).limit(20)
+                    .then(({ data: rows }) => setVersions((rows as TailoredItem[]) || []));
                 const [profileRes, resumeRes, usageRes] = await Promise.all([
                     supabase.from('profiles').select('full_name, phone, linkedin, avatar_url').eq('id', user.id).single(),
                     fetch('/api/resume', { signal: AbortSignal.timeout(10000) }),
@@ -106,28 +119,7 @@ export default function ResumeBuilderPage() {
         footer: plan === 'free' ? t('footer_free') : undefined,
     }), [language, avatarUrl, plan, t]);
 
-    // Reparte el contenido en páginas A4 midiendo cada bloque con las fuentes ya cargadas.
-    useEffect(() => {
-        if (loading) return;
-        let cancelled = false;
-        const timer = setTimeout(async () => {
-            await ensureFonts(style.font);
-            if (cancelled) return;
-            const tmp = mountOffscreen(renderResumeMeasureHtml(data, style, options));
-            try {
-                await waitForImages(tmp);
-                if (!cancelled) setPages(paginateMeasured(tmp));
-            } finally {
-                document.body.removeChild(tmp);
-            }
-        }, 250);
-        return () => { cancelled = true; clearTimeout(timer); };
-    }, [loading, data, style, options]);
-
-    const html = useMemo(
-        () => renderResumeHtml(data, style, options, pages),
-        [data, style, options, pages],
-    );
+    const { html, pageCount } = useResumeHtml(data, style, options, !loading);
 
     function update(patch: Partial<ResumeData>) {
         setData((d) => ({ ...d, ...patch }));
@@ -212,8 +204,7 @@ export default function ResumeBuilderPage() {
     async function handleDownload() {
         setDownloading(true);
         try {
-            const name = (data.personal.fullName || 'cv').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase();
-            await downloadPagesPdf(html, style.font, `cv-${name}.pdf`);
+            await downloadPagesPdf(html, style.font, resumeFileName(data.personal.fullName));
         } catch (err) {
             console.error('Resume PDF error:', err);
             setError(tc('common.error'));
@@ -300,7 +291,7 @@ export default function ResumeBuilderPage() {
                     <p style={{ fontSize: '13px', color: dirty ? 'var(--warning, #f59e0b)' : 'var(--text-muted)' }} role="status">
                         {dirty ? t('unsaved') : savedAt ? <><CheckCircle2 size={13} style={{ display: 'inline', verticalAlign: 'middle' }} /> {t('saved')}</> : ''}
                     </p>
-                    {pages.length > 1 && <span className="badge badge-cyan">{t('pages', { count: pages.length })}</span>}
+                    {pageCount > 1 && <span className="badge badge-cyan">{t('pages', { count: pageCount })}</span>}
                 </div>
 
                 {error && <div className="error-msg" style={{ marginBottom: '20px' }}>{error}</div>}
@@ -315,7 +306,7 @@ export default function ResumeBuilderPage() {
                     value={style}
                     onChange={updateStyle}
                     previewHtml={html}
-                    pages={Math.max(1, pages.length)}
+                    pages={pageCount}
                     title={t('design_title')}
                     photoHint={t('photo_hint')}
                 />
@@ -453,6 +444,27 @@ export default function ResumeBuilderPage() {
                             <Plus size={14} /> {t('add_certification')}
                         </button>
                     </section>
+
+                    {versions.length > 0 && (
+                        <section className="card">
+                            <h2 style={{ fontSize: '17px', fontWeight: 700, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Sparkles size={16} /> {t('versions_title')}
+                            </h2>
+                            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '14px' }}>{t('versions_desc')}</p>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                {versions.map((v) => (
+                                    <Link key={v.id} href={`/dashboard/cv/tailored/${v.id}`} className="card" style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', gap: '12px', alignItems: 'center' }}>
+                                        <span style={{ fontWeight: 600, fontSize: '14px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v.title}</span>
+                                        <span style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
+                                            {v.match?.after && <span className="badge badge-green">{v.match.after.score}/100</span>}
+                                            {v.status !== 'done' && <span className="badge badge-cyan">{t(`status_${v.status === 'pending' ? 'pending' : 'error'}`)}</span>}
+                                            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{new Date(v.created_at).toLocaleDateString()}</span>
+                                        </span>
+                                    </Link>
+                                ))}
+                            </div>
+                        </section>
+                    )}
 
                     {!usable && <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{t('not_usable')}</p>}
 

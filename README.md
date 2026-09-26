@@ -43,6 +43,8 @@ N8N_WEBHOOK_URL=your_n8n_webhook_url
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 WEBHOOK_SECRET=shared_secret_with_n8n        # n8n → app (callback)
 N8N_WEBHOOK_SECRET=another_long_secret       # app → n8n (Webhook node Header Auth)
+GEMINI_API_KEY=your_gemini_api_key           # CV fit score and tailored CV (paid tier)
+GEMINI_MODEL=gemini-flash-latest             # optional
 
 # Legal notice (shown only when set)
 NEXT_PUBLIC_CONTACT_EMAIL=you@example.com
@@ -73,6 +75,10 @@ npm run dev
 - **CV builder** (`/dashboard/cv`, every plan): one CV per user built from a form, rendered with the same four templates, colour, font and photo as the letters (`lib/resumeTemplates.ts`), split into A4 pages without cutting entries, and downloadable as PDF. Free-plan PDFs carry a small "Made with CoverCraft" footer. Run `supabase/migrations/004_resumes.sql` once.
   - On save, `/api/resume` generates a **plain-text PDF** (`lib/resumePdf.ts`, pdf-lib) and lists it in "My CVs", so it can be picked to generate letters with no n8n changes. The same PDF is the **ATS version** download (`/api/resume/ats`).
   - When a letter uses a built CV, `/api/generate` also sends `cv_text` (clean plain text) to n8n. Optional: in n8n, use `cv_text` when present instead of extracting text from the PDF.
+- **CV fit score and tailored CV** (Gemini, called from the app — not n8n). Set `GEMINI_API_KEY` (a **paid** key: on Google's free tier prompts may be used to improve their products, which the privacy policy rules out) and optionally `GEMINI_MODEL` (default `gemini-flash-latest`). Run `supabase/migrations/005_ai_resume.sql` once.
+  - `/api/resume/match`: fit score of the built CV against a job offer. Free plan gets the score only; Pro gets matched/missing keywords and tips. Monthly caps in `lib/plans.ts` (`ai.match`).
+  - `/api/resume/tailor` (Pro, cap `ai.tailor`): creates a tailored copy of the CV (`resumes.parent_id`), returns at once and runs Gemini in the background (`after()`). The AI may only rewrite headline, profile, achievements and skill order; employers, titles, dates and education always come from the base CV. The user reviews each change at `/dashboard/cv/tailored/[id]`. Also offered as a checkbox when generating a letter.
+  - Letters, fit checks and tailoring are counted separately in `generation_usage.kind`.
 - **Account deletion** (`/api/account/delete`) removes storage files and the auth user; the database cascades the rest.
 - **Public pages:** `/pricing`, `/terms`, `/privacy`, `/cookies`, `/legal` (ES/EN; FR and NL show the English text), plus `robots.txt`, `sitemap.xml` and `ads.txt`.
 - **Analytics:** Vercel Web Analytics (cookie-free). Enable it in the Vercel project.

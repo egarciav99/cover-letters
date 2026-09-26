@@ -12,7 +12,7 @@ function migrationMissing(error: { code?: string } | null | undefined) {
 }
 
 function fileSlug(name: string) {
-    return name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '').toLowerCase() || 'cv';
+    return name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '').toLowerCase() || 'cv';
 }
 
 export async function GET() {
