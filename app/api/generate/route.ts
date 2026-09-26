@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
         const supabase = await createClient();
 
-        // 1. Get the authenticated user from the session — DO NOT TRUST body.user_id
+        // 1. Get the authenticated user from the session. DO NOT TRUST body.user_id
         const { data: { user }, error: authError } = await supabase.auth.getUser();
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

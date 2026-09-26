@@ -793,7 +793,7 @@ export default function DashboardPage() {
                                     <div className="form-group">
                                         <label className="input-label">{t('dashboard.select_cv')}</label>
                                         <select className="input" value={selectedCvId} onChange={e => setSelectedCvId(e.target.value)} required>
-                                            <option value="">—</option>
+                                            <option value="">-</option>
                                             {cvs.map(cv => (
                                                 <option key={cv.id} value={cv.id}>{cv.label} ({langLabel[cv.language as keyof typeof langLabel] || cv.language})</option>
                                             ))}

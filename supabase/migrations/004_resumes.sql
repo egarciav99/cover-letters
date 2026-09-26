@@ -1,5 +1,5 @@
 -- ============================================================
--- CoverCraft — CV creado en la web
+-- CoverCraft: CV creado en la web
 -- Ejecutar una vez en Supabase → SQL Editor (después de 002 y 003). Idempotente.
 -- ============================================================
 

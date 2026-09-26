@@ -275,7 +275,7 @@ export default function TailoredResumePage() {
                                             <div className="input-label" style={{ fontSize: '11px' }}>{t('original')}</div>
                                             {d.from.filter(Boolean).length
                                                 ? d.from.map((l, i) => <p key={i} style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '4px', lineHeight: 1.5 }}>{d.from.length > 1 ? '• ' : ''}{l}</p>)
-                                                : <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>—</p>}
+                                                : <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>-</p>}
                                         </div>
                                         <div>
                                             <div className="input-label" style={{ fontSize: '11px' }}>{t('adapted')}</div>

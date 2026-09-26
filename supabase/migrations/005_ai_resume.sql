@@ -1,5 +1,5 @@
 -- ============================================================
--- CoverCraft — CV adaptado a la oferta y puntuación de encaje (Gemini desde la app)
+-- CoverCraft: CV adaptado a la oferta y puntuación de encaje (Gemini desde la app)
 -- Ejecutar una vez en Supabase → SQL Editor (después de 004). Idempotente.
 -- ============================================================
 

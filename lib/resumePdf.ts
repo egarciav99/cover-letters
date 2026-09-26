@@ -21,7 +21,7 @@ export async function renderResumeTextPdf(d: ResumeData, lang: ResumeLanguage, a
     const L = RESUME_LABELS[lang] || RESUME_LABELS.en;
     const accent = /^#[0-9a-fA-F]{6}$/.test(accentHex) ? hexToRgb(accentHex) : hexToRgb('#1B3A6B');
     const doc = await PDFDocument.create();
-    doc.setTitle(d.personal.fullName ? `CV – ${d.personal.fullName}` : 'CV');
+    doc.setTitle(d.personal.fullName ? `CV · ${d.personal.fullName}` : 'CV');
     doc.setAuthor(d.personal.fullName || '');
     doc.setCreator('CoverCraft');
     const regular = await doc.embedFont(StandardFonts.Helvetica);
@@ -130,7 +130,7 @@ export async function renderResumeTextPdf(d: ResumeData, lang: ResumeLanguage, a
         d.experience.forEach((e, i) => {
             ensure(44);
             if (i > 0) y -= 8;
-            write([e.role, e.company].filter(Boolean).join(' — '), { font: bold, size: 10.5 });
+            write([e.role, e.company].filter(Boolean).join(' · '), { font: bold, size: 10.5 });
             const meta = [dateRange(e.start, e.end, e.current, L.present), e.location].filter(Boolean).join('  |  ');
             if (meta) write(meta, { size: 9, color: MUTED, gap: 2 });
             bulletLines(e.bullets).forEach(bullet);
@@ -142,7 +142,7 @@ export async function renderResumeTextPdf(d: ResumeData, lang: ResumeLanguage, a
         d.education.forEach((e, i) => {
             ensure(36);
             if (i > 0) y -= 8;
-            write([e.degree, e.school].filter(Boolean).join(' — '), { font: bold, size: 10.5 });
+            write([e.degree, e.school].filter(Boolean).join(' · '), { font: bold, size: 10.5 });
             const meta = [dateRange(e.start, e.end, false, L.present), e.location].filter(Boolean).join('  |  ');
             if (meta) write(meta, { size: 9, color: MUTED, gap: 2 });
             if (e.details.trim()) write(e.details.trim());
@@ -163,7 +163,7 @@ export async function renderResumeTextPdf(d: ResumeData, lang: ResumeLanguage, a
     const certs = d.certifications.filter((c) => c.name.trim());
     if (certs.length) {
         heading(L.certifications);
-        certs.forEach((c) => bullet([c.name, c.issuer, c.year].filter(Boolean).join(' — ')));
+        certs.forEach((c) => bullet([c.name, c.issuer, c.year].filter(Boolean).join(' · ')));
     }
 
     return doc.save();

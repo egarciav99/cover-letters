@@ -182,7 +182,7 @@
         "pro_soon_desc": "Betalen voor Pro is nog niet mogelijk. Mail ons als je bericht wilt krijgen.",
         "fair_use": "*Redelijk gebruik: tot 100 brieven per maand.",
         "vat": "Prijzen inclusief btw waar van toepassing.",
-        "free_f5": "Matchscore cv–vacature",
+        "free_f5": "Matchscore tussen cv en vacature",
         "pro_f5": "Cv aangepast aan elke vacature en volledige matchanalyse"
     },
     "footer": {
@@ -265,7 +265,7 @@
         "website": "Website of portfolio",
         "photo_from_profile": "De foto is je profielfoto. Je kunt hem wijzigen via het dashboard.",
         "section_summary": "Profiel",
-        "summary_placeholder": "2–4 zinnen: wie je bent, waar je goed in bent en wat je zoekt.",
+        "summary_placeholder": "2 tot 4 zinnen: wie je bent, waar je goed in bent en wat je zoekt.",
         "section_experience": "Werkervaring",
         "add_experience": "Werkervaring toevoegen",
         "role": "Functie",

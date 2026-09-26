@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
         usageId = await consumeAiUsage(admin, user.id, 'tailor', PLANS[plan].ai.tailor);
         if (!usageId) return NextResponse.json({ error: 'quota_exceeded', plan, limit: PLANS[plan].ai.tailor }, { status: 402 });
 
-        const title = [job.position, job.company].filter(Boolean).join(' – ') || 'CV';
+        const title = [job.position, job.company].filter(Boolean).join(' · ') || 'CV';
         const { data: row, error } = await admin
             .from('resumes')
             .insert({

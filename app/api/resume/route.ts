@@ -76,7 +76,7 @@ export async function PUT(request: NextRequest) {
         if (uploadError) throw uploadError;
         const { data: { publicUrl } } = admin.storage.from('cvs').getPublicUrl(path);
 
-        const label = title || (data.personal.headline ? `CV – ${data.personal.headline}` : 'CV CoverCraft');
+        const label = title || (data.personal.headline ? `CV · ${data.personal.headline}` : 'CV CoverCraft');
         const fileName = `cv-${fileSlug(data.personal.fullName)}.pdf`;
         const { data: linked } = await admin.from('cvs').select('id, file_url').eq('resume_id', saved.id).maybeSingle();
         let cvId: string;

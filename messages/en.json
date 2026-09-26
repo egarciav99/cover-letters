@@ -182,7 +182,7 @@
         "pro_soon_desc": "Pro payments are not open yet. Write to us if you want to be notified.",
         "fair_use": "*Fair use: up to 100 letters per month.",
         "vat": "Prices include VAT where applicable.",
-        "free_f5": "CV–job fit score",
+        "free_f5": "CV to job fit score",
         "pro_f5": "CV tailored to every job and full fit analysis"
     },
     "footer": {
@@ -265,7 +265,7 @@
         "website": "Website or portfolio",
         "photo_from_profile": "The photo is your profile photo. You can change it from the dashboard.",
         "section_summary": "Professional profile",
-        "summary_placeholder": "2–4 sentences: who you are, what you're great at and what you're looking for.",
+        "summary_placeholder": "2 to 4 sentences: who you are, what you're great at and what you're looking for.",
         "section_experience": "Experience",
         "add_experience": "Add experience",
         "role": "Job title",

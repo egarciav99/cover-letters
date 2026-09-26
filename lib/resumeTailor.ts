@@ -41,12 +41,18 @@ export interface JobInfo {
     requirements: string;
 }
 
-const norm = (s: string) => s.replace(/\s+/g, ' ').trim().toLowerCase();
+/** Quita los guiones largos y medios que se cuelen en el texto de la IA (estilo de la casa). */
+export function noDashes(s: string): string {
+    return s.replace(/\s*[\u2014\u2013]\s*/g, (m) => (m.trim() === m ? '-' : ', '));
+}
+
+/** Para comparar: sin mayúsculas, espacios repetidos ni diferencias de guiones. */
+const norm = (s: string) => noDashes(s).replace(/\s+/g, ' ').trim().toLowerCase();
 
 /** Limpia la respuesta de la IA y la limita a las experiencias que existen en el CV base. */
 export function sanitizeProposal(raw: unknown, base: ResumeData): TailorProposal {
     const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
-    const str = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
+    const str = (v: unknown, max: number) => (typeof v === 'string' ? noDashes(v).trim().slice(0, max) : '');
     const ids = new Set(base.experience.map((e) => e.id));
     const experience: Record<string, string> = {};
     const reasons: Record<string, string> = {};
@@ -105,7 +111,7 @@ export function applyChanges(c: TailorChanges): ResumeData {
 export function sanitizeMatch(raw: unknown): MatchResult {
     const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
     const list = (v: unknown, n: number, max: number) =>
-        Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string').map((x) => x.trim().slice(0, max)).filter(Boolean).slice(0, n) : [];
+        Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string').map((x) => noDashes(x).trim().slice(0, max)).filter(Boolean).slice(0, n) : [];
     const score = Math.round(Number(r.score));
     return {
         score: Number.isFinite(score) ? Math.min(100, Math.max(0, score)) : 0,

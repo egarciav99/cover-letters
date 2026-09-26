@@ -182,7 +182,7 @@
         "pro_soon_desc": "El pago de Pro aún no está abierto. Escríbenos si quieres que te avisemos.",
         "fair_use": "*Uso razonable: hasta 100 cartas al mes.",
         "vat": "Precios con IVA incluido cuando corresponda.",
-        "free_f5": "Puntuación de encaje CV–oferta",
+        "free_f5": "Puntuación de encaje entre CV y oferta",
         "pro_f5": "CV adaptado a cada oferta y análisis de encaje completo"
     },
     "footer": {
@@ -265,7 +265,7 @@
         "website": "Web o portfolio",
         "photo_from_profile": "La foto es la de tu perfil. Puedes cambiarla desde el panel.",
         "section_summary": "Perfil profesional",
-        "summary_placeholder": "2–4 frases: quién eres, en qué destacas y qué buscas.",
+        "summary_placeholder": "2 a 4 frases: quién eres, en qué destacas y qué buscas.",
         "section_experience": "Experiencia",
         "add_experience": "Añadir experiencia",
         "role": "Puesto",

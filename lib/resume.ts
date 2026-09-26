@@ -209,18 +209,18 @@ export function resumeToText(d: ResumeData, lang: ResumeLanguage): string {
     section(L.summary, d.summary.trim() ? [d.summary.trim()] : []);
     section(L.experience, d.experience.flatMap((e) => [
         '',
-        [e.role, e.company].filter(Boolean).join(' — '),
+        [e.role, e.company].filter(Boolean).join(' · '),
         [dateRange(e.start, e.end, e.current, L.present), e.location].filter(Boolean).join(' | '),
         ...bulletLines(e.bullets).map((b) => `- ${b}`),
     ].filter((l, i) => i === 0 || l)));
     section(L.education, d.education.flatMap((e) => [
         '',
-        [e.degree, e.school].filter(Boolean).join(' — '),
+        [e.degree, e.school].filter(Boolean).join(' · '),
         [dateRange(e.start, e.end, false, L.present), e.location].filter(Boolean).join(' | '),
         e.details.trim(),
     ].filter((l, i) => i === 0 || l)));
     section(L.skills, d.skills.length ? [d.skills.join(', ')] : []);
     section(L.languages, d.languages.filter((l) => l.name).map((l) => (l.level ? `${l.name}: ${l.level}` : l.name)));
-    section(L.certifications, d.certifications.filter((c) => c.name).map((c) => [c.name, c.issuer, c.year].filter(Boolean).join(' — ')));
+    section(L.certifications, d.certifications.filter((c) => c.name).map((c) => [c.name, c.issuer, c.year].filter(Boolean).join(' · ')));
     return out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
 }
