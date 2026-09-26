@@ -1,4 +1,4 @@
-# CoverCraft — AI Cover Letter Generator
+# CoverCraft · AI Cover Letter Generator
 
 CoverCraft is a professional AI-powered tool designed to generate personalized cover letters in seconds. By uploading your CV and pasting job requirements, the app uses AI (via n8n) to create a tailored letter, which you can then edit and download as a professional PDF.
 
