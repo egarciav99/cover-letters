@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
-import { Upload, Trash2, Star, FileText, LogOut, Plus, X, Clock, AlertCircle, ArrowRight } from 'lucide-react';
+import { Upload, Trash2, Star, FileText, LogOut, Plus, X, Clock, AlertCircle, ArrowRight, PenLine, Sparkles } from 'lucide-react';
 import AdSlot from '@/components/AdSlot';
 import SiteFooter from '@/components/SiteFooter';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
@@ -19,6 +19,8 @@ interface CV {
     file_name: string;
     is_default: boolean;
     created_at: string;
+    /** Solo en el CV creado con el editor. */
+    resume_id?: string | null;
 }
 
 interface CoverLetterHistory {
@@ -59,6 +61,7 @@ export default function DashboardPage() {
     const [usage, setUsage] = useState<Usage | null>(null);
     const [quotaHit, setQuotaHit] = useState(false);
     const [deletingAccount, setDeletingAccount] = useState(false);
+    const [resume, setResume] = useState<{ id: string; updated_at: string } | null>(null);
 
     // Profile modal state
     const [showProfile, setShowProfile] = useState(false);
@@ -89,7 +92,7 @@ export default function DashboardPage() {
                 if (authError || !u) { router.push('/login'); return; }
                 setUser({ id: u.id, email: u.email! });
                 // Todo en paralelo; si el contador caducó cartas atascadas, se recarga el historial.
-                const [expired] = await Promise.all([fetchUsage(), fetchCvs(u.id), fetchHistory(u.id), fetchProfile(u.id)]);
+                const [expired] = await Promise.all([fetchUsage(), fetchCvs(u.id), fetchHistory(u.id), fetchProfile(u.id), fetchResume()]);
                 if (expired > 0) await fetchHistory(u.id);
             } catch (err: any) {
                 console.error('Initial load error:', err);
@@ -112,6 +115,12 @@ export default function DashboardPage() {
             // El contador es informativo: si falla, el servidor sigue aplicando el límite.
             return 0;
         }
+    }
+
+    async function fetchResume() {
+        // Si la migración 004 aún no está aplicada, la consulta falla y simplemente no se muestra.
+        const { data } = await supabase.from('resumes').select('id, updated_at').is('parent_id', null).maybeSingle();
+        setResume(data ?? null);
     }
 
     async function fetchProfile(userId: string) {
@@ -462,6 +471,22 @@ export default function DashboardPage() {
 
                     {/* LEFT: CV Manager */}
                     <div>
+                        {/* Mi CV (creado en la web) */}
+                        <div className="card" style={{ padding: '20px', marginBottom: '28px', borderColor: 'rgba(59, 130, 246, 0.35)', background: 'rgba(59, 130, 246, 0.06)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                                <Sparkles size={16} style={{ color: 'var(--accent-light)' }} />
+                                <h2 style={{ fontSize: '16px', fontWeight: 700 }}>{resume ? t('resume.card_title_existing') : t('resume.card_title')}</h2>
+                            </div>
+                            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '14px' }}>
+                                {resume
+                                    ? t('resume.card_updated', { date: mounted ? new Date(resume.updated_at).toLocaleDateString() : '' })
+                                    : t('resume.card_desc')}
+                            </p>
+                            <Link href="/dashboard/cv" className="btn btn-primary btn-sm" id="btn-open-resume">
+                                <PenLine size={14} /> {resume ? t('resume.card_edit') : t('resume.card_cta')}
+                            </Link>
+                        </div>
+
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                             <h2 style={{ fontSize: '18px', fontWeight: 700 }}>{t('dashboard.my_cvs')}</h2>
                             <button className="btn btn-primary btn-sm" onClick={() => setShowUpload(true)}>
@@ -488,6 +513,7 @@ export default function DashboardPage() {
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
                                                     <span style={{ fontWeight: 600, fontSize: '15px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{cv.label}</span>
                                                     {cv.is_default && <span className="badge badge-purple">{t('cv.default_badge')}</span>}
+                                                    {cv.resume_id && <span className="badge badge-green">{t('resume.built_badge')}</span>}
                                                 </div>
                                                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                                                     <span className="badge badge-cyan">{langLabel[cv.language as keyof typeof langLabel] || cv.language.toUpperCase()}</span>
@@ -500,9 +526,15 @@ export default function DashboardPage() {
                                                         <Star size={14} />
                                                     </button>
                                                 )}
-                                                <button className="btn btn-danger btn-sm" onClick={e => { e.stopPropagation(); handleDeleteCV(cv.id); }}>
-                                                    <Trash2 size={14} />
-                                                </button>
+                                                {cv.resume_id ? (
+                                                    <button className="btn btn-ghost btn-sm" title={t('resume.card_edit')} aria-label={t('resume.card_edit')} onClick={e => { e.stopPropagation(); router.push('/dashboard/cv'); }}>
+                                                        <PenLine size={14} />
+                                                    </button>
+                                                ) : (
+                                                    <button className="btn btn-danger btn-sm" onClick={e => { e.stopPropagation(); handleDeleteCV(cv.id); }}>
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

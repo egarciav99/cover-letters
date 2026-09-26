@@ -10,10 +10,16 @@ interface DesignPanelProps {
     onChange: (style: LetterStyle) => void;
     /** HTML de la carta con el estilo actual (el mismo que va al PDF). */
     previewHtml: string;
+    /** Número de páginas A4 de la vista previa (el CV puede tener varias). */
+    pages?: number;
+    /** Texto bajo "Mostrar foto"; por defecto, el de la carta. */
+    photoHint?: string;
+    title?: string;
 }
 
 const PAGE_W = 794;
 const PAGE_H = 1123;
+const PAGE_GAP = 16;
 
 /** Miniatura esquemática de cada plantilla. */
 function Thumb({ id, accent }: { id: TemplateId; accent: string }) {
@@ -33,7 +39,7 @@ function Thumb({ id, accent }: { id: TemplateId; accent: string }) {
     return <div style={box}><div style={{ padding: 6 }}>{line('60%', { height: 5, background: '#111827' })}{line('20%', { background: accent })}<div style={{ height: 6 }} />{lines}</div></div>;
 }
 
-export default function DesignPanel({ value, onChange, previewHtml }: DesignPanelProps) {
+export default function DesignPanel({ value, onChange, previewHtml, pages = 1, photoHint, title }: DesignPanelProps) {
     const t = useTranslations('design');
     const [showPreview, setShowPreview] = useState(true);
     const boxRef = useRef<HTMLDivElement>(null);
@@ -49,10 +55,12 @@ export default function DesignPanel({ value, onChange, previewHtml }: DesignPane
         return () => ro.disconnect();
     }, [showPreview]);
 
+    const totalH = PAGE_H * pages + PAGE_GAP * (pages - 1);
+
     const set = (patch: Partial<LetterStyle>) => onChange({ ...value, ...patch });
 
     const srcDoc = `<!doctype html><html><head><meta charset="utf-8" /><link rel="stylesheet" href="${fontsHref(value.font)}" />
-        <style>html,body{margin:0;background:#fff;}</style></head><body>${previewHtml}</body></html>`;
+        <style>html,body{margin:0;background:${pages > 1 ? '#d1d5db' : '#fff'};}.pdf-page + .pdf-page{margin-top:${PAGE_GAP}px !important;}</style></head><body>${previewHtml}</body></html>`;
 
     const chip = (active: boolean): React.CSSProperties => ({
         border: `1px solid ${active ? 'var(--accent)' : 'var(--border)'}`,
@@ -68,7 +76,7 @@ export default function DesignPanel({ value, onChange, previewHtml }: DesignPane
         <section className="card design-panel" aria-labelledby="design-title" style={{ padding: '20px', marginBottom: '28px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
                 <h2 id="design-title" style={{ fontSize: '16px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Palette size={16} /> {t('title')}
+                    <Palette size={16} /> {title || t('title')}
                 </h2>
                 <button type="button" className="btn btn-ghost btn-sm" onClick={() => setShowPreview(!showPreview)} id="btn-toggle-preview">
                     {showPreview ? <EyeOff size={14} /> : <Eye size={14} />} {showPreview ? t('hide_preview') : t('show_preview')}
@@ -146,16 +154,16 @@ export default function DesignPanel({ value, onChange, previewHtml }: DesignPane
                         <input type="checkbox" checked={value.showPhoto} onChange={(e) => set({ showPhoto: e.target.checked })} id="toggle-photo" />
                         {t('show_photo')}
                     </label>
-                    <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.5, marginTop: '-8px' }}>{t('photo_hint')}</p>
+                    <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.5, marginTop: '-8px' }}>{photoHint || t('photo_hint')}</p>
                 </div>
 
                 {showPreview && (
-                    <div ref={boxRef} style={{ width: '100%', height: PAGE_H * scale, overflow: 'hidden', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', background: '#fff' }}>
+                    <div ref={boxRef} style={{ width: '100%', height: totalH * scale, overflow: 'hidden', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', background: '#fff' }}>
                         <iframe
                             title={t('preview')}
                             srcDoc={srcDoc}
                             sandbox=""
-                            style={{ width: PAGE_W, height: PAGE_H, border: 0, transform: `scale(${scale})`, transformOrigin: 'top left', pointerEvents: 'none' }}
+                            style={{ width: PAGE_W, height: totalH, border: 0, transform: `scale(${scale})`, transformOrigin: 'top left', pointerEvents: 'none' }}
                         />
                     </div>
                 )}

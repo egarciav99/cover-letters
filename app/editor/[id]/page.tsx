@@ -7,9 +7,10 @@ import { createClient } from '@/lib/supabase/client';
 import { ArrowLeft, Download, RefreshCw, Loader2, AlertCircle } from 'lucide-react';
 import DesignPanel from '@/components/editor/DesignPanel';
 import {
-    DEFAULT_STYLE, LETTER_LABELS, fontFamilies, fontsHref, loadStyle, renderLetterHtml, saveStyle, toParagraphs,
+    DEFAULT_STYLE, LETTER_LABELS, loadStyle, renderLetterHtml, saveStyle, toParagraphs,
     type LetterStyle,
 } from '@/lib/letterTemplates';
+import { ensureFonts } from '@/lib/pdfExport';
 import dynamic from 'next/dynamic';
 import { LETTER_TIMEOUT_SECONDS } from '@/lib/letters';
 
@@ -167,29 +168,12 @@ export default function EditorPage() {
         );
     }, [mounted, labels, profile, position, company, greeting, content, closing, letterStyle]);
 
-    /** Carga las fuentes del estilo en la página y espera a que estén listas antes de capturar. */
-    async function ensureFonts(style: LetterStyle) {
-        const href = fontsHref(style.font);
-        if (!document.querySelector(`link[data-letter-font="${style.font}"]`)) {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = href;
-            link.dataset.letterFont = style.font;
-            document.head.appendChild(link);
-            await new Promise((resolve) => { link.onload = resolve; link.onerror = resolve; });
-        }
-        await Promise.all(fontFamilies(style.font).flatMap((f) => [
-            document.fonts.load(`400 16px "${f}"`),
-            document.fonts.load(`700 16px "${f}"`),
-        ])).catch(() => undefined);
-    }
-
     async function handleDownloadPDF() {
         setDownloading(true);
         let tmp: HTMLDivElement | null = null;
         try {
             const html2pdf = (await import('html2pdf.js')).default;
-            await ensureFonts(letterStyle);
+            await ensureFonts(letterStyle.font);
 
             const opt = {
                 margin: [0, 0, 0, 0] as [number, number, number, number],

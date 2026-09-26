@@ -70,6 +70,9 @@ npm run dev
 - **Database:** run `supabase/migrations/002_freemium.sql` once in the Supabase SQL editor. Until it runs, the app keeps working but the quota is not enforced (a warning is logged).
 - **Letter errors:** run `supabase/migrations/003_letter_errors.sql` too. n8n reports failures to the callback with `{ cover_letter_id, status: 'error', error_code }`; the app marks the letter as failed and gives the quota back.
 - **PDF templates** live in `lib/letterTemplates.ts` (Executive, Classic, Modern, Minimal) with accent colour, font and photo options. The editor preview and the PDF use the same HTML.
+- **CV builder** (`/dashboard/cv`, every plan): one CV per user built from a form, rendered with the same four templates, colour, font and photo as the letters (`lib/resumeTemplates.ts`), split into A4 pages without cutting entries, and downloadable as PDF. Free-plan PDFs carry a small "Made with CoverCraft" footer. Run `supabase/migrations/004_resumes.sql` once.
+  - On save, `/api/resume` generates a **plain-text PDF** (`lib/resumePdf.ts`, pdf-lib) and lists it in "My CVs", so it can be picked to generate letters with no n8n changes. The same PDF is the **ATS version** download (`/api/resume/ats`).
+  - When a letter uses a built CV, `/api/generate` also sends `cv_text` (clean plain text) to n8n. Optional: in n8n, use `cv_text` when present instead of extracting text from the PDF.
 - **Account deletion** (`/api/account/delete`) removes storage files and the auth user; the database cascades the rest.
 - **Public pages:** `/pricing`, `/terms`, `/privacy`, `/cookies`, `/legal` (ES/EN; FR and NL show the English text), plus `robots.txt`, `sitemap.xml` and `ads.txt`.
 - **Analytics:** Vercel Web Analytics (cookie-free). Enable it in the Vercel project.

@@ -18,7 +18,7 @@ export default async function PrivacyPage() {
                 <ul>
                     <li><strong>Cuenta:</strong> correo electrónico y contraseña (la contraseña se guarda cifrada por nuestro proveedor de autenticación; nunca la vemos).</li>
                     <li><strong>Perfil:</strong> nombre, teléfono, URL de LinkedIn y foto, si decides añadirlos.</li>
-                    <li><strong>CV:</strong> los archivos PDF que subes, con los datos que contengan.</li>
+                    <li><strong>CV:</strong> los archivos PDF que subes, con los datos que contengan, y el CV que crees con nuestro editor (experiencia, formación, habilidades, idiomas y datos de contacto). Del CV creado generamos un PDF de texto que se guarda de forma privada para usarlo en tus cartas.</li>
                     <li><strong>Ofertas y cartas:</strong> empresa, puesto, descripción de la oferta y las cartas generadas.</li>
                     <li><strong>Uso:</strong> fecha de cada carta generada, para aplicar el límite de tu plan.</li>
                     <li><strong>Datos técnicos:</strong> registros del servidor (dirección IP, navegador) necesarios para la seguridad del servicio.</li>
@@ -105,7 +105,7 @@ export default async function PrivacyPage() {
             <ul>
                 <li><strong>Account:</strong> email address and password (the password is stored hashed by our authentication provider; we never see it).</li>
                 <li><strong>Profile:</strong> name, phone, LinkedIn URL and photo, if you choose to add them.</li>
-                <li><strong>CV:</strong> the PDF files you upload and the data they contain.</li>
+                <li><strong>CV:</strong> the PDF files you upload and the data they contain, and the CV you build with our editor (experience, education, skills, languages and contact details). From the CV you build we create a plain-text PDF, stored privately, to use for your letters.</li>
                 <li><strong>Job offers and letters:</strong> company, position, job description and the generated letters.</li>
                 <li><strong>Usage:</strong> the date of each generated letter, to apply your plan&apos;s limit.</li>
                 <li><strong>Technical data:</strong> server logs (IP address, browser) needed to keep the service secure.</li>
