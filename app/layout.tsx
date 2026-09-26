@@ -12,7 +12,7 @@ const DESCRIPTION =
 export const metadata: Metadata = {
     metadataBase: new URL(SITE.url),
     title: {
-        default: 'CoverCraft — AI Cover Letter Generator',
+        default: 'CoverCraft · AI Cover Letter Generator',
         template: '%s · CoverCraft',
     },
     description: DESCRIPTION,
@@ -20,13 +20,13 @@ export const metadata: Metadata = {
     openGraph: {
         type: 'website',
         siteName: SITE.name,
-        title: 'CoverCraft — AI Cover Letter Generator',
+        title: 'CoverCraft · AI Cover Letter Generator',
         description: DESCRIPTION,
         url: SITE.url,
     },
     twitter: {
         card: 'summary',
-        title: 'CoverCraft — AI Cover Letter Generator',
+        title: 'CoverCraft · AI Cover Letter Generator',
         description: DESCRIPTION,
     },
     // AdSense pide esta etiqueta para verificar el sitio.

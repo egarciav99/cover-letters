@@ -86,7 +86,7 @@
     "editor": {
         "title": "Cover Letter",
         "waiting": "Generating your cover letter...",
-        "waiting_subtitle": "This usually takes 15–30 seconds. Please wait.",
+        "waiting_subtitle": "This usually takes 15 to 30 seconds. Please wait.",
         "download_pdf": "Download PDF",
         "regenerate": "Regenerate",
         "back": "Back to Dashboard",
