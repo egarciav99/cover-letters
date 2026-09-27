@@ -18,11 +18,13 @@ export async function ensureFonts(font: FontId): Promise<void> {
     ])).catch(() => undefined);
 }
 
-export async function waitForImages(root: HTMLElement): Promise<void> {
-    await Promise.all(Array.from(root.querySelectorAll('img')).map((img) => (img.complete ? Promise.resolve() : new Promise((resolve) => {
+/** Espera a que carguen las imágenes (p. ej. la foto), como mucho `timeoutMs`: nunca se queda colgado. */
+export async function waitForImages(root: HTMLElement, timeoutMs = 4000): Promise<void> {
+    const loads = Promise.all(Array.from(root.querySelectorAll('img')).map((img) => (img.complete ? Promise.resolve() : new Promise((resolve) => {
         img.onload = resolve;
         img.onerror = resolve;
     }))));
+    await Promise.race([loads, new Promise((resolve) => setTimeout(resolve, timeoutMs))]);
 }
 
 /** Inserta HTML fuera de la pantalla (794 px de ancho) y devuelve el contenedor. */

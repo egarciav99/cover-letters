@@ -10,7 +10,7 @@ import { type LetterStyle } from '@/lib/letterTemplates';
 import { bulletLines, type ResumeData, type ResumeLanguage } from '@/lib/resume';
 import { applyChanges, type JobInfo, type MatchResult, type TailorChanges } from '@/lib/resumeTailor';
 import { downloadPagesPdf } from '@/lib/pdfExport';
-import { resumeFileName, useResumeHtml } from '@/components/resume/useResumeHtml';
+import { buildResumeHtml, resumeFileName, useResumeHtml } from '@/components/resume/useResumeHtml';
 import ScoreBadge from '@/components/resume/ScoreBadge';
 
 interface Tailored {
@@ -122,7 +122,7 @@ export default function TailoredResumePage() {
         if (!data || !style) return;
         setDownloading(true);
         try {
-            await downloadPagesPdf(html, style.font, resumeFileName(data.personal.fullName, `-${(resume?.job?.company || 'oferta').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`));
+            await downloadPagesPdf(await buildResumeHtml(data, style, options), style.font, resumeFileName(data.personal.fullName, `-${(resume?.job?.company || 'oferta').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`));
         } catch {
             setError(tc('common.error'));
         } finally {

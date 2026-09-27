@@ -271,14 +271,17 @@ export function renderResumeHtml(d: ResumeData, s: LetterStyle, o: ResumeRenderO
 export function paginateMeasured(root: HTMLElement): number[][] {
     const page = root.querySelector('.pdf-page') as HTMLElement | null;
     if (!page) return [];
-    const top0 = page.getBoundingClientRect().top;
+    const box = page.getBoundingClientRect();
+    // Todo se mide con getBoundingClientRect y se pasa a px de la página (794 de ancho): así el
+    // zoom del navegador, una escala de pantalla o un transform no descuadran la medida.
+    const scale = box.width > 0 ? box.width / PAGE_W : 1;
     const blocks = Array.from(page.querySelectorAll('.main .cv-block')) as HTMLElement[];
     const pages: number[][] = [[]];
     let limit = PAGE_H - BOTTOM; // Fondo útil de la página actual, en coordenadas de la versión de medida.
     blocks.forEach((el, i) => {
         const r = el.getBoundingClientRect();
-        const top = r.top - top0;
-        const bottom = top + el.offsetHeight;
+        const top = (r.top - box.top) / scale;
+        const bottom = (r.bottom - box.top) / scale;
         const current = pages[pages.length - 1];
         if (bottom > limit && current.length > 0) {
             pages.push([i]);

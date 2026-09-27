@@ -13,7 +13,7 @@ import {
     type ResumeData, type ResumeLanguage,
 } from '@/lib/resume';
 import { downloadPagesPdf } from '@/lib/pdfExport';
-import { resumeFileName, useResumeHtml } from '@/components/resume/useResumeHtml';
+import { buildResumeHtml, resumeFileName, useResumeHtml } from '@/components/resume/useResumeHtml';
 import { aiErrorCode } from '@/lib/aiErrorCode';
 
 interface TailoredItem {
@@ -268,7 +268,8 @@ export default function ResumeBuilderPage() {
     async function handleDownload() {
         setDownloading(true);
         try {
-            await downloadPagesPdf(html, style.font, resumeFileName(data.personal.fullName));
+            // Se reparte en el momento de descargar: nunca con un cálculo anterior de la vista previa.
+            await downloadPagesPdf(await buildResumeHtml(data, style, options), style.font, resumeFileName(data.personal.fullName));
         } catch (err) {
             console.error('Resume PDF error:', err);
             setError(tc('common.error'));

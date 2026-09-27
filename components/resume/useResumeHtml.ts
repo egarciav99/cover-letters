@@ -6,9 +6,26 @@ import type { ResumeData } from '@/lib/resume';
 import { paginateMeasured, renderResumeHtml, renderResumeMeasureHtml, type ResumeRenderOptions } from '@/lib/resumeTemplates';
 import { ensureFonts, mountOffscreen, waitForImages } from '@/lib/pdfExport';
 
+/** Mide el CV con las fuentes y la foto ya cargadas y lo reparte en páginas A4. */
+export async function paginateResume(data: ResumeData, style: LetterStyle, options: ResumeRenderOptions): Promise<number[][]> {
+    await ensureFonts(style.font);
+    const tmp = mountOffscreen(renderResumeMeasureHtml(data, style, options));
+    try {
+        await waitForImages(tmp);
+        return paginateMeasured(tmp);
+    } finally {
+        document.body.removeChild(tmp);
+    }
+}
+
+/** HTML final del CV ya paginado, calculado en el momento (para descargar el PDF). */
+export async function buildResumeHtml(data: ResumeData, style: LetterStyle, options: ResumeRenderOptions): Promise<string> {
+    return renderResumeHtml(data, style, options, await paginateResume(data, style, options));
+}
+
 /**
- * HTML del CV repartido en páginas A4. Mide los bloques con las fuentes ya cargadas
- * (con un pequeño retardo para no medir en cada pulsación).
+ * HTML del CV repartido en páginas A4 para la vista previa. Se recalcula con un pequeño
+ * retardo para no medir en cada pulsación.
  */
 export function useResumeHtml(data: ResumeData, style: LetterStyle, options: ResumeRenderOptions, enabled = true) {
     const [pages, setPages] = useState<number[][]>([]);
@@ -17,15 +34,8 @@ export function useResumeHtml(data: ResumeData, style: LetterStyle, options: Res
         if (!enabled) return;
         let cancelled = false;
         const timer = setTimeout(async () => {
-            await ensureFonts(style.font);
-            if (cancelled) return;
-            const tmp = mountOffscreen(renderResumeMeasureHtml(data, style, options));
-            try {
-                await waitForImages(tmp);
-                if (!cancelled) setPages(paginateMeasured(tmp));
-            } finally {
-                document.body.removeChild(tmp);
-            }
+            const result = await paginateResume(data, style, options).catch(() => null);
+            if (!cancelled && result) setPages(result);
         }, 250);
         return () => { cancelled = true; clearTimeout(timer); };
     }, [enabled, data, style, options]);
