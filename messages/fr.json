@@ -130,7 +130,8 @@
         "cancel": "Annuler",
         "delete": "Supprimer",
         "confirm_delete": "Voulez-vous vraiment supprimer ceci ?",
-        "company_fallback": "l'entreprise"
+        "company_fallback": "l'entreprise",
+        "error_code": "code : {code}"
     },
     "terms": {
         "title": "Conditions Générales d'Utilisation",

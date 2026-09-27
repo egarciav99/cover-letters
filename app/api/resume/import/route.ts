@@ -62,8 +62,8 @@ export async function POST(request: NextRequest) {
     } catch (err) {
         await refundUsage(admin, usageId).catch(() => undefined);
         if (err instanceof AiError) {
-            console.error('Import AI error:', err.code, err.message);
-            return NextResponse.json({ error: 'ai_failed' }, { status: 502 });
+            console.error('Import AI error:', err.code, err.reason, err.message);
+            return NextResponse.json({ error: 'ai_failed', reason: err.reason }, { status: 502 });
         }
         console.error('Import error:', err);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

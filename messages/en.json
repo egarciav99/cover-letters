@@ -130,7 +130,8 @@
         "cancel": "Cancel",
         "delete": "Delete",
         "confirm_delete": "Are you sure you want to delete this?",
-        "company_fallback": "the company"
+        "company_fallback": "the company",
+        "error_code": "code: {code}"
     },
     "terms": {
         "title": "Terms and Conditions of Use",

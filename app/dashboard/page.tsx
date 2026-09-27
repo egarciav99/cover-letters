@@ -11,6 +11,7 @@ import SiteFooter from '@/components/SiteFooter';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import ProfilePhotoCropper from '@/components/ProfilePhotoCropper';
 import ScoreBadge from '@/components/resume/ScoreBadge';
+import { aiErrorCode } from '@/lib/aiErrorCode';
 
 interface CV {
     id: string;
@@ -317,13 +318,15 @@ export default function DashboardPage() {
         }
     }
 
-    function aiErrorMessage(status: number, code: string): string {
+    function aiErrorMessage(status: number, body: { error?: string; reason?: string }): string {
+        const code = body.error;
         if (code === 'no_resume') return t('match.error_no_resume');
         if (code === 'requirements_too_short') return t('match.error_short');
         if (code === 'quota_exceeded') return t('match.error_quota');
         if (code === 'pro_required') return t('match.error_pro');
         if (status === 503) return t('match.error_unavailable');
-        return t('common.error');
+        const detail = aiErrorCode(status, body);
+        return detail ? `${t('common.error')} (${t('common.error_code', { code: detail })})` : t('common.error');
     }
 
     async function handleMatch() {
@@ -338,7 +341,7 @@ export default function DashboardPage() {
                 signal: AbortSignal.timeout(60000),
             });
             const data = await res.json().catch(() => ({}));
-            if (!res.ok) setMatchError(aiErrorMessage(res.status, data.error));
+            if (!res.ok) setMatchError(aiErrorMessage(res.status, data));
             else setMatch(data);
         } catch {
             setMatchError(t('common.error'));
@@ -359,7 +362,7 @@ export default function DashboardPage() {
             });
             const data = await res.json().catch(() => ({}));
             if (res.ok && data.id) router.push(`/dashboard/cv/tailored/${data.id}`);
-            else setMatchError(aiErrorMessage(res.status, data.error));
+            else setMatchError(aiErrorMessage(res.status, data));
         } catch {
             setMatchError(t('common.error'));
         } finally {
