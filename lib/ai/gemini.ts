@@ -5,8 +5,8 @@
 
 import { ApiError, GoogleGenAI, type Part } from '@google/genai';
 
-/** Alias que Google mantiene apuntando a su Flash más reciente. Se puede fijar con GEMINI_MODEL. */
-export const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-flash-latest';
+/** Modelo por defecto. Se puede cambiar sin tocar el código con la variable GEMINI_MODEL. */
+export const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
 
 /** Motivo corto del fallo, para mostrarlo al usuario y buscarlo en los logs. */
 export type AiFailReason = 'truncated' | 'timeout' | 'invalid_json' | 'empty' | 'blocked' | `http_${number}` | 'network';
