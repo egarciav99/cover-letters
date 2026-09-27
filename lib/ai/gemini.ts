@@ -33,11 +33,12 @@ export function isAiConfigured(): boolean {
 type Mode = 'schema' | 'json' | 'plain';
 const MODES: Mode[] = ['schema', 'json', 'plain'];
 /**
- * Primer modo que el modelo configurado acepta. Algunos modelos rechazan con un 400 genérico
- * ("invalid argument") el esquema JSON o parámetros concretos: entonces se prueba el siguiente
- * y se recuerda (mientras la instancia del servidor siga viva) para no repetir el intento fallido.
+ * Primer modo que se prueba. gemini-3.8-flash rechaza el esquema estricto con un 400 genérico
+ * ("invalid argument") y funciona en modo JSON, así que se empieza ahí. Con GEMINI_STRICT_SCHEMA=true
+ * se prueba antes el esquema (útil con otros modelos). Si un modo da 400 se pasa al siguiente y se
+ * recuerda mientras la instancia del servidor siga viva.
  */
-let startMode = 0;
+let startMode = process.env.GEMINI_STRICT_SCHEMA === 'true' ? 0 : 1;
 
 /** El JSON de la respuesta, aunque venga dentro de un bloque de código o con texto alrededor. */
 function extractJson(text: string): string {

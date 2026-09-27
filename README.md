@@ -45,6 +45,7 @@ WEBHOOK_SECRET=shared_secret_with_n8n        # n8n → app (callback)
 N8N_WEBHOOK_SECRET=another_long_secret       # app → n8n (Webhook node Header Auth)
 GEMINI_API_KEY=your_gemini_api_key           # CV fit score and tailored CV (paid tier)
 GEMINI_MODEL=gemini-3.8-flash                # optional
+GEMINI_STRICT_SCHEMA=false                   # optional: true to try strict JSON schema first (gemini-3.8-flash rejects it)
 
 # Legal notice (shown only when set)
 NEXT_PUBLIC_CONTACT_EMAIL=you@example.com
