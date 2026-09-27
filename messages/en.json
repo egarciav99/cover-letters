@@ -318,7 +318,11 @@
         "import_error_file_too_large": "The PDF is larger than 4 MB.",
         "import_error_not_pdf": "The file is not a valid PDF.",
         "import_error_quota_exceeded": "You've reached the monthly import limit.",
-        "import_error_ai_not_configured": "Import is not available right now."
+        "import_error_ai_not_configured": "Import is not available right now.",
+        "fit_label": "Fit on one page when possible",
+        "fit_yes": "Fits on one page.",
+        "fit_compacted": "Compacted (less white space) to fit on one page.",
+        "fit_no": "It doesn't fit on one page even compacted: it takes {count} pages. Shorten some achievements to make it fit."
     },
     "match": {
         "title": "Does your CV fit this job?",

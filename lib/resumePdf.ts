@@ -8,6 +8,13 @@ import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from 'pdf
 import { RESUME_LABELS, bulletLines, dateRange, type ResumeData, type ResumeLanguage } from './resume';
 
 const A4 = { w: 595.28, h: 841.89 };
+
+/** Equivalentes en texto para caracteres que las fuentes estándar del PDF no pueden escribir. */
+const SYMBOLS: Record<string, string> = {
+    '\u2192': '->', '\u2190': '<-', '\u2194': '<->', '\u21D2': '=>', '\u21D0': '<=', '\u2191': '^', '\u2193': 'v',
+    '\u2264': '<=', '\u2265': '>=', '\u2260': '!=', '\u2248': '~', '\u2212': '-', '\u2715': 'x', '\u2713': '', '\u2714': '',
+    '\u2605': '*', '\u25CF': '\u2022', '\u25AA': '\u2022', '\u25B8': '\u2022', '\u2023': '\u2022', '\u2011': '-', '\u00A0': ' ',
+};
 const MARGIN = 50;
 const TEXT = rgb(0.12, 0.12, 0.14);
 const MUTED = rgb(0.4, 0.42, 0.46);
@@ -36,6 +43,8 @@ export async function renderResumeTextPdf(d: ResumeData, lang: ResumeLanguage, a
                     try { regular.encodeText(ch); okChars.set(ch, true); } catch { okChars.set(ch, false); }
                 }
                 if (okChars.get(ch)) return ch;
+                // Flechas y signos habituales en los CV que la fuente estándar no tiene.
+                if (SYMBOLS[ch] !== undefined) return SYMBOLS[ch];
                 // Emojis y símbolos se quitan; otras letras (p. ej. chino) quedan como "?".
                 if (/[\p{Extended_Pictographic}‍️]/u.test(ch)) return '';
                 const plain = ch.normalize('NFD').replace(/[\u0300-\u036f]/g, '');

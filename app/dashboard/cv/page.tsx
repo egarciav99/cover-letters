@@ -8,12 +8,13 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import DesignPanel from '@/components/editor/DesignPanel';
 import { DEFAULT_STYLE, loadStyle, type LetterStyle } from '@/lib/letterTemplates';
+import FitOnePage from '@/components/resume/FitOnePage';
 import {
     EMPTY_RESUME, RESUME_LANGUAGES, isResumeLanguage, isResumeUsable, newId,
-    type ResumeData, type ResumeLanguage,
+    type ResumeData, type ResumeLanguage, type ResumeStyle,
 } from '@/lib/resume';
 import { downloadPagesPdf } from '@/lib/pdfExport';
-import { resumeFileName, useResumeHtml } from '@/components/resume/useResumeHtml';
+import { buildResumeHtml, resumeFileName, useResumeHtml } from '@/components/resume/useResumeHtml';
 import { aiErrorCode } from '@/lib/aiErrorCode';
 
 interface TailoredItem {
@@ -38,7 +39,7 @@ export default function ResumeBuilderPage() {
     const [skillsText, setSkillsText] = useState('');
     const [language, setLanguage] = useState<ResumeLanguage>(isResumeLanguage(locale) ? locale : 'en');
     const [title, setTitle] = useState('');
-    const [style, setStyle] = useState<LetterStyle>(DEFAULT_STYLE);
+    const [style, setStyle] = useState<ResumeStyle>({ ...DEFAULT_STYLE, fitOnePage: true });
     const [avatarUrl, setAvatarUrl] = useState('');
     const [plan, setPlan] = useState<'free' | 'pro'>('free');
     const [exists, setExists] = useState(false);
@@ -94,7 +95,7 @@ export default function ResumeBuilderPage() {
                     setSavedAt(body.resume.updated_at);
                 } else {
                     // CV nuevo: se rellena con los datos del perfil y el diseño de las cartas.
-                    setStyle(loadStyle());
+                    setStyle({ ...loadStyle(), fitOnePage: true });
                     setData({
                         ...EMPTY_RESUME,
                         personal: {
@@ -131,7 +132,7 @@ export default function ResumeBuilderPage() {
         footer: plan === 'free' ? t('footer_free') : undefined,
     }), [language, avatarUrl, plan, t]);
 
-    const { html, pageCount } = useResumeHtml(data, style, options, !loading);
+    const { html, pageCount, density, fits } = useResumeHtml(data, style, options, !loading, style.fitOnePage);
 
     function update(patch: Partial<ResumeData>) {
         setData((d) => ({ ...d, ...patch }));
@@ -180,8 +181,8 @@ export default function ResumeBuilderPage() {
         update({ skills: text.split(/[,\n]/).map((s) => s.trim()).filter(Boolean) });
     }
 
-    function updateStyle(next: LetterStyle) {
-        setStyle(next);
+    function updateStyle(next: Partial<ResumeStyle>) {
+        setStyle((s) => ({ ...s, ...next }));
         setDirty(true);
     }
 
@@ -268,7 +269,8 @@ export default function ResumeBuilderPage() {
     async function handleDownload() {
         setDownloading(true);
         try {
-            await downloadPagesPdf(html, style.font, resumeFileName(data.personal.fullName));
+            // Se reparte en el momento de descargar: nunca con un cálculo anterior de la vista previa.
+            await downloadPagesPdf(await buildResumeHtml(data, style, options, style.fitOnePage), style.font, resumeFileName(data.personal.fullName));
         } catch (err) {
             console.error('Resume PDF error:', err);
             setError(tc('common.error'));
@@ -373,7 +375,9 @@ export default function ResumeBuilderPage() {
                     pages={pageCount}
                     title={t('design_title')}
                     photoHint={t('photo_hint')}
-                />
+                >
+                    <FitOnePage checked={style.fitOnePage} onChange={(fitOnePage) => updateStyle({ fitOnePage })} density={density} fits={fits} pageCount={pageCount} />
+                </DesignPanel>
 
                 <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
                     <section className="card" style={{ borderColor: 'rgba(59, 130, 246, 0.35)' }}>

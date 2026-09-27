@@ -15,6 +15,8 @@ interface DesignPanelProps {
     /** Texto bajo "Mostrar foto"; por defecto, el de la carta. */
     photoHint?: string;
     title?: string;
+    /** Controles extra bajo las opciones de diseño (p. ej. "Ajustar a una página" en el CV). */
+    children?: React.ReactNode;
 }
 
 const PAGE_W = 794;
@@ -39,7 +41,7 @@ function Thumb({ id, accent }: { id: TemplateId; accent: string }) {
     return <div style={box}><div style={{ padding: 6 }}>{line('60%', { height: 5, background: '#111827' })}{line('20%', { background: accent })}<div style={{ height: 6 }} />{lines}</div></div>;
 }
 
-export default function DesignPanel({ value, onChange, previewHtml, pages = 1, photoHint, title }: DesignPanelProps) {
+export default function DesignPanel({ value, onChange, previewHtml, pages = 1, photoHint, title, children }: DesignPanelProps) {
     const t = useTranslations('design');
     const [showPreview, setShowPreview] = useState(true);
     const boxRef = useRef<HTMLDivElement>(null);
@@ -155,6 +157,7 @@ export default function DesignPanel({ value, onChange, previewHtml, pages = 1, p
                         {t('show_photo')}
                     </label>
                     <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.5, marginTop: '-8px' }}>{photoHint || t('photo_hint')}</p>
+                    {children}
                 </div>
 
                 {showPreview && (

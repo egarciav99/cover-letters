@@ -14,15 +14,21 @@ export const PAGE_W = 794;
 export const PAGE_H = 1123;
 /** Margen superior del contenido en las páginas 2 y siguientes. */
 const CONT_TOP = 52;
-/** Margen inferior de todas las páginas (ahí va el pie). */
+/** Margen inferior de todas las páginas (ahí va el pie). En los niveles compactos, algo menor. */
 const BOTTOM = 52;
+const BOTTOM_COMPACT = 36;
+export const bottomFor = (density = 0) => (density >= 2 ? BOTTOM_COMPACT : BOTTOM);
 
 export interface ResumeRenderOptions {
     language: ResumeLanguage;
     avatarUrl: string;
     /** Texto pequeño al pie de cada página (plan gratis). */
     footer?: string;
+    /** Nivel de compactación para que quepa en una página: 0 normal, hasta MAX_DENSITY. */
+    density?: number;
 }
+
+export const MAX_DENSITY = 3;
 
 interface Parts {
     /** Bloques del cuerpo principal, en orden. */
@@ -125,7 +131,7 @@ function buildParts(d: ResumeData, s: LetterStyle, lang: ResumeLanguage): Parts 
     return { blocks, side: sideSections.join('') };
 }
 
-function css(s: LetterStyle): string {
+function templateCss(s: LetterStyle): string {
     const f = FONTS[s.font];
     const a = s.accent;
     const base = `
@@ -205,6 +211,57 @@ function css(s: LetterStyle): string {
     `;
 }
 
+/**
+ * Reglas extra para que el CV quepa en una página. Primero se quita espacio en blanco
+ * (separaciones, cabecera, foto), luego márgenes laterales y, solo al final, un poco de letra.
+ */
+function compactCss(s: LetterStyle, level: number): string {
+    if (level <= 0) return '';
+    let out = `
+        .cvdoc .pdf-page { line-height: 1.4; }
+        .cvdoc .cv-block { padding-bottom: 8px; }
+        .cvdoc .cv-h { margin-bottom: 6px; padding-bottom: 3px; }
+        .cvdoc .cv-text p { margin-bottom: 3px; }
+        .cvdoc .cv-bullets li { margin-bottom: 1px; }
+        .cvdoc .cv-item .cv-text, .cvdoc .cv-item .cv-bullets { margin-top: 3px; }
+    `;
+    out += {
+        executive: `.cvdoc .head { padding: 20px 52px; } .cvdoc .avatar { width: 80px; height: 80px; } .cvdoc .first { padding-top: 18px; }`,
+        classic: `.cvdoc .top { padding: 28px 64px 10px; } .cvdoc .avatar { width: 60px; height: 60px; margin-bottom: 6px; } .cvdoc .top-rule { margin-bottom: 14px; }`,
+        modern: `.cvdoc .side { padding: 32px 22px; } .cvdoc .avatar { width: 100px; height: 100px; margin-bottom: 14px; } .cvdoc .first { padding-top: 34px; }`,
+        minimal: `.cvdoc .top { padding: 40px 72px 18px; } .cvdoc .avatar { width: 70px; height: 70px; }`,
+    }[s.template];
+    if (level >= 2) {
+        out += `.cvdoc .pdf-page { line-height: 1.35; } .cvdoc .cv-block { padding-bottom: 6px; }`;
+        out += {
+            executive: `.cvdoc .main { padding-left: 40px; padding-right: 40px; } .cvdoc .head { padding: 18px 40px; }`,
+            classic: `.cvdoc .main { padding-left: 44px; padding-right: 44px; } .cvdoc .top { padding: 24px 44px 8px; } .cvdoc .top-rule { margin: 0 44px 12px; }`,
+            modern: `.cvdoc .main { padding-left: 30px; padding-right: 30px; } .cvdoc .side { width: 210px; }`,
+            minimal: `.cvdoc .main { padding-left: 48px; padding-right: 48px; } .cvdoc .top { padding: 32px 48px 14px; }`,
+        }[s.template];
+        if (s.template === 'classic') out += `.cvdoc .cv-h { letter-spacing: 2px; } .cvdoc .cv-h::after { margin-top: 3px; width: 28px; }`;
+    }
+    if (level >= 3) {
+        out += `
+            .cvdoc .pdf-page { font-size: 10px; line-height: 1.32; }
+            .cvdoc .cv-item-title { font-size: 10.5px; }
+            .cvdoc .cv-h { font-size: 10.5px; }
+            .cvdoc .name { font-size: 22px; }
+        `;
+        out += {
+            executive: `.cvdoc .head { padding: 16px 40px; } .cvdoc .avatar { width: 68px; height: 68px; }`,
+            classic: `.cvdoc .top { padding: 18px 44px 6px; } .cvdoc .avatar { width: 52px; height: 52px; margin-bottom: 4px; } .cvdoc .headline { margin: 2px 0 4px; } .cvdoc .top-rule { margin-bottom: 10px; }`,
+            modern: `.cvdoc .avatar { width: 88px; height: 88px; }`,
+            minimal: `.cvdoc .top { padding: 26px 48px 12px; } .cvdoc .avatar { width: 60px; height: 60px; }`,
+        }[s.template];
+    }
+    return out;
+}
+
+function css(s: LetterStyle, density = 0): string {
+    return templateCss(s) + compactCss(s, Math.min(MAX_DENSITY, Math.max(0, density)));
+}
+
 /** Cabecera de la primera página (y barra lateral en la plantilla Moderna). */
 function firstPage(d: ResumeData, s: LetterStyle, o: ResumeRenderOptions, side: string, main: string): string {
     const p = d.personal;
@@ -249,7 +306,7 @@ function footer(o: ResumeRenderOptions, index: number, total: number): string {
 /** HTML con todo el contenido en una sola página alta, para medir los bloques. */
 export function renderResumeMeasureHtml(d: ResumeData, s: LetterStyle, o: ResumeRenderOptions): string {
     const { blocks, side } = buildParts(d, s, o.language);
-    return `<div class="cvdoc measure"><style>${css(s)}</style>
+    return `<div class="cvdoc measure"><style>${css(s, o.density)}</style>
         <div class="pdf-page">${firstPage(d, s, o, side, blocks.join(''))}</div></div>`;
 }
 
@@ -261,28 +318,31 @@ export function renderResumeHtml(d: ResumeData, s: LetterStyle, o: ResumeRenderO
         const main = idx.map((b) => blocks[b] || '').join('');
         return `<div class="pdf-page">${i === 0 ? firstPage(d, s, o, side, main) : nextPage(s, main)}${footer(o, i, groups.length)}</div>`;
     }).join('');
-    return `<div class="cvdoc"><style>${css(s)}</style>${html}</div>`;
+    return `<div class="cvdoc"><style>${css(s, o.density)}</style>${html}</div>`;
 }
 
 /**
  * Reparte los bloques en páginas a partir de la versión de medida ya insertada en el DOM.
  * Un bloque más alto que una página entera se coloca solo en su página.
  */
-export function paginateMeasured(root: HTMLElement): number[][] {
+export function paginateMeasured(root: HTMLElement, bottomMargin = BOTTOM): number[][] {
     const page = root.querySelector('.pdf-page') as HTMLElement | null;
     if (!page) return [];
-    const top0 = page.getBoundingClientRect().top;
+    const box = page.getBoundingClientRect();
+    // Todo se mide con getBoundingClientRect y se pasa a px de la página (794 de ancho): así el
+    // zoom del navegador, una escala de pantalla o un transform no descuadran la medida.
+    const scale = box.width > 0 ? box.width / PAGE_W : 1;
     const blocks = Array.from(page.querySelectorAll('.main .cv-block')) as HTMLElement[];
     const pages: number[][] = [[]];
-    let limit = PAGE_H - BOTTOM; // Fondo útil de la página actual, en coordenadas de la versión de medida.
+    let limit = PAGE_H - bottomMargin; // Fondo útil de la página actual, en coordenadas de la versión de medida.
     blocks.forEach((el, i) => {
         const r = el.getBoundingClientRect();
-        const top = r.top - top0;
-        const bottom = top + el.offsetHeight;
+        const top = (r.top - box.top) / scale;
+        const bottom = (r.bottom - box.top) / scale;
         const current = pages[pages.length - 1];
         if (bottom > limit && current.length > 0) {
             pages.push([i]);
-            limit = top - CONT_TOP + PAGE_H - BOTTOM;
+            limit = top - CONT_TOP + PAGE_H - bottomMargin;
         } else {
             current.push(i);
         }

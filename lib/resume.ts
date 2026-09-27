@@ -68,7 +68,7 @@ export interface Resume {
     title: string;
     language: ResumeLanguage;
     data: ResumeData;
-    style: LetterStyle;
+    style: ResumeStyle;
     updated_at: string;
 }
 
@@ -153,9 +153,13 @@ export function sanitizeResumeData(input: unknown): ResumeData {
     };
 }
 
-export function sanitizeResumeStyle(input: unknown): LetterStyle {
-    const s = (input && typeof input === 'object' ? input : {}) as Partial<LetterStyle>;
+/** Diseño del CV: el de las cartas más la opción de ajustarlo a una página. */
+export type ResumeStyle = LetterStyle & { fitOnePage: boolean };
+
+export function sanitizeResumeStyle(input: unknown): ResumeStyle {
+    const s = (input && typeof input === 'object' ? input : {}) as Partial<ResumeStyle>;
     return {
+        fitOnePage: s.fitOnePage !== false,
         template: ['executive', 'classic', 'modern', 'minimal'].includes(s.template as string) ? s.template! : DEFAULT_STYLE.template,
         accent: typeof s.accent === 'string' && /^#[0-9a-fA-F]{6}$/.test(s.accent) ? s.accent : DEFAULT_STYLE.accent,
         font: ['sans', 'serif', 'elegant'].includes(s.font as string) ? s.font! : DEFAULT_STYLE.font,
