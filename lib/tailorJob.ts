@@ -27,6 +27,8 @@ export async function runTailorJob(admin: SupabaseClient, tailoredId: string, ba
             .eq('id', tailoredId)
             .eq('status', 'pending');
         if (error) throw error;
+        // Enlaza el CV adaptado con la candidatura de esa carta, si la hay.
+        await linkTailoredToApplication(admin, tailoredId);
     } catch (err) {
         console.error('Tailor job error:', err);
         await admin.from('resumes').update({ status: 'error', error_code: 'ai_failed' }).eq('id', tailoredId).eq('status', 'pending');
@@ -46,4 +48,11 @@ export async function expireStaleTailor(admin: SupabaseClient, row: { id: string
         .select('id');
     if (data?.length && row.job?.usage_id) await refundUsage(admin, row.job.usage_id).catch(() => undefined);
     return !!data?.length;
+}
+
+async function linkTailoredToApplication(admin: SupabaseClient, tailoredId: string) {
+    const { data: row } = await admin.from('resumes').select('cover_letter_id').eq('id', tailoredId).maybeSingle();
+    if (!row?.cover_letter_id) return;
+    const { error } = await admin.from('applications').update({ resume_id: tailoredId }).eq('cover_letter_id', row.cover_letter_id);
+    if (error) console.error('Link tailored CV to application error:', error);
 }

@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
-import { Upload, Trash2, Star, FileText, LogOut, Plus, X, Clock, AlertCircle, ArrowRight, PenLine, Sparkles } from 'lucide-react';
+import { Upload, Trash2, Star, FileText, LogOut, Plus, X, Clock, AlertCircle, ArrowRight, PenLine, Sparkles, Briefcase } from 'lucide-react';
 import AdSlot from '@/components/AdSlot';
 import SiteFooter from '@/components/SiteFooter';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
@@ -482,6 +482,9 @@ export default function DashboardPage() {
             <header className="page-header">
                 <span className="logo">CoverCraft</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Link href="/dashboard/applications" className="btn btn-ghost btn-sm" id="btn-open-applications">
+                        <Briefcase size={15} /> <span className="hide-mobile">{t('applications.nav')}</span>
+                    </Link>
                     <LanguageSwitcher />
                     <div
                         onClick={() => setShowProfile(true)}
@@ -550,6 +553,18 @@ export default function DashboardPage() {
 
                     {/* LEFT: CV Manager */}
                     <div>
+                        {/* Seguimiento de candidaturas */}
+                        <Link href="/dashboard/applications" className="card" style={{ padding: '16px 20px', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', color: 'inherit', textDecoration: 'none' }}>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <Briefcase size={18} style={{ color: 'var(--accent-light)' }} />
+                                <span>
+                                    <span style={{ display: 'block', fontWeight: 700, fontSize: '15px' }}>{t('applications.title')}</span>
+                                    <span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>{t('applications.card_desc')}</span>
+                                </span>
+                            </span>
+                            <ArrowRight size={16} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+                        </Link>
+
                         {/* Mi CV (creado en la web) */}
                         <div className="card" style={{ padding: '20px', marginBottom: '28px', borderColor: 'rgba(59, 130, 246, 0.35)', background: 'rgba(59, 130, 246, 0.06)' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>

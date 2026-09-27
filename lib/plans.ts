@@ -1,9 +1,12 @@
 /** Planes de CoverCraft. Cambiar aquí los límites y el precio. */
 export const PLANS = {
-    free: { id: 'free', monthlyLimit: 3, priceEur: 0, showAds: true, ai: { match: 10, tailor: 0 } },
+    free: { id: 'free', monthlyLimit: 3, priceEur: 0, showAds: true, ai: { match: 10, tailor: 0, import: 2, interview: 0 } },
     // "Ilimitado" para el usuario, con un tope interno para controlar el coste de la IA.
-    pro: { id: 'pro', monthlyLimit: 100, priceEur: 4.99, showAds: false, ai: { match: 200, tailor: 100 } },
+    pro: { id: 'pro', monthlyLimit: 100, priceEur: 4.99, showAds: false, ai: { match: 200, tailor: 100, import: 20, interview: 30 } },
 } as const;
+
+/** Candidaturas activas en el seguimiento (plan gratis). Pro: sin límite. También en la migración 006. */
+export const FREE_APPLICATION_LIMIT = 15;
 
 /** Funciones de IA del CV con cupo mensual propio (aparte de las cartas). */
 export type AiKind = keyof (typeof PLANS)['free']['ai'];

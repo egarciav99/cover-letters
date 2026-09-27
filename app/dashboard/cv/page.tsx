@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowDown, ArrowUp, CheckCircle2, Download, FileText, Plus, Save, Sparkles, Trash2, X } from 'lucide-react';
+import { ArrowLeft, ArrowDown, ArrowUp, CheckCircle2, Download, FileText, FileUp, Plus, Save, Sparkles, Trash2, X } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import DesignPanel from '@/components/editor/DesignPanel';
@@ -47,6 +47,11 @@ export default function ResumeBuilderPage() {
     const [savedAt, setSavedAt] = useState<string | null>(null);
     const [downloading, setDownloading] = useState(false);
     const [error, setError] = useState('');
+    const [uploadedCvs, setUploadedCvs] = useState<{ id: string; label: string }[]>([]);
+    const [importCvId, setImportCvId] = useState('');
+    const [importing, setImporting] = useState(false);
+    const [importMsg, setImportMsg] = useState('');
+    const importFileRef = useRef<HTMLInputElement>(null);
     const [versions, setVersions] = useState<TailoredItem[]>([]);
 
     useEffect(() => {
@@ -54,6 +59,12 @@ export default function ResumeBuilderPage() {
             try {
                 const { data: { user } } = await supabase.auth.getUser();
                 if (!user) { router.push('/login'); return; }
+                // CVs en PDF que se pueden importar al editor.
+                supabase.from('cvs').select('id, label').is('resume_id', null).order('created_at', { ascending: false })
+                    .then(({ data: rows }) => {
+                        setUploadedCvs(rows || []);
+                        if (rows?.[0]) setImportCvId(rows[0].id);
+                    });
                 // Versiones adaptadas (plan Pro). Sin la migración 005 la consulta falla y no se muestran.
                 supabase.from('resumes').select('id, title, status, created_at, match').not('parent_id', 'is', null)
                     .order('created_at', { ascending: false }).limit(20)
@@ -171,6 +182,52 @@ export default function ResumeBuilderPage() {
     function updateStyle(next: LetterStyle) {
         setStyle(next);
         setDirty(true);
+    }
+
+    /** Rellena el formulario con un CV en PDF leído por la IA. No guarda: el usuario revisa primero. */
+    async function runImport(body: FormData | { cv_id: string }) {
+        const hasContent = data.summary.trim() || data.experience.length || data.education.length;
+        if (hasContent && !confirm(t('import_confirm'))) return;
+        setImporting(true);
+        setImportMsg('');
+        setError('');
+        try {
+            const res = await fetch('/api/resume/import', {
+                method: 'POST',
+                ...(body instanceof FormData ? { body } : { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }),
+                signal: AbortSignal.timeout(70000),
+            });
+            const result = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                const code = result.error as string;
+                setError(t(['not_a_cv', 'file_too_large', 'not_pdf', 'quota_exceeded', 'ai_not_configured'].includes(code) ? `import_error_${code}` : 'import_error'));
+                return;
+            }
+            const imported = result.data as ResumeData;
+            // Lo que el PDF no trae se mantiene (p. ej. correo o teléfono del perfil).
+            const personal = { ...data.personal };
+            (Object.keys(personal) as (keyof ResumeData['personal'])[]).forEach((k) => {
+                if (imported.personal[k]) personal[k] = imported.personal[k];
+            });
+            setData({ ...imported, personal });
+            setSkillsText(imported.skills.join(', '));
+            if (result.language) setLanguage(result.language);
+            setDirty(true);
+            setImportMsg(t('import_done'));
+        } catch {
+            setError(t('import_error'));
+        } finally {
+            setImporting(false);
+            if (importFileRef.current) importFileRef.current.value = '';
+        }
+    }
+
+    function importFile(file: File | undefined) {
+        if (!file) return;
+        if (file.size > 4 * 1024 * 1024) { setError(t('import_error_file_too_large')); return; }
+        const form = new FormData();
+        form.append('file', file);
+        runImport(form);
     }
 
     async function save(): Promise<boolean> {
@@ -312,6 +369,32 @@ export default function ResumeBuilderPage() {
                 />
 
                 <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                    <section className="card" style={{ borderColor: 'rgba(59, 130, 246, 0.35)' }}>
+                        <h2 style={{ fontSize: '17px', fontWeight: 700, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <FileUp size={17} /> {t('import_title')}
+                        </h2>
+                        <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '14px', lineHeight: 1.5 }}>{t('import_desc')}</p>
+                        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+                            {uploadedCvs.length > 0 && (
+                                <>
+                                    <select className="input" style={{ flex: '1 1 200px', width: 'auto' }} value={importCvId} onChange={(e) => setImportCvId(e.target.value)} aria-label={t('import_pick')}>
+                                        {uploadedCvs.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+                                    </select>
+                                    <button type="button" className="btn btn-secondary btn-sm" disabled={importing || !importCvId} onClick={() => runImport({ cv_id: importCvId })} id="btn-import-existing">
+                                        {importing ? <div className="spinner" /> : <Sparkles size={14} />} {t('import_button')}
+                                    </button>
+                                    <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{t('import_or')}</span>
+                                </>
+                            )}
+                            <button type="button" className="btn btn-secondary btn-sm" disabled={importing} onClick={() => importFileRef.current?.click()} id="btn-import-file">
+                                {importing && !uploadedCvs.length ? <div className="spinner" /> : <FileUp size={14} />} {t('import_upload')}
+                            </button>
+                            <input ref={importFileRef} type="file" accept="application/pdf,.pdf" hidden onChange={(e) => importFile(e.target.files?.[0])} />
+                        </div>
+                        {importing && <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '12px' }} role="status">{t('import_working')}</p>}
+                        {importMsg && <p style={{ fontSize: '13px', color: 'var(--success)', marginTop: '12px' }} role="status"><CheckCircle2 size={13} style={{ display: 'inline', verticalAlign: 'middle' }} /> {importMsg}</p>}
+                    </section>
+
                     <section className="card">
                         {sectionTitle(t('section_settings'))}
                         <div className="form-row">
@@ -453,7 +536,7 @@ export default function ResumeBuilderPage() {
                             <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '14px' }}>{t('versions_desc')}</p>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                 {versions.map((v) => (
-                                    <Link key={v.id} href={`/dashboard/cv/tailored/${v.id}`} className="card" style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', gap: '12px', alignItems: 'center' }}>
+                                    <Link key={v.id} href={`/dashboard/cv/tailored/${v.id}`} className="card" style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', gap: '12px', alignItems: 'center', color: 'inherit', textDecoration: 'none' }}>
                                         <span style={{ fontWeight: 600, fontSize: '14px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v.title}</span>
                                         <span style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
                                             {v.match?.after && <span className="badge badge-green">{v.match.after.score}/100</span>}

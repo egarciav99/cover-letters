@@ -4,6 +4,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { PLANS } from '@/lib/plans';
 import { getUserPlan, getUsageSummary } from '@/lib/usage';
 import { resumeToText, isResumeLanguage, sanitizeResumeData } from '@/lib/resume';
+import { trackLetterApplication } from '@/lib/applications';
 
 // Límites de tamaño: protegen el coste de la IA y el payload hacia n8n.
 const MAX_SHORT_FIELD = 200;
@@ -173,6 +174,8 @@ export async function POST(request: NextRequest) {
         } finally {
             clearTimeout(timeoutId);
         }
+
+        await trackLetterApplication(admin, user.id, { company, position, requirements: job_requirements, coverLetterId: coverLetter.id });
 
         return NextResponse.json({ cover_letter_id: coverLetter.id });
     } catch (error) {

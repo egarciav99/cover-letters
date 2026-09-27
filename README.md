@@ -79,6 +79,10 @@ npm run dev
   - `/api/resume/match`: fit score of the built CV against a job offer. Free plan gets the score only; Pro gets matched/missing keywords and tips. Monthly caps in `lib/plans.ts` (`ai.match`).
   - `/api/resume/tailor` (Pro, cap `ai.tailor`): creates a tailored copy of the CV (`resumes.parent_id`), returns at once and runs Gemini in the background (`after()`). The AI may only rewrite headline, profile, achievements and skill order; employers, titles, dates and education always come from the base CV. The user reviews each change at `/dashboard/cv/tailored/[id]`. Also offered as a checkbox when generating a letter.
   - Letters, fit checks and tailoring are counted separately in `generation_usage.kind`.
+- **Phase 3** (run `supabase/migrations/006_applications.sql` once):
+  - **Import CV from PDF** (`/api/resume/import`): Gemini reads a PDF (uploaded or one of "My CVs") and fills the CV builder; nothing is saved until the user clicks Save. Caps `ai.import`.
+  - **Application tracker** (`/dashboard/applications`): board by status with stats. Every generated letter creates or updates the application for that company and position. Free plan: 15 applications, enforced by a database trigger (`FREE_APPLICATION_LIMIT` must match).
+  - **Interview prep** (Pro, `/api/interview`, cap `ai.interview`): likely questions, tips and sample answers from the job description and the user's CV, saved on the application.
 - **Account deletion** (`/api/account/delete`) removes storage files and the auth user; the database cascades the rest.
 - **Public pages:** `/pricing`, `/terms`, `/privacy`, `/cookies`, `/legal` (ES/EN; FR and NL show the English text), plus `robots.txt`, `sitemap.xml` and `ads.txt`.
 - **Analytics:** Vercel Web Analytics (cookie-free). Enable it in the Vercel project.
