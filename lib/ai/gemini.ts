@@ -3,7 +3,7 @@
  * Configuración: GEMINI_API_KEY (obligatoria) y GEMINI_MODEL (opcional).
  */
 
-import { ApiError, GoogleGenAI } from '@google/genai';
+import { ApiError, GoogleGenAI, type Part } from '@google/genai';
 
 /** Alias que Google mantiene apuntando a su Flash más reciente. Se puede fijar con GEMINI_MODEL. */
 export const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-flash-latest';
@@ -30,6 +30,8 @@ export function isAiConfigured(): boolean {
 export async function generateJson<T>(opts: {
     system: string;
     prompt: string;
+    /** Archivo adjunto (p. ej. un CV en PDF), antes del texto. */
+    file?: { mimeType: string; base64: string };
     schema: Record<string, unknown>;
     maxOutputTokens?: number;
     timeoutMs?: number;
@@ -39,7 +41,9 @@ export async function generateJson<T>(opts: {
     try {
         const response = await ai.models.generateContent({
             model: GEMINI_MODEL,
-            contents: opts.prompt,
+            contents: opts.file
+                ? [{ inlineData: { mimeType: opts.file.mimeType, data: opts.file.base64 } } satisfies Part, { text: opts.prompt }]
+                : opts.prompt,
             config: {
                 systemInstruction: opts.system,
                 responseMimeType: 'application/json',

@@ -20,6 +20,7 @@ export default async function PrivacyPage() {
                     <li><strong>Perfil:</strong> nombre, teléfono, URL de LinkedIn y foto, si decides añadirlos.</li>
                     <li><strong>CV:</strong> los archivos PDF que subes, con los datos que contengan, y el CV que crees con nuestro editor (experiencia, formación, habilidades, idiomas y datos de contacto). Del CV creado generamos un PDF de texto que se guarda de forma privada para usarlo en tus cartas.</li>
                     <li><strong>Ofertas y cartas:</strong> empresa, puesto, descripción de la oferta y las cartas generadas.</li>
+                    <li><strong>Candidaturas:</strong> las que apuntas en el seguimiento (estado, fechas, enlace, notas) y, si la pides, la preparación de entrevista.</li>
                     <li><strong>Uso:</strong> fecha de cada carta generada, para aplicar el límite de tu plan.</li>
                     <li><strong>Datos técnicos:</strong> registros del servidor (dirección IP, navegador) necesarios para la seguridad del servicio.</li>
                     <li><strong>Pago (plan Pro):</strong> lo gestiona Stripe. No guardamos los datos de tu tarjeta.</li>
@@ -51,6 +52,10 @@ export default async function PrivacyPage() {
                     que has creado y el de la oferta directamente a la API de Google Gemini. El resultado (la puntuación y
                     la versión adaptada) se guarda en tu cuenta y puedes borrarlo cuando quieras. Es una ayuda: tú decides
                     qué cambios usar.
+                </p>
+                <p>
+                    Lo mismo ocurre si importas un CV en PDF (enviamos el PDF a Gemini para leerlo; los datos solo se
+                    guardan cuando pulsas Guardar) o si preparas una entrevista (enviamos la oferta y tu CV).
                 </p>
 
                 <h2>5. Con quién compartimos datos</h2>
@@ -113,6 +118,7 @@ export default async function PrivacyPage() {
                 <li><strong>Profile:</strong> name, phone, LinkedIn URL and photo, if you choose to add them.</li>
                 <li><strong>CV:</strong> the PDF files you upload and the data they contain, and the CV you build with our editor (experience, education, skills, languages and contact details). From the CV you build we create a plain-text PDF, stored privately, to use for your letters.</li>
                 <li><strong>Job offers and letters:</strong> company, position, job description and the generated letters.</li>
+                <li><strong>Applications:</strong> the ones you track (status, dates, link, notes) and, if you ask for it, the interview prep.</li>
                 <li><strong>Usage:</strong> the date of each generated letter, to apply your plan&apos;s limit.</li>
                 <li><strong>Technical data:</strong> server logs (IP address, browser) needed to keep the service secure.</li>
                 <li><strong>Payment (Pro plan):</strong> handled by Stripe. We do not store your card details.</li>
@@ -142,6 +148,10 @@ export default async function PrivacyPage() {
                 If you use the fit score or the CV tailored to a job, our server sends the text of the CV you built and of
                 the job offer directly to the Google Gemini API. The result (the score and the tailored version) is saved to
                 your account and you can delete it at any time. It is an aid: you decide which changes to use.
+            </p>
+            <p>
+                The same applies if you import a CV as a PDF (we send the PDF to Gemini to read it; the data is only saved
+                when you click Save) or prepare an interview (we send the job offer and your CV).
             </p>
 
             <h2>5. Who we share data with</h2>

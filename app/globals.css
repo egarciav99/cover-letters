@@ -406,3 +406,15 @@ textarea.input {
 @media (max-width: 700px) {
   .diff-grid { grid-template-columns: 1fr; }
 }
+
+/* Seguimiento de candidaturas */
+.stats-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.board-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; align-items: start; }
+.board-column { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; min-height: 120px; }
+@media (max-width: 1100px) {
+  .board-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .board-grid, .stats-row { grid-template-columns: 1fr; }
+}
