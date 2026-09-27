@@ -318,7 +318,11 @@
         "import_error_file_too_large": "Le PDF dépasse 4 Mo.",
         "import_error_not_pdf": "Le fichier n'est pas un PDF valide.",
         "import_error_quota_exceeded": "Vous avez atteint la limite mensuelle d'importations.",
-        "import_error_ai_not_configured": "L'importation n'est pas disponible pour le moment."
+        "import_error_ai_not_configured": "L'importation n'est pas disponible pour le moment.",
+        "fit_label": "Tenir sur une page si possible",
+        "fit_yes": "Tient sur une page.",
+        "fit_compacted": "Compacté (moins d'espace blanc) pour tenir sur une page.",
+        "fit_no": "Ne tient pas sur une page même compacté : il fait {count} pages. Raccourcissez quelques réalisations."
     },
     "match": {
         "title": "Votre CV correspond-il à cette offre ?",

@@ -318,7 +318,11 @@
         "import_error_file_too_large": "El PDF pesa más de 4 MB.",
         "import_error_not_pdf": "El archivo no es un PDF válido.",
         "import_error_quota_exceeded": "Has alcanzado el límite mensual de importaciones.",
-        "import_error_ai_not_configured": "La importación no está disponible ahora mismo."
+        "import_error_ai_not_configured": "La importación no está disponible ahora mismo.",
+        "fit_label": "Ajustar a una página cuando sea posible",
+        "fit_yes": "Cabe en una página.",
+        "fit_compacted": "Compactado (menos espacio en blanco) para que quepa en una página.",
+        "fit_no": "No cabe en una página ni compactado: ocupa {count} páginas. Acorta algunos logros para que quepa."
     },
     "match": {
         "title": "¿Encaja tu CV con esta oferta?",

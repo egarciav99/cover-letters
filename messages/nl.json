@@ -318,7 +318,11 @@
         "import_error_file_too_large": "De pdf is groter dan 4 MB.",
         "import_error_not_pdf": "Het bestand is geen geldige pdf.",
         "import_error_quota_exceeded": "Je hebt de maandlimiet voor importeren bereikt.",
-        "import_error_ai_not_configured": "Importeren is nu niet beschikbaar."
+        "import_error_ai_not_configured": "Importeren is nu niet beschikbaar.",
+        "fit_label": "Op één pagina passen indien mogelijk",
+        "fit_yes": "Past op één pagina.",
+        "fit_compacted": "Compacter gemaakt (minder witruimte) zodat het op één pagina past.",
+        "fit_no": "Past zelfs compact niet op één pagina: het beslaat {count} pagina's. Kort een paar resultaten in."
     },
     "match": {
         "title": "Past je cv bij deze vacature?",

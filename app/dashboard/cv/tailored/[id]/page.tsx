@@ -7,7 +7,8 @@ import { AlertCircle, ArrowLeft, Check, Download, FileText, Loader2, Save, Spark
 import { createClient } from '@/lib/supabase/client';
 import DesignPanel from '@/components/editor/DesignPanel';
 import { type LetterStyle } from '@/lib/letterTemplates';
-import { bulletLines, type ResumeData, type ResumeLanguage } from '@/lib/resume';
+import { bulletLines, type ResumeData, type ResumeLanguage, type ResumeStyle } from '@/lib/resume';
+import FitOnePage from '@/components/resume/FitOnePage';
 import { applyChanges, type JobInfo, type MatchResult, type TailorChanges } from '@/lib/resumeTailor';
 import { downloadPagesPdf } from '@/lib/pdfExport';
 import { buildResumeHtml, resumeFileName, useResumeHtml } from '@/components/resume/useResumeHtml';
@@ -18,7 +19,7 @@ interface Tailored {
     title: string;
     language: ResumeLanguage;
     data: ResumeData;
-    style: LetterStyle;
+    style: ResumeStyle;
     status: 'pending' | 'done' | 'error';
     error_code: string | null;
     job: JobInfo | null;
@@ -38,7 +39,7 @@ export default function TailoredResumePage() {
     const [resume, setResume] = useState<Tailored | null>(null);
     const [notFound, setNotFound] = useState(false);
     const [accepted, setAccepted] = useState<string[]>([]);
-    const [style, setStyle] = useState<LetterStyle | null>(null);
+    const [style, setStyle] = useState<ResumeStyle | null>(null);
     const [avatarUrl, setAvatarUrl] = useState('');
     const [plan, setPlan] = useState<'free' | 'pro'>('pro');
     const [dirty, setDirty] = useState(false);
@@ -91,7 +92,7 @@ export default function TailoredResumePage() {
     }), [resume?.language, avatarUrl, plan, tr]);
 
     const ready = resume?.status === 'done' && !!data && !!style;
-    const { html, pageCount } = useResumeHtml(data ?? resume?.data ?? ({} as ResumeData), style ?? ({} as LetterStyle), options, ready);
+    const { html, pageCount, density, fits } = useResumeHtml(data ?? resume?.data ?? ({} as ResumeData), style ?? ({} as ResumeStyle), options, ready, style?.fitOnePage ?? true);
 
     function toggle(key: string) {
         setAccepted((a) => (a.includes(key) ? a.filter((k) => k !== key) : [...a, key]));
@@ -122,7 +123,7 @@ export default function TailoredResumePage() {
         if (!data || !style) return;
         setDownloading(true);
         try {
-            await downloadPagesPdf(await buildResumeHtml(data, style, options), style.font, resumeFileName(data.personal.fullName, `-${(resume?.job?.company || 'oferta').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`));
+            await downloadPagesPdf(await buildResumeHtml(data, style, options, style.fitOnePage), style.font, resumeFileName(data.personal.fullName, `-${(resume?.job?.company || 'oferta').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`));
         } catch {
             setError(tc('common.error'));
         } finally {
@@ -291,12 +292,14 @@ export default function TailoredResumePage() {
                 {ready && (
                     <DesignPanel
                         value={style!}
-                        onChange={(s) => { setStyle(s); setDirty(true); }}
+                        onChange={(s) => { setStyle((prev) => ({ ...prev!, ...s })); setDirty(true); }}
                         previewHtml={html}
                         pages={pageCount}
                         title={tr('design_title')}
                         photoHint={tr('photo_hint')}
-                    />
+                    >
+                        <FitOnePage checked={style!.fitOnePage} onChange={(fitOnePage) => { setStyle((prev) => ({ ...prev!, fitOnePage })); setDirty(true); }} density={density} fits={fits} pageCount={pageCount} />
+                    </DesignPanel>
                 )}
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
