@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
         await refundUsage(admin, usageId).catch(() => undefined);
         if (MISSING_TABLE_CODES.includes(err?.code ?? '')) return NextResponse.json({ error: 'migration_missing' }, { status: 503 });
         if (err instanceof AiError) {
-            console.error('Match AI error:', err.code, err.message);
-            return NextResponse.json({ error: 'ai_failed' }, { status: 502 });
+            console.error('Match AI error:', err.code, err.reason, err.message);
+            return NextResponse.json({ error: 'ai_failed', reason: err.reason }, { status: 502 });
         }
         console.error('Match error:', err);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

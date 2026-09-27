@@ -14,6 +14,7 @@ import {
 } from '@/lib/resume';
 import { downloadPagesPdf } from '@/lib/pdfExport';
 import { resumeFileName, useResumeHtml } from '@/components/resume/useResumeHtml';
+import { aiErrorCode } from '@/lib/aiErrorCode';
 
 interface TailoredItem {
     id: string;
@@ -200,7 +201,12 @@ export default function ResumeBuilderPage() {
             const result = await res.json().catch(() => ({}));
             if (!res.ok) {
                 const code = result.error as string;
-                setError(t(['not_a_cv', 'file_too_large', 'not_pdf', 'quota_exceeded', 'ai_not_configured'].includes(code) ? `import_error_${code}` : 'import_error'));
+                if (['not_a_cv', 'file_too_large', 'not_pdf', 'quota_exceeded', 'ai_not_configured'].includes(code)) {
+                    setError(t(`import_error_${code}`));
+                } else {
+                    const detail = aiErrorCode(res.status, result) || code || `http_${res.status}`;
+                    setError(`${t('import_error')} (${tc('common.error_code', { code: detail })})`);
+                }
                 return;
             }
             const imported = result.data as ResumeData;
@@ -214,8 +220,9 @@ export default function ResumeBuilderPage() {
             if (result.language) setLanguage(result.language);
             setDirty(true);
             setImportMsg(t('import_done'));
-        } catch {
-            setError(t('import_error'));
+        } catch (err) {
+            const timedOut = err instanceof Error && (err.name === 'TimeoutError' || err.name === 'AbortError');
+            setError(`${t('import_error')} (${tc('common.error_code', { code: timedOut ? 'client_timeout' : 'network' })})`);
         } finally {
             setImporting(false);
             if (importFileRef.current) importFileRef.current.value = '';

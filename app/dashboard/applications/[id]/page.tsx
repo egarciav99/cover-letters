@@ -8,6 +8,7 @@ import { ArrowLeft, ExternalLink, FileText, MessageSquare, Save, Sparkles, Trash
 import { createClient } from '@/lib/supabase/client';
 import { STATUS_COLORS, type Application } from '@/lib/applications';
 import ApplicationForm, { draftToRow, type ApplicationDraft } from '@/components/applications/ApplicationForm';
+import { aiErrorCode } from '@/lib/aiErrorCode';
 
 export default function ApplicationDetailPage() {
     const t = useTranslations('applications');
@@ -73,7 +74,8 @@ export default function ApplicationDetailPage() {
             const body = await res.json().catch(() => ({}));
             if (!res.ok) {
                 const code = body.error as string;
-                setError(ti(['no_job_description', 'quota_exceeded', 'pro_required', 'ai_not_configured'].includes(code) ? `error_${code}` : 'error'));
+                if (['no_job_description', 'quota_exceeded', 'pro_required', 'ai_not_configured'].includes(code)) setError(ti(`error_${code}`));
+                else setError(`${ti('error')} (${tc('common.error_code', { code: aiErrorCode(res.status, body) || code || `http_${res.status}` })})`);
                 return;
             }
             setApp((a) => (a ? { ...a, interview_prep: body.prep } : a));

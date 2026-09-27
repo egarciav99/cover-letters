@@ -130,7 +130,8 @@
         "cancel": "Annuleren",
         "delete": "Verwijderen",
         "confirm_delete": "Weet je zeker dat je dit wilt verwijderen?",
-        "company_fallback": "het bedrijf"
+        "company_fallback": "het bedrijf",
+        "error_code": "code: {code}"
     },
     "terms": {
         "title": "Algemene Voorwaarden",

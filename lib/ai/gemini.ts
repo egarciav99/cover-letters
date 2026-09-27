@@ -8,8 +8,11 @@ import { ApiError, GoogleGenAI, type Part } from '@google/genai';
 /** Alias que Google mantiene apuntando a su Flash más reciente. Se puede fijar con GEMINI_MODEL. */
 export const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-flash-latest';
 
+/** Motivo corto del fallo, para mostrarlo al usuario y buscarlo en los logs. */
+export type AiFailReason = 'truncated' | 'timeout' | 'invalid_json' | 'empty' | 'blocked' | `http_${number}` | 'network';
+
 export class AiError extends Error {
-    constructor(public code: 'not_configured' | 'unavailable' | 'bad_output', message: string) {
+    constructor(public code: 'not_configured' | 'unavailable' | 'bad_output', message: string, public reason: AiFailReason = 'network') {
         super(message);
     }
 }
@@ -38,6 +41,7 @@ export async function generateJson<T>(opts: {
 }): Promise<T> {
     const ai = getClient();
     let text: string | undefined;
+    let finish: string | undefined;
     try {
         const response = await ai.models.generateContent({
             model: GEMINI_MODEL,
@@ -49,19 +53,27 @@ export async function generateJson<T>(opts: {
                 responseMimeType: 'application/json',
                 responseJsonSchema: opts.schema,
                 temperature: 0.4,
-                maxOutputTokens: opts.maxOutputTokens ?? 8192,
+                // Los modelos que "piensan" gastan de este mismo límite antes de responder: margen amplio.
+                maxOutputTokens: opts.maxOutputTokens ?? 32768,
                 abortSignal: AbortSignal.timeout(opts.timeoutMs ?? 50_000),
             },
         });
         text = response.text;
+        finish = response.candidates?.[0]?.finishReason;
+        const usage = response.usageMetadata;
+        if (finish && finish !== 'STOP') {
+            console.error(`Gemini finish=${finish} model=${GEMINI_MODEL} thoughts=${usage?.thoughtsTokenCount ?? '?'} output=${usage?.candidatesTokenCount ?? '?'}`);
+        }
     } catch (err) {
-        const detail = err instanceof ApiError ? `Gemini ${err.status}: ${err.message}` : String(err);
-        throw new AiError('unavailable', detail);
+        if (err instanceof ApiError) throw new AiError('unavailable', `Gemini ${err.status}: ${err.message}`, `http_${err.status}`);
+        const aborted = err instanceof Error && (err.name === 'AbortError' || err.name === 'TimeoutError');
+        throw new AiError('unavailable', String(err), aborted ? 'timeout' : 'network');
     }
-    if (!text) throw new AiError('bad_output', 'Empty response from Gemini');
+    if (finish === 'MAX_TOKENS') throw new AiError('bad_output', 'Gemini response was cut off (MAX_TOKENS)', 'truncated');
+    if (!text) throw new AiError('bad_output', `Empty response from Gemini (finish=${finish ?? '?'})`, finish && finish !== 'STOP' ? 'blocked' : 'empty');
     try {
         return JSON.parse(text) as T;
     } catch {
-        throw new AiError('bad_output', 'Gemini returned invalid JSON');
+        throw new AiError('bad_output', `Gemini returned invalid JSON (finish=${finish ?? '?'}, ${text.length} chars)`, 'invalid_json');
     }
 }

@@ -99,7 +99,6 @@ export async function importResumeFromPdf(pdfBase64: string): Promise<ImportedRe
         prompt: 'Extract this CV.',
         file: { mimeType: 'application/pdf', base64: pdfBase64 },
         schema: IMPORT_SCHEMA,
-        maxOutputTokens: 8192,
         timeoutMs: 50_000,
     });
 

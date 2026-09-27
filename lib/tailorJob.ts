@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Resume } from './resume';
 import { applyChanges, type JobInfo, type TailorChanges } from './resumeTailor';
 import { scoreMatch, tailorResume } from './ai/resumeAi';
+import { AiError } from './ai/gemini';
 import { refundUsage } from './usage';
 
 /** Tiempo tras el que una adaptación en `pending` se da por fallida (la función se cortó). */
@@ -31,7 +32,8 @@ export async function runTailorJob(admin: SupabaseClient, tailoredId: string, ba
         await linkTailoredToApplication(admin, tailoredId);
     } catch (err) {
         console.error('Tailor job error:', err);
-        await admin.from('resumes').update({ status: 'error', error_code: 'ai_failed' }).eq('id', tailoredId).eq('status', 'pending');
+        const reason = err instanceof AiError ? `ai_failed:${err.reason}` : 'ai_failed';
+        await admin.from('resumes').update({ status: 'error', error_code: reason }).eq('id', tailoredId).eq('status', 'pending');
         await refundUsage(admin, usageId).catch(() => undefined);
     }
 }

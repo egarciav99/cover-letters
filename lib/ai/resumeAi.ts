@@ -50,7 +50,7 @@ export async function scoreMatch(data: ResumeData, cvLanguage: ResumeLanguage, j
         ].join('\n'),
         prompt: `${jobBlock(job)}\n\n<cv>\n${resumeToText(data, cvLanguage)}\n</cv>`,
         schema: MATCH_SCHEMA,
-        maxOutputTokens: 2048,
+        maxOutputTokens: 8192,
         timeoutMs,
     });
     return sanitizeMatch(raw);
@@ -120,7 +120,6 @@ export async function tailorResume(data: ResumeData, cvLanguage: ResumeLanguage,
         ].join('\n'),
         prompt: `${jobBlock(job)}\n\n<cv_json>\n${cvJson}\n</cv_json>`,
         schema: TAILOR_SCHEMA,
-        maxOutputTokens: 8192,
         timeoutMs: 40_000,
     });
     const proposal = sanitizeProposal(raw, data);

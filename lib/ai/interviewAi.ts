@@ -58,7 +58,6 @@ export async function prepareInterview(job: JobInfo, cv: { data: ResumeData; lan
         ].join('\n'),
         prompt: `<job_offer>\nCompany: ${job.company || '-'}\nPosition: ${job.position || '-'}\nDescription:\n${job.requirements}\n</job_offer>\n\n${cv ? `<cv>\n${resumeToText(cv.data, cv.language)}\n</cv>` : '<cv>(none)</cv>'}`,
         schema: PREP_SCHEMA,
-        maxOutputTokens: 8192,
         timeoutMs: 50_000,
     });
     return {
