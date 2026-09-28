@@ -12,6 +12,7 @@ import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import ProfilePhotoCropper from '@/components/ProfilePhotoCropper';
 import ScoreBadge from '@/components/resume/ScoreBadge';
 import { aiErrorCode } from '@/lib/aiErrorCode';
+import { storagePdfName } from '@/lib/fileName';
 
 interface CV {
     id: string;
@@ -183,7 +184,7 @@ export default function DashboardPage() {
         if (!uploadFile || !uploadLabel || !user) return;
         setUploading(true);
         setError('');
-        const filePath = `${user.id}/${Date.now()}_${uploadFile.name}`;
+        const filePath = `${user.id}/${Date.now()}_${storagePdfName(uploadFile.name)}`;
         
         try {
             const { error: storageError } = await supabase.storage

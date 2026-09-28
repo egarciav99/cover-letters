@@ -4,15 +4,12 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { isResumeLanguage, isResumeUsable, sanitizeResumeData, sanitizeResumeStyle } from '@/lib/resume';
 import { renderResumeTextPdf } from '@/lib/resumePdf';
 import { MISSING_TABLE_CODES, cvStoragePath, getBaseResume } from '@/lib/resumeServer';
+import { fileSlug } from '@/lib/fileName';
 
 const MAX_BODY = 100_000;
 
 function migrationMissing(error: { code?: string } | null | undefined) {
     return !!error && MISSING_TABLE_CODES.includes(error.code ?? '');
-}
-
-function fileSlug(name: string) {
-    return name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '').toLowerCase() || 'cv';
 }
 
 export async function GET() {
