@@ -17,7 +17,7 @@ export default async function PricingPage() {
     const tl = await getTranslations('legal_ui');
 
     const free = [t('free_f1'), t('free_f2'), t('free_f3'), t('free_f5'), t('free_f6'), t('free_f4')];
-    const pro = [t('pro_f1'), t('pro_f5'), t('pro_f6'), t('pro_f2'), t('pro_f3'), t('pro_f4')];
+    const pro = [t('pro_f1'), t('pro_f5'), t('pro_f6'), t('pro_f7'), t('pro_f2'), t('pro_f3'), t('pro_f4')];
 
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
