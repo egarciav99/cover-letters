@@ -187,7 +187,7 @@
         "pro_f5": "CV tailored to every job and full fit analysis",
         "free_f6": "Import your CV from PDF and track 15 applications",
         "pro_f6": "AI interview prep and unlimited applications",
-        "pro_f7": "AI assistant in the CV builder: review, suggestions and rewrites of your summary and achievements",
+        "pro_f7": "AI assistant in the CV builder: review, chat and rewrites of your summary and achievements",
         "pro_f8": "Online CV with its own link and QR code to share it"
     },
     "footer": {
@@ -378,7 +378,27 @@
         "online_error_invalid_slug": "The link must have 3 to 50 letters, numbers or hyphens.",
         "online_error_pro_only": "The online CV is part of the Pro plan.",
         "online_error_not_usable": "Add your name and at least one experience, education entry or summary before publishing.",
-        "online_error_migration_missing": "The database is not ready for the online CV yet (migration 007)."
+        "online_error_migration_missing": "The database is not ready for the online CV yet (migration 007).",
+        "chat_open": "AI chat",
+        "chat_title": "Your CV assistant",
+        "chat_close": "Close",
+        "chat_greeting": "Hi! Tell me what you want to change or add to your CV and I will suggest the text. For example: \"I want to add that I worked as a waiter at Hotel X for 2 years\".",
+        "chat_starter_experience": "I want to add an experience",
+        "chat_starter_summary": "Improve my summary",
+        "chat_starter_skills": "Which skills should I add?",
+        "chat_placeholder": "Type your message…",
+        "chat_send": "Send",
+        "chat_note": "Each message uses one AI credit. Check the changes before saving.",
+        "chat_locked": "With the Pro plan you can chat with the AI to improve your CV: tell it what to add or change and it writes it for you.",
+        "chat_change": "Suggested change",
+        "chat_changes_ready": "Here are the suggested changes.",
+        "section_custom": "Other sections",
+        "custom_desc": "Add anything that does not fit the sections above: volunteering, projects, publications, awards, interests… They appear on the CV after certifications.",
+        "custom_title": "Section title",
+        "custom_title_placeholder": "E.g. Volunteering, Projects, Awards",
+        "custom_content": "Content (one item per line)",
+        "custom_content_placeholder": "E.g. Red Cross volunteer (2022-2024): support in food collection campaigns",
+        "add_custom": "Add section"
     },
     "match": {
         "title": "Does your CV fit this job?",

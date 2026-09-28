@@ -2,7 +2,7 @@
 export const PLANS = {
     free: { id: 'free', monthlyLimit: 3, priceEur: 0, showAds: true, ai: { match: 10, tailor: 0, import: 2, interview: 0, assist: 0 } },
     // "Ilimitado" para el usuario, con un tope interno para controlar el coste de la IA.
-    pro: { id: 'pro', monthlyLimit: 100, priceEur: 4.99, showAds: false, ai: { match: 200, tailor: 100, import: 20, interview: 30, assist: 100 } },
+    pro: { id: 'pro', monthlyLimit: 100, priceEur: 4.99, showAds: false, ai: { match: 200, tailor: 100, import: 20, interview: 30, assist: 300 } },
 } as const;
 
 /** Candidaturas activas en el seguimiento (plan gratis). Pro: sin límite. También en la migración 006. */

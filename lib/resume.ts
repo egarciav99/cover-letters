@@ -53,6 +53,13 @@ export interface ResumeCertification {
     year: string;
 }
 
+/** Sección libre (voluntariado, proyectos, publicaciones…): un elemento por línea. */
+export interface ResumeCustomSection {
+    id: string;
+    title: string;
+    content: string;
+}
+
 export interface ResumeData {
     personal: ResumePersonal;
     summary: string;
@@ -61,6 +68,7 @@ export interface ResumeData {
     skills: string[];
     languages: ResumeLanguageSkill[];
     certifications: ResumeCertification[];
+    custom: ResumeCustomSection[];
 }
 
 export interface Resume {
@@ -80,6 +88,7 @@ export const EMPTY_RESUME: ResumeData = {
     skills: [],
     languages: [],
     certifications: [],
+    custom: [],
 };
 
 // Límites: protegen la base de datos y el coste de la IA cuando el CV se usa para las cartas.
@@ -88,6 +97,7 @@ const MEDIUM = 300;
 const LONG = 3000;
 const MAX_ITEMS = 15;
 const MAX_SKILLS = 40;
+const MAX_CUSTOM = 8;
 
 export function newId(): string {
     return Math.random().toString(36).slice(2, 10);
@@ -150,6 +160,7 @@ export function sanitizeResumeData(input: unknown): ResumeData {
             issuer: str(c.issuer, SHORT),
             year: str(c.year, 30),
         })),
+        custom: list(raw.custom, MAX_CUSTOM, (c) => ({ id: id(c.id), title: str(c.title, 80), content: str(c.content, LONG) })),
     };
 }
 
@@ -226,5 +237,13 @@ export function resumeToText(d: ResumeData, lang: ResumeLanguage): string {
     section(L.skills, d.skills.length ? [d.skills.join(', ')] : []);
     section(L.languages, d.languages.filter((l) => l.name).map((l) => (l.level ? `${l.name}: ${l.level}` : l.name)));
     section(L.certifications, d.certifications.filter((c) => c.name).map((c) => [c.name, c.issuer, c.year].filter(Boolean).join(' · ')));
+    customSections(d).forEach((c) => section(c.title, c.lines.length > 1 ? c.lines.map((l) => `- ${l}`) : c.lines));
     return out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+
+/** Secciones libres con título y contenido, ya partidas en líneas. */
+export function customSections(d: ResumeData): { title: string; lines: string[] }[] {
+    return (d.custom || [])
+        .map((c) => ({ title: c.title.trim(), lines: bulletLines(c.content) }))
+        .filter((c) => c.title && c.lines.length);
 }

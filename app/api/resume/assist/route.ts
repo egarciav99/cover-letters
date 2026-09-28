@@ -5,8 +5,8 @@ import { PLANS } from '@/lib/plans';
 import { consumeAiUsage, getUserPlan, refundUsage } from '@/lib/usage';
 import { isResumeLanguage, sanitizeResumeData } from '@/lib/resume';
 import { AiError, isAiConfigured } from '@/lib/ai/gemini';
-import { improveField, reviewResume } from '@/lib/ai/resumeAssistAi';
-import type { ImproveField } from '@/lib/resumeAssist';
+import { chatResume, improveField, reviewResume } from '@/lib/ai/resumeAssistAi';
+import { sanitizeChatMessages, type ImproveField } from '@/lib/resumeAssist';
 
 export const maxDuration = 60;
 
@@ -17,6 +17,7 @@ const FIELDS: ImproveField[] = ['headline', 'summary', 'bullets'];
  * Asistente del CV (solo Pro). Trabaja con lo que hay en el editor, aunque no esté guardado.
  * - `{ action: 'review', data, language, locale }` → nota y sugerencias.
  * - `{ action: 'improve', field, item_id?, data, language }` → texto mejorado de ese campo.
+ * - `{ action: 'chat', messages, data, language, locale }` → respuesta y cambios propuestos.
  */
 export async function POST(request: NextRequest) {
     const supabase = await createClient();
@@ -30,7 +31,9 @@ export async function POST(request: NextRequest) {
 
     const action = body.action;
     const field = body.field as ImproveField;
-    if (action !== 'review' && !(action === 'improve' && FIELDS.includes(field))) return NextResponse.json({ error: 'bad_request' }, { status: 400 });
+    const messages = sanitizeChatMessages(body.messages);
+    const validAction = action === 'review' || (action === 'improve' && FIELDS.includes(field)) || (action === 'chat' && messages.at(-1)?.role === 'user');
+    if (!validAction) return NextResponse.json({ error: 'bad_request' }, { status: 400 });
     const data = sanitizeResumeData(body.data);
     const language = isResumeLanguage(body.language) ? body.language : 'en';
     const uiLanguage = typeof body.locale === 'string' ? body.locale.slice(0, 5) : language;
@@ -48,6 +51,11 @@ export async function POST(request: NextRequest) {
         if (!usageId) return NextResponse.json({ error: 'quota_exceeded', plan, limit: PLANS[plan].ai.assist }, { status: 402 });
 
         if (action === 'review') return NextResponse.json(await reviewResume(data, language, uiLanguage));
+        if (action === 'chat') {
+            const result = await chatResume(data, language, uiLanguage, messages);
+            if (!result.reply && !result.changes.length) throw new AiError('bad_output', 'Empty chat reply', 'empty');
+            return NextResponse.json(result);
+        }
 
         const improved = await improveField(data, language, field, itemId);
         if (!improved) throw new AiError('bad_output', 'Empty improved text', 'empty');

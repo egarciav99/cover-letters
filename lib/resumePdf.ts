@@ -5,7 +5,7 @@
  */
 
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
-import { RESUME_LABELS, bulletLines, dateRange, type ResumeData, type ResumeLanguage } from './resume';
+import { RESUME_LABELS, bulletLines, customSections, dateRange, type ResumeData, type ResumeLanguage } from './resume';
 
 const A4 = { w: 595.28, h: 841.89 };
 
@@ -174,6 +174,12 @@ export async function renderResumeTextPdf(d: ResumeData, lang: ResumeLanguage, a
         heading(L.certifications);
         certs.forEach((c) => bullet([c.name, c.issuer, c.year].filter(Boolean).join(' · ')));
     }
+
+    customSections(d).forEach((c) => {
+        heading(c.title);
+        if (c.lines.length > 1) c.lines.forEach((l) => bullet(l));
+        else write(c.lines[0]);
+    });
 
     return doc.save();
 }

@@ -1,6 +1,6 @@
 import { aiErrorCode } from '@/lib/aiErrorCode';
 import type { ResumeData, ResumeLanguage } from '@/lib/resume';
-import type { AssistReview, ImproveField } from '@/lib/resumeAssist';
+import type { AssistReview, ChatMessage, ChatReply, ImproveField } from '@/lib/resumeAssist';
 
 /** Error del asistente: `code` es una clave conocida (resume.assist_error_*) o un código para mostrar. */
 export class AssistError extends Error {
@@ -36,4 +36,8 @@ export function reviewResume(data: ResumeData, language: ResumeLanguage, locale:
 
 export async function improveResumeField(data: ResumeData, language: ResumeLanguage, field: ImproveField, itemId: string | null): Promise<string> {
     return (await call<{ text: string }>({ action: 'improve', field, item_id: itemId, data, language })).text;
+}
+
+export function chatWithAssistant(data: ResumeData, language: ResumeLanguage, locale: string, messages: ChatMessage[]): Promise<ChatReply> {
+    return call<ChatReply>({ action: 'chat', data, language, locale, messages });
 }

@@ -8,7 +8,7 @@
  */
 
 import { FONTS, escapeHtml, type LetterStyle } from './letterTemplates';
-import { RESUME_LABELS, bulletLines, dateRange, type ResumeData, type ResumeLanguage } from './resume';
+import { RESUME_LABELS, bulletLines, customSections, dateRange, type ResumeData, type ResumeLanguage } from './resume';
 
 export const PAGE_W = 794;
 export const PAGE_H = 1123;
@@ -128,6 +128,12 @@ function buildParts(d: ResumeData, s: LetterStyle, lang: ResumeLanguage): Parts 
         `<ul class="cv-bullets">${certs.map((c) => `<li><strong>${e(c.name)}</strong>${[c.issuer, c.year].filter((v) => v.trim()).map((v) => ` · ${e(v)}`).join('')}</li>`).join('')}</ul>`,
     ]);
 
+    customSections(d).forEach((c) => section(c.title, [
+        c.lines.length > 1
+            ? `<ul class="cv-bullets">${c.lines.map((l) => `<li>${e(l)}</li>`).join('')}</ul>`
+            : `<div class="cv-text"><p>${e(c.lines[0])}</p></div>`,
+    ]));
+
     return { blocks, side: sideSections.join('') };
 }
 
@@ -135,7 +141,7 @@ function templateCss(s: LetterStyle): string {
     const f = FONTS[s.font];
     const a = s.accent;
     const base = `
-        .cvdoc, .cvdoc * { box-sizing: border-box; margin: 0; padding: 0; }
+        .cvdoc, .cvdoc * { box-sizing: border-box; margin: 0; padding: 0; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
         .cvdoc .pdf-page { background: #fff; width: ${PAGE_W}px; height: ${PAGE_H - 1}px; position: relative; overflow: hidden;
             font-family: ${f.body}; color: #1f2937; font-size: 10.5px; line-height: 1.5; }
         .cvdoc.measure .pdf-page { height: auto; min-height: ${PAGE_H - 1}px; }

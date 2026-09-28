@@ -62,7 +62,7 @@ export default function DesignPanel({ value, onChange, previewHtml, pages = 1, p
     const set = (patch: Partial<LetterStyle>) => onChange({ ...value, ...patch });
 
     const srcDoc = `<!doctype html><html><head><meta charset="utf-8" /><link rel="stylesheet" href="${fontsHref(value.font)}" />
-        <style>html,body{margin:0;background:${pages > 1 ? '#d1d5db' : '#fff'};}.pdf-page + .pdf-page{margin-top:${PAGE_GAP}px !important;}</style></head><body>${previewHtml}</body></html>`;
+        <style>html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}html,body{margin:0;background:${pages > 1 ? '#d1d5db' : '#fff'};}.pdf-page + .pdf-page{margin-top:${PAGE_GAP}px !important;}</style></head><body>${previewHtml}</body></html>`;
 
     const chip = (active: boolean): React.CSSProperties => ({
         border: `1px solid ${active ? 'var(--accent)' : 'var(--border)'}`,

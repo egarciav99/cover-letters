@@ -30,6 +30,9 @@
 
 html {
   scroll-behavior: smooth;
+  /* Los móviles no agrandan el texto por su cuenta: el CV y la carta se miden al píxel. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {

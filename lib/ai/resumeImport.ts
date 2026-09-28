@@ -56,8 +56,14 @@ const IMPORT_SCHEMA = {
             maxItems: 15,
             items: { type: 'object', properties: { name: s, issuer: s, year: s }, required: ['name', 'issuer', 'year'], additionalProperties: false },
         },
+        other_sections: {
+            type: 'array',
+            maxItems: 8,
+            description: 'Any other section of the CV (volunteering, projects, publications, awards, interests...), with its original title and one item per entry.',
+            items: { type: 'object', properties: { title: s, items: { type: 'array', items: s, maxItems: 20 } }, required: ['title', 'items'], additionalProperties: false },
+        },
     },
-    required: ['language', 'personal', 'summary', 'experience', 'education', 'skills', 'languages', 'certifications'],
+    required: ['language', 'personal', 'summary', 'experience', 'education', 'skills', 'languages', 'certifications', 'other_sections'],
     additionalProperties: false,
 };
 
@@ -70,6 +76,7 @@ type Raw = {
     skills?: unknown[];
     languages?: Record<string, unknown>[];
     certifications?: Record<string, unknown>[];
+    other_sections?: { title?: unknown; items?: unknown[] }[];
 };
 
 export interface ImportedResume {
@@ -117,6 +124,7 @@ export async function importResumeFromPdf(pdfBase64: string): Promise<ImportedRe
         skills: (raw.skills || []).map(t).filter(Boolean),
         languages: (raw.languages || []).map((l) => ({ id: newId(), name: t(l.name), level: t(l.level) })).filter((l) => l.name),
         certifications: (raw.certifications || []).map((c) => ({ id: newId(), name: t(c.name), issuer: t(c.issuer), year: date(c.year) })).filter((c) => c.name),
+        custom: (raw.other_sections || []).map((c) => ({ id: newId(), title: t(c.title), content: (c.items || []).map(t).filter(Boolean).join('\n') })).filter((c) => c.title && c.content),
     });
     const language = RESUME_LANGUAGES.includes(raw.language as ResumeLanguage) ? (raw.language as ResumeLanguage) : null;
     const empty = !data.personal.fullName && data.experience.length === 0 && data.education.length === 0 && !data.summary;
