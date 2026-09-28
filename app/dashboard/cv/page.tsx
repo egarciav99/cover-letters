@@ -20,6 +20,7 @@ import { quickHints, type ImproveField } from '@/lib/resumeAssist';
 import ResumeAssistant from '@/components/resume/ResumeAssistant';
 import ImproveButton from '@/components/resume/ImproveButton';
 import Hint from '@/components/resume/Hint';
+import OnlineResumePanel from '@/components/resume/OnlineResumePanel';
 
 interface TailoredItem {
     id: string;
@@ -425,6 +426,8 @@ export default function ResumeBuilderPage() {
                     </section>
 
                     <ResumeAssistant data={data} language={language} plan={plan} getText={assistText} onApply={applyAssist} />
+
+                    <OnlineResumePanel plan={plan} saved={exists} dirty={dirty} fileName={resumeFileName(data.personal.fullName).replace(/\.pdf$/, '')} />
 
                     <section className="card">
                         {sectionTitle(t('section_settings'))}
