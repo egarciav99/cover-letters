@@ -187,7 +187,8 @@
         "pro_f5": "CV adapté à chaque offre et analyse complète",
         "free_f6": "Import de votre CV depuis un PDF et suivi de 15 candidatures",
         "pro_f6": "Préparation d'entretien par IA et candidatures illimitées",
-        "pro_f7": "Assistant IA dans le CV : analyse, suggestions et réécriture du profil et des réalisations"
+        "pro_f7": "Assistant IA dans le CV : analyse, suggestions et réécriture du profil et des réalisations",
+        "pro_f8": "CV en ligne avec son propre lien et un QR code pour le partager"
     },
     "footer": {
         "aria": "Informations légales et aide",
@@ -353,7 +354,31 @@
         "hint_bullets_numbers": "Aucune réalisation n'a de chiffres. Si possible, indiquez combien de personnes, d'argent ou de temps.",
         "hint_bullets_few": "Une seule réalisation, c'est peu : ajoutez-en 2 ou 3.",
         "hint_skills_few": "Ajoutez au moins 5 compétences ou outils, séparés par des virgules. Les filtres ATS les recherchent.",
-        "hint_languages_empty": "Ajoutez les langues que vous parlez et votre niveau."
+        "hint_languages_empty": "Ajoutez les langues que vous parlez et votre niveau.",
+        "online_title": "Mon CV en ligne",
+        "online_desc": "Publiez votre CV sur une page avec son propre lien et un QR code pour le partager sur LinkedIn, par e-mail ou sur papier. Chacun peut le télécharger en PDF.",
+        "online_locked": "Avec le plan Pro, vous publiez votre CV sur une page avec son propre lien et un QR code pour le partager.",
+        "online_save_first": "Enregistrez votre CV pour pouvoir le publier.",
+        "online_publish": "Publier mon CV en ligne",
+        "online_link": "Lien de votre CV",
+        "online_copy": "Copier",
+        "online_copied": "Copié",
+        "online_open": "Voir mon CV en ligne",
+        "online_edit_link": "Modifier le lien",
+        "online_cancel": "Annuler",
+        "online_show_contact": "Afficher mon e-mail et mon téléphone",
+        "online_show_contact_hint": "Désactivé par défaut pour que les robots ne récupèrent pas vos coordonnées. LinkedIn, site web et ville sont toujours affichés.",
+        "online_views": "{count, plural, =0 {Pas encore de visites} one {# visite} other {# visites}}",
+        "online_last_saved": "La dernière version enregistrée est affichée.",
+        "online_unsaved": "Vous avez des modifications non enregistrées : enregistrez-les pour qu'elles apparaissent en ligne.",
+        "online_qr_alt": "QR code de votre CV en ligne",
+        "online_qr_download": "Télécharger le QR",
+        "online_error": "Votre CV en ligne n'a pas pu être mis à jour. Réessayez.",
+        "online_error_slug_taken": "Ce lien est déjà utilisé. Essayez-en un autre.",
+        "online_error_invalid_slug": "Le lien doit comporter de 3 à 50 lettres, chiffres ou tirets.",
+        "online_error_pro_only": "Le CV en ligne fait partie du plan Pro.",
+        "online_error_not_usable": "Ajoutez votre nom et au moins une expérience, une formation ou un profil avant de publier.",
+        "online_error_migration_missing": "La base de données n'est pas encore prête pour le CV en ligne (migration 007)."
     },
     "match": {
         "title": "Votre CV correspond-il à cette offre ?",
@@ -469,5 +494,17 @@
         "error_quota_exceeded": "Vous avez atteint la limite mensuelle de préparations d'entretien.",
         "error_pro_required": "Cette fonction fait partie du plan Pro.",
         "error_ai_not_configured": "Cette fonction n'est pas disponible pour le moment."
+    },
+    "public_cv": {
+        "download": "Télécharger le PDF",
+        "loading": "Chargement du CV…",
+        "header_cta": "Créez votre CV gratuitement",
+        "cta_title": "Ce CV vous plaît ?",
+        "cta_text": "Créez le vôtre gratuitement avec CoverCraft : modèles professionnels, lettres de motivation par IA et téléchargement en PDF.",
+        "cta_button": "Créer mon CV gratuitement",
+        "unavailable_title": "Ce CV n'est pas disponible",
+        "unavailable_text": "Le lien n'existe pas ou son propriétaire ne le publie plus.",
+        "meta_fallback": "CV en ligne",
+        "meta_description": "CV de {name}, créé avec CoverCraft."
     }
 }

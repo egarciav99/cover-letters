@@ -187,7 +187,8 @@
         "pro_f5": "Cv aangepast aan elke vacature en volledige matchanalyse",
         "free_f6": "Je cv importeren uit pdf en 15 sollicitaties volgen",
         "pro_f6": "Gespreksvoorbereiding met AI en onbeperkt sollicitaties",
-        "pro_f7": "AI-assistent in de cv-bouwer: beoordeling, suggesties en herschrijven van profiel en prestaties"
+        "pro_f7": "AI-assistent in de cv-bouwer: beoordeling, suggesties en herschrijven van profiel en prestaties",
+        "pro_f8": "Online cv met eigen link en QR-code om te delen"
     },
     "footer": {
         "aria": "Juridische informatie en hulp",
@@ -353,7 +354,31 @@
         "hint_bullets_numbers": "Geen van je prestaties bevat cijfers. Voeg zo mogelijk toe hoeveel mensen, geld of tijd.",
         "hint_bullets_few": "Eén prestatie is weinig: voeg er 2 of 3 toe.",
         "hint_skills_few": "Voeg minstens 5 vaardigheden of tools toe, gescheiden door komma's. ATS-filters zoeken ernaar.",
-        "hint_languages_empty": "Voeg de talen toe die je spreekt en je niveau."
+        "hint_languages_empty": "Voeg de talen toe die je spreekt en je niveau.",
+        "online_title": "Mijn online cv",
+        "online_desc": "Publiceer je cv op een pagina met een eigen link en QR-code om het te delen via LinkedIn, e-mail of op papier. Iedereen die het opent kan het als pdf downloaden.",
+        "online_locked": "Met Pro publiceer je je cv op een pagina met een eigen link en QR-code om het te delen.",
+        "online_save_first": "Sla je cv op om het te kunnen publiceren.",
+        "online_publish": "Mijn cv online publiceren",
+        "online_link": "Link naar je cv",
+        "online_copy": "Kopiëren",
+        "online_copied": "Gekopieerd",
+        "online_open": "Mijn online cv bekijken",
+        "online_edit_link": "Link wijzigen",
+        "online_cancel": "Annuleren",
+        "online_show_contact": "Mijn e-mail en telefoon tonen",
+        "online_show_contact_hint": "Standaard uit, zodat bots je gegevens niet verzamelen. LinkedIn, website en stad worden altijd getoond.",
+        "online_views": "{count, plural, =0 {Nog geen bezoeken} one {# bezoek} other {# bezoeken}}",
+        "online_last_saved": "De laatst opgeslagen versie wordt getoond.",
+        "online_unsaved": "Je hebt niet-opgeslagen wijzigingen: sla ze op zodat ze in je online cv verschijnen.",
+        "online_qr_alt": "QR-code van je online cv",
+        "online_qr_download": "QR downloaden",
+        "online_error": "Je online cv kon niet worden bijgewerkt. Probeer het opnieuw.",
+        "online_error_slug_taken": "Die link is al in gebruik. Probeer een andere.",
+        "online_error_invalid_slug": "De link moet 3 tot 50 letters, cijfers of koppeltekens hebben.",
+        "online_error_pro_only": "Het online cv hoort bij het Pro-abonnement.",
+        "online_error_not_usable": "Voeg je naam en minstens één ervaring, opleiding of profiel toe voor je publiceert.",
+        "online_error_migration_missing": "De database is nog niet klaar voor het online cv (migratie 007)."
     },
     "match": {
         "title": "Past je cv bij deze vacature?",
@@ -469,5 +494,17 @@
         "error_quota_exceeded": "Je hebt de maandlimiet voor gespreksvoorbereidingen bereikt.",
         "error_pro_required": "Deze functie hoort bij het Pro-abonnement.",
         "error_ai_not_configured": "Deze functie is nu niet beschikbaar."
+    },
+    "public_cv": {
+        "download": "Pdf downloaden",
+        "loading": "Cv laden…",
+        "header_cta": "Maak gratis je cv",
+        "cta_title": "Vind je dit cv mooi?",
+        "cta_text": "Maak het jouwe gratis met CoverCraft: professionele sjablonen, sollicitatiebrieven met AI en pdf-download.",
+        "cta_button": "Gratis mijn cv maken",
+        "unavailable_title": "Dit cv is niet beschikbaar",
+        "unavailable_text": "De link bestaat niet of de eigenaar publiceert het niet meer.",
+        "meta_fallback": "Online cv",
+        "meta_description": "Cv van {name}, gemaakt met CoverCraft."
     }
 }

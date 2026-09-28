@@ -187,7 +187,8 @@
         "pro_f5": "CV tailored to every job and full fit analysis",
         "free_f6": "Import your CV from PDF and track 15 applications",
         "pro_f6": "AI interview prep and unlimited applications",
-        "pro_f7": "AI assistant in the CV builder: review, suggestions and rewrites of your summary and achievements"
+        "pro_f7": "AI assistant in the CV builder: review, suggestions and rewrites of your summary and achievements",
+        "pro_f8": "Online CV with its own link and QR code to share it"
     },
     "footer": {
         "aria": "Legal and help",
@@ -353,7 +354,31 @@
         "hint_bullets_numbers": "None of your achievements has numbers. If you can, add how many people, how much money or how much time.",
         "hint_bullets_few": "One achievement is not much: add 2 or 3 more.",
         "hint_skills_few": "Add at least 5 skills or tools, separated by commas. ATS filters look for them.",
-        "hint_languages_empty": "Add the languages you speak and your level."
+        "hint_languages_empty": "Add the languages you speak and your level.",
+        "online_title": "My online CV",
+        "online_desc": "Publish your CV on a page with its own link and a QR code to share it on LinkedIn, by email or on paper. Anyone who opens it can download it as a PDF.",
+        "online_locked": "With the Pro plan you publish your CV on a page with its own link and a QR code to share it.",
+        "online_save_first": "Save your CV to be able to publish it.",
+        "online_publish": "Publish my CV online",
+        "online_link": "Link to your CV",
+        "online_copy": "Copy",
+        "online_copied": "Copied",
+        "online_open": "View my online CV",
+        "online_edit_link": "Change link",
+        "online_cancel": "Cancel",
+        "online_show_contact": "Show my email and phone",
+        "online_show_contact_hint": "Off by default so bots do not collect your details. LinkedIn, website and city are always shown.",
+        "online_views": "{count, plural, =0 {No visits yet} one {# visit} other {# visits}}",
+        "online_last_saved": "It shows the last saved version.",
+        "online_unsaved": "You have unsaved changes: save them so they appear in your online CV.",
+        "online_qr_alt": "QR code of your online CV",
+        "online_qr_download": "Download QR",
+        "online_error": "Your online CV could not be updated. Please try again.",
+        "online_error_slug_taken": "That link is already taken. Try another one.",
+        "online_error_invalid_slug": "The link must have 3 to 50 letters, numbers or hyphens.",
+        "online_error_pro_only": "The online CV is part of the Pro plan.",
+        "online_error_not_usable": "Add your name and at least one experience, education entry or summary before publishing.",
+        "online_error_migration_missing": "The database is not ready for the online CV yet (migration 007)."
     },
     "match": {
         "title": "Does your CV fit this job?",
@@ -469,5 +494,17 @@
         "error_quota_exceeded": "You've reached the monthly interview prep limit.",
         "error_pro_required": "This feature is part of the Pro plan.",
         "error_ai_not_configured": "This feature is not available right now."
+    },
+    "public_cv": {
+        "download": "Download PDF",
+        "loading": "Loading CV…",
+        "header_cta": "Create your CV for free",
+        "cta_title": "Like this CV?",
+        "cta_text": "Create yours for free with CoverCraft: professional templates, AI cover letters and PDF download.",
+        "cta_button": "Create my CV for free",
+        "unavailable_title": "This CV is not available",
+        "unavailable_text": "The link does not exist or its owner no longer publishes it.",
+        "meta_fallback": "Online CV",
+        "meta_description": "CV of {name}, created with CoverCraft."
     }
 }
