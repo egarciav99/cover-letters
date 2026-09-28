@@ -16,6 +16,10 @@ import {
 import { downloadPagesPdf } from '@/lib/pdfExport';
 import { buildResumeHtml, resumeFileName, useResumeHtml } from '@/components/resume/useResumeHtml';
 import { aiErrorCode } from '@/lib/aiErrorCode';
+import { quickHints, type ImproveField } from '@/lib/resumeAssist';
+import ResumeAssistant from '@/components/resume/ResumeAssistant';
+import ImproveButton from '@/components/resume/ImproveButton';
+import Hint from '@/components/resume/Hint';
 
 interface TailoredItem {
     id: string;
@@ -181,6 +185,19 @@ export default function ResumeBuilderPage() {
         update({ skills: text.split(/[,\n]/).map((s) => s.trim()).filter(Boolean) });
     }
 
+    /** Texto de un campo que el asistente puede reescribir. */
+    function assistText(field: ImproveField, itemId: string | null): string {
+        if (field === 'headline') return data.personal.headline;
+        if (field === 'summary') return data.summary;
+        return data.experience.find((e) => e.id === itemId)?.bullets ?? '';
+    }
+
+    function applyAssist(field: ImproveField, itemId: string | null, text: string) {
+        if (field === 'headline') setPersonal('headline', text);
+        else if (field === 'summary') update({ summary: text });
+        else if (itemId) setItem('experience', itemId, { bullets: text });
+    }
+
     function updateStyle(next: Partial<ResumeStyle>) {
         setStyle((s) => ({ ...s, ...next }));
         setDirty(true);
@@ -311,6 +328,7 @@ export default function ResumeBuilderPage() {
     );
 
     const usable = isResumeUsable(data);
+    const hints = quickHints(data);
     const p = data.personal;
 
     const field = (label: string, value: string, onChange: (v: string) => void, opts: { placeholder?: string; id?: string; type?: string } = {}) => (
@@ -406,6 +424,8 @@ export default function ResumeBuilderPage() {
                         {importMsg && <p style={{ fontSize: '13px', color: 'var(--success)', marginTop: '12px' }} role="status"><CheckCircle2 size={13} style={{ display: 'inline', verticalAlign: 'middle' }} /> {importMsg}</p>}
                     </section>
 
+                    <ResumeAssistant data={data} language={language} plan={plan} getText={assistText} onApply={applyAssist} />
+
                     <section className="card">
                         {sectionTitle(t('section_settings'))}
                         <div className="form-row">
@@ -426,6 +446,10 @@ export default function ResumeBuilderPage() {
                             {field(t('full_name'), p.fullName, (v) => setPersonal('fullName', v), { id: 'resume-name' })}
                             {field(t('headline'), p.headline, (v) => setPersonal('headline', v), { placeholder: t('headline_placeholder'), id: 'resume-headline' })}
                         </div>
+                        <div style={{ marginTop: '-8px', marginBottom: '16px' }}>
+                            <Hint hint={hints.headline} />
+                            <ImproveButton field="headline" data={data} language={language} plan={plan} current={p.headline} onApply={(v) => setPersonal('headline', v)} />
+                        </div>
                         <div className="form-row">
                             {field(t('email'), p.email, (v) => setPersonal('email', v), { type: 'email' })}
                             {field(t('phone'), p.phone, (v) => setPersonal('phone', v))}
@@ -441,10 +465,13 @@ export default function ResumeBuilderPage() {
                     <section className="card">
                         {sectionTitle(t('section_summary'))}
                         <textarea className="input" value={data.summary} onChange={(e) => update({ summary: e.target.value })} placeholder={t('summary_placeholder')} style={{ minHeight: '110px' }} aria-label={t('section_summary')} />
+                        <Hint hint={hints.summary} />
+                        <ImproveButton field="summary" data={data} language={language} plan={plan} current={data.summary} onApply={(v) => update({ summary: v })} />
                     </section>
 
                     <section className="card">
                         {sectionTitle(t('section_experience'))}
+                        {hints.experience && <div style={{ marginTop: '-8px', marginBottom: '12px' }}><Hint hint={hints.experience} /></div>}
                         {data.experience.map((x, i) => (
                             <div key={x.id} style={{ borderBottom: '1px solid var(--border)', paddingBottom: '16px', marginBottom: '16px' }}>
                                 {itemTools('experience', i, x.id, data.experience.length)}
@@ -468,6 +495,8 @@ export default function ResumeBuilderPage() {
                                 <div className="form-group" style={{ marginBottom: 0 }}>
                                     <label className="input-label">{t('bullets')}</label>
                                     <textarea className="input" value={x.bullets} onChange={(e) => setItem('experience', x.id, { bullets: e.target.value })} placeholder={t('bullets_placeholder')} style={{ minHeight: '110px' }} />
+                                    <Hint hint={hints.items[x.id]} />
+                                    <ImproveButton field="bullets" itemId={x.id} data={data} language={language} plan={plan} current={x.bullets} onApply={(v) => setItem('experience', x.id, { bullets: v })} />
                                 </div>
                             </div>
                         ))}
@@ -504,10 +533,12 @@ export default function ResumeBuilderPage() {
                     <section className="card">
                         {sectionTitle(t('section_skills'))}
                         <textarea className="input" value={skillsText} onChange={(e) => updateSkills(e.target.value)} placeholder={t('skills_placeholder')} style={{ minHeight: '80px' }} aria-label={t('section_skills')} />
+                        <Hint hint={hints.skills} />
                     </section>
 
                     <section className="card">
                         {sectionTitle(t('section_languages'))}
+                        {hints.languages && <div style={{ marginTop: '-8px', marginBottom: '12px' }}><Hint hint={hints.languages} /></div>}
                         {data.languages.map((x) => (
                             <div key={x.id} className="form-row" style={{ alignItems: 'flex-end' }}>
                                 {field(t('language_name'), x.name, (v) => setItem('languages', x.id, { name: v }))}
