@@ -187,7 +187,7 @@
         "pro_f5": "CV adapté à chaque offre et analyse complète",
         "free_f6": "Import de votre CV depuis un PDF et suivi de 15 candidatures",
         "pro_f6": "Préparation d'entretien par IA et candidatures illimitées",
-        "pro_f7": "Assistant IA dans le CV : analyse, suggestions et réécriture du profil et des réalisations",
+        "pro_f7": "Assistant IA dans le CV : analyse, chat et réécriture du profil et des réalisations",
         "pro_f8": "CV en ligne avec son propre lien et un QR code pour le partager"
     },
     "footer": {
@@ -378,7 +378,27 @@
         "online_error_invalid_slug": "Le lien doit comporter de 3 à 50 lettres, chiffres ou tirets.",
         "online_error_pro_only": "Le CV en ligne fait partie du plan Pro.",
         "online_error_not_usable": "Ajoutez votre nom et au moins une expérience, une formation ou un profil avant de publier.",
-        "online_error_migration_missing": "La base de données n'est pas encore prête pour le CV en ligne (migration 007)."
+        "online_error_migration_missing": "La base de données n'est pas encore prête pour le CV en ligne (migration 007).",
+        "chat_open": "Chat IA",
+        "chat_title": "Assistant de votre CV",
+        "chat_close": "Fermer",
+        "chat_greeting": "Bonjour ! Dites-moi ce que vous voulez modifier ou ajouter à votre CV et je vous propose le texte. Par exemple : « Je veux ajouter que j'ai été serveur à l'Hôtel X pendant 2 ans ».",
+        "chat_starter_experience": "Je veux ajouter une expérience",
+        "chat_starter_summary": "Améliore mon profil",
+        "chat_starter_skills": "Quelles compétences ajouter ?",
+        "chat_placeholder": "Écrivez votre message…",
+        "chat_send": "Envoyer",
+        "chat_note": "Chaque message utilise une aide IA. Vérifiez les changements avant d'enregistrer.",
+        "chat_locked": "Avec le plan Pro, vous pouvez discuter avec l'IA pour améliorer votre CV : dites-lui quoi ajouter ou modifier et elle l'écrit pour vous.",
+        "chat_change": "Modification proposée",
+        "chat_changes_ready": "Voici les modifications proposées.",
+        "section_custom": "Autres sections",
+        "custom_desc": "Ajoutez ce qui n'entre pas dans les sections précédentes : bénévolat, projets, publications, prix, centres d'intérêt… Elles apparaissent sur le CV après les certifications.",
+        "custom_title": "Titre de la section",
+        "custom_title_placeholder": "Ex. : Bénévolat, Projets, Prix",
+        "custom_content": "Contenu (un élément par ligne)",
+        "custom_content_placeholder": "Ex. : Bénévole à la Croix-Rouge (2022-2024) : aide aux collectes alimentaires",
+        "add_custom": "Ajouter une section"
     },
     "match": {
         "title": "Votre CV correspond-il à cette offre ?",

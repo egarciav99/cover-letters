@@ -53,6 +53,14 @@ export async function buildResumeHtml(data: ResumeData, style: LetterStyle, opti
  */
 export function useResumeHtml(data: ResumeData, style: LetterStyle, options: ResumeRenderOptions, enabled = true, fit = false) {
     const [layout, setLayout] = useState<ResumeLayout>({ pages: [], density: 0, fits: null });
+    // Si una fuente termina de cargar después de medir (red lenta, sobre todo en el móvil), se vuelve a medir.
+    const [fontsVersion, setFontsVersion] = useState(0);
+
+    useEffect(() => {
+        const onFonts = () => setFontsVersion((v) => v + 1);
+        document.fonts?.addEventListener?.('loadingdone', onFonts);
+        return () => document.fonts?.removeEventListener?.('loadingdone', onFonts);
+    }, []);
 
     useEffect(() => {
         if (!enabled) return;
@@ -62,7 +70,7 @@ export function useResumeHtml(data: ResumeData, style: LetterStyle, options: Res
             if (!cancelled && result) setLayout(result);
         }, 250);
         return () => { cancelled = true; clearTimeout(timer); };
-    }, [enabled, data, style, options, fit]);
+    }, [enabled, data, style, options, fit, fontsVersion]);
 
     const html = useMemo(
         () => (enabled ? renderResumeHtml(data, style, { ...options, density: layout.density }, layout.pages) : ''),

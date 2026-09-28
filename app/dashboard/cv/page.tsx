@@ -16,11 +16,12 @@ import {
 import { downloadPagesPdf } from '@/lib/pdfExport';
 import { buildResumeHtml, resumeFileName, useResumeHtml } from '@/components/resume/useResumeHtml';
 import { aiErrorCode } from '@/lib/aiErrorCode';
-import { quickHints, type ImproveField } from '@/lib/resumeAssist';
+import { quickHints, type ChatChange, type ImproveField } from '@/lib/resumeAssist';
 import ResumeAssistant from '@/components/resume/ResumeAssistant';
 import ImproveButton from '@/components/resume/ImproveButton';
 import Hint from '@/components/resume/Hint';
 import OnlineResumePanel from '@/components/resume/OnlineResumePanel';
+import ResumeChat from '@/components/resume/ResumeChat';
 
 interface TailoredItem {
     id: string;
@@ -30,7 +31,7 @@ interface TailoredItem {
     match: { before: { score: number } | null; after: { score: number } | null } | null;
 }
 
-type ListKey = 'experience' | 'education' | 'languages' | 'certifications';
+type ListKey = 'experience' | 'education' | 'languages' | 'certifications' | 'custom';
 
 export default function ResumeBuilderPage() {
     const t = useTranslations('resume');
@@ -160,6 +161,7 @@ export default function ResumeBuilderPage() {
             education: { id: newId(), degree: '', school: '', location: '', start: '', end: '', details: '' },
             languages: { id: newId(), name: '', level: '' },
             certifications: { id: newId(), name: '', issuer: '', year: '' },
+            custom: { id: newId(), title: '', content: '' },
         }[key];
         setData((d) => ({ ...d, [key]: [...d[key], blank] }));
         setDirty(true);
@@ -197,6 +199,40 @@ export default function ResumeBuilderPage() {
         if (field === 'headline') setPersonal('headline', text);
         else if (field === 'summary') update({ summary: text });
         else if (itemId) setItem('experience', itemId, { bullets: text });
+    }
+
+    /** Aplica un cambio propuesto en el chat del asistente. */
+    function applyChatChange(c: ChatChange) {
+        switch (c.type) {
+            case 'set_headline': setPersonal('headline', c.text); return;
+            case 'set_summary': update({ summary: c.text }); return;
+            case 'update_experience': setItem('experience', c.itemId, c.fields); return;
+            case 'add_experience': {
+                const item = { id: newId(), ...c.experience };
+                // El puesto actual va arriba; uno anterior, al final (se puede mover con las flechas).
+                setData((d) => ({ ...d, experience: item.current ? [item, ...d.experience] : [...d.experience, item] }));
+                break;
+            }
+            case 'add_education':
+                setData((d) => ({ ...d, education: [...d.education, { id: newId(), ...c.education }] }));
+                break;
+            case 'add_skills': {
+                const skills = [...data.skills, ...c.skills.filter((s) => !data.skills.some((k) => k.toLowerCase() === s.toLowerCase()))];
+                setSkillsText(skills.join(', '));
+                update({ skills });
+                return;
+            }
+            case 'add_language':
+                setData((d) => ({ ...d, languages: [...d.languages, { id: newId(), name: c.name, level: c.level }] }));
+                break;
+            case 'add_certification':
+                setData((d) => ({ ...d, certifications: [...d.certifications, { id: newId(), name: c.name, issuer: c.issuer, year: c.year }] }));
+                break;
+            case 'add_section':
+                setData((d) => ({ ...d, custom: [...d.custom, { id: newId(), title: c.title, content: c.content }] }));
+                break;
+        }
+        setDirty(true);
     }
 
     function updateStyle(next: Partial<ResumeStyle>) {
@@ -371,7 +407,7 @@ export default function ResumeBuilderPage() {
                 </div>
             </header>
 
-            <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '32px' }}>
+            <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '32px 32px 96px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', flexWrap: 'wrap', marginBottom: '20px' }}>
                     <p style={{ fontSize: '13px', color: dirty ? 'var(--warning, #f59e0b)' : 'var(--text-muted)' }} role="status">
                         {dirty ? t('unsaved') : savedAt ? <><CheckCircle2 size={13} style={{ display: 'inline', verticalAlign: 'middle' }} /> {t('saved')}</> : ''}
@@ -573,6 +609,24 @@ export default function ResumeBuilderPage() {
                         </button>
                     </section>
 
+                    <section className="card">
+                        {sectionTitle(t('section_custom'))}
+                        <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '-8px', marginBottom: '14px', lineHeight: 1.5 }}>{t('custom_desc')}</p>
+                        {data.custom.map((x, i) => (
+                            <div key={x.id} style={{ borderBottom: '1px solid var(--border)', paddingBottom: '12px', marginBottom: '12px' }}>
+                                {itemTools('custom', i, x.id, data.custom.length)}
+                                {field(t('custom_title'), x.title, (v) => setItem('custom', x.id, { title: v }), { placeholder: t('custom_title_placeholder') })}
+                                <div className="form-group" style={{ marginBottom: 0 }}>
+                                    <label className="input-label">{t('custom_content')}</label>
+                                    <textarea className="input" value={x.content} onChange={(e) => setItem('custom', x.id, { content: e.target.value })} placeholder={t('custom_content_placeholder')} style={{ minHeight: '90px' }} />
+                                </div>
+                            </div>
+                        ))}
+                        <button type="button" className="btn btn-secondary btn-sm" onClick={() => addItem('custom')} id="btn-add-custom">
+                            <Plus size={14} /> {t('add_custom')}
+                        </button>
+                    </section>
+
                     {versions.length > 0 && (
                         <section className="card">
                             <h2 style={{ fontSize: '17px', fontWeight: 700, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -608,6 +662,8 @@ export default function ResumeBuilderPage() {
                     </div>
                 </div>
             </div>
+
+            <ResumeChat data={data} language={language} plan={plan} onApplyChange={applyChatChange} />
         </div>
     );
 }

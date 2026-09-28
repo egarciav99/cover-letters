@@ -187,7 +187,7 @@
         "pro_f5": "CV adaptado a cada oferta y análisis de encaje completo",
         "free_f6": "Importar tu CV desde PDF y seguimiento de 15 candidaturas",
         "pro_f6": "Preparación de entrevistas con IA y candidaturas ilimitadas",
-        "pro_f7": "Asistente de IA en el CV: revisión, sugerencias y reescritura del perfil y los logros",
+        "pro_f7": "Asistente de IA en el CV: revisión, chat y reescritura del perfil y los logros",
         "pro_f8": "CV online con enlace propio y QR para compartirlo"
     },
     "footer": {
@@ -378,7 +378,27 @@
         "online_error_invalid_slug": "El enlace debe tener entre 3 y 50 letras, números o guiones.",
         "online_error_pro_only": "El CV online es parte del plan Pro.",
         "online_error_not_usable": "Añade tu nombre y al menos una experiencia, formación o perfil antes de publicarlo.",
-        "online_error_migration_missing": "Falta preparar la base de datos para el CV online (migración 007)."
+        "online_error_migration_missing": "Falta preparar la base de datos para el CV online (migración 007).",
+        "chat_open": "Chat con IA",
+        "chat_title": "Asistente de tu CV",
+        "chat_close": "Cerrar",
+        "chat_greeting": "¡Hola! Cuéntame qué quieres cambiar o añadir en tu CV y te propongo el texto. Por ejemplo: \"Quiero añadir que trabajé 2 años de camarero en el Hotel X\".",
+        "chat_starter_experience": "Quiero añadir una experiencia",
+        "chat_starter_summary": "Mejora mi perfil",
+        "chat_starter_skills": "¿Qué habilidades debería añadir?",
+        "chat_placeholder": "Escribe tu mensaje…",
+        "chat_send": "Enviar",
+        "chat_note": "Cada mensaje usa una ayuda de IA. Revisa los cambios antes de guardar.",
+        "chat_locked": "Con el plan Pro puedes hablar con la IA para mejorar tu CV: le cuentas qué quieres añadir o cambiar y te lo escribe.",
+        "chat_change": "Cambio propuesto",
+        "chat_changes_ready": "Aquí tienes los cambios propuestos.",
+        "section_custom": "Otras secciones",
+        "custom_desc": "Añade lo que no encaje en las secciones anteriores: voluntariado, proyectos, publicaciones, premios, intereses… Salen en el CV después de las certificaciones.",
+        "custom_title": "Título de la sección",
+        "custom_title_placeholder": "Ej.: Voluntariado, Proyectos, Premios",
+        "custom_content": "Contenido (un elemento por línea)",
+        "custom_content_placeholder": "Ej.: Voluntario en Cruz Roja (2022-2024): apoyo en campañas de recogida de alimentos",
+        "add_custom": "Añadir sección"
     },
     "match": {
         "title": "¿Encaja tu CV con esta oferta?",

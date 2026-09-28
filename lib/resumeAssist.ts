@@ -103,3 +103,121 @@ export function quickHints(data: ResumeData): QuickHints {
     if (!data.languages.some((l) => l.name.trim())) hints.languages = 'hint_languages_empty';
     return hints;
 }
+
+// ── Chat del asistente ──────────────────────────────────────────
+
+export interface ChatMessage {
+    role: 'user' | 'assistant';
+    text: string;
+}
+
+type ExperienceFields = { role: string; company: string; location: string; start: string; end: string; current: boolean; bullets: string };
+type EducationFields = { degree: string; school: string; location: string; start: string; end: string; details: string };
+
+/** Cambio que la IA propone en el chat. El usuario lo aplica (o no) con un botón. */
+export type ChatChange =
+    | { type: 'set_headline'; label: string; text: string }
+    | { type: 'set_summary'; label: string; text: string }
+    | { type: 'add_experience'; label: string; experience: ExperienceFields }
+    | { type: 'update_experience'; label: string; itemId: string; fields: Partial<ExperienceFields> }
+    | { type: 'add_education'; label: string; education: EducationFields }
+    | { type: 'add_skills'; label: string; skills: string[] }
+    | { type: 'add_language'; label: string; name: string; level: string }
+    | { type: 'add_certification'; label: string; name: string; issuer: string; year: string }
+    | { type: 'add_section'; label: string; title: string; content: string };
+
+export interface ChatReply {
+    reply: string;
+    changes: ChatChange[];
+}
+
+export const MAX_CHAT_MESSAGES = 12;
+export const MAX_CHAT_TEXT = 2000;
+
+/** Historial del chat que llega del cliente: solo los últimos mensajes y con longitud limitada. */
+export function sanitizeChatMessages(input: unknown): ChatMessage[] {
+    if (!Array.isArray(input)) return [];
+    return input
+        .filter((m): m is Record<string, unknown> => !!m && typeof m === 'object')
+        .map((m) => ({ role: m.role === 'assistant' ? 'assistant' as const : 'user' as const, text: typeof m.text === 'string' ? m.text.trim().slice(0, MAX_CHAT_TEXT) : '' }))
+        .filter((m) => m.text)
+        .slice(-MAX_CHAT_MESSAGES);
+}
+
+/** Limpia la respuesta del chat: tipos conocidos, textos acotados y solo experiencias que existen. */
+export function sanitizeChatReply(raw: unknown, data: ResumeData): ChatReply {
+    const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+    const ids = new Set(data.experience.map((e) => e.id));
+    const o = (v: unknown) => (v && typeof v === 'object' ? v : {}) as Record<string, unknown>;
+    const exp = (v: unknown): ExperienceFields => {
+        const x = o(v);
+        return {
+            role: str(x.role, 150), company: str(x.company, 150), location: str(x.location, 150),
+            start: str(x.start, 30), end: str(x.end, 30), current: x.current === true,
+            bullets: cleanProposed('bullets', str(x.bullets, 3000)),
+        };
+    };
+    const changes: ChatChange[] = [];
+    for (const item of Array.isArray(r.changes) ? r.changes.slice(0, 8) : []) {
+        const c = o(item);
+        const label = str(c.label, 160);
+        switch (c.type) {
+            case 'set_headline': {
+                const text = cleanProposed('headline', str(c.text, 150));
+                if (text) changes.push({ type: 'set_headline', label, text });
+                break;
+            }
+            case 'set_summary': {
+                const text = str(c.text, 3000);
+                if (text) changes.push({ type: 'set_summary', label, text });
+                break;
+            }
+            case 'add_experience': {
+                const experience = exp(c.experience);
+                if (experience.role || experience.company) changes.push({ type: 'add_experience', label, experience });
+                break;
+            }
+            case 'update_experience': {
+                const itemId = typeof c.item_id === 'string' ? c.item_id : '';
+                if (!ids.has(itemId)) break;
+                const full = exp(c.fields);
+                const given = o(c.fields);
+                const fields: Partial<ExperienceFields> = {};
+                (Object.keys(full) as (keyof ExperienceFields)[]).forEach((k) => {
+                    if (k in given && (k === 'current' ? typeof given.current === 'boolean' : full[k] !== '')) (fields as Record<string, unknown>)[k] = full[k];
+                });
+                if (Object.keys(fields).length) changes.push({ type: 'update_experience', label, itemId, fields });
+                break;
+            }
+            case 'add_education': {
+                const x = o(c.education);
+                const education = { degree: str(x.degree, 150), school: str(x.school, 150), location: str(x.location, 150), start: str(x.start, 30), end: str(x.end, 30), details: str(x.details, 3000) };
+                if (education.degree || education.school) changes.push({ type: 'add_education', label, education });
+                break;
+            }
+            case 'add_skills': {
+                const have = new Set(data.skills.map((s) => s.toLowerCase()));
+                const skills = (Array.isArray(c.skills) ? c.skills : []).map((s) => str(s, 60)).filter((s) => s && !have.has(s.toLowerCase())).slice(0, 20);
+                if (skills.length) changes.push({ type: 'add_skills', label, skills });
+                break;
+            }
+            case 'add_language': {
+                const name = str(c.name, 60);
+                if (name) changes.push({ type: 'add_language', label, name, level: str(c.level, 60) });
+                break;
+            }
+            case 'add_section': {
+                const title = str(c.title, 80);
+                const content = cleanProposed('bullets', str(c.content, 3000));
+                if (title && content) changes.push({ type: 'add_section', label, title, content });
+                break;
+            }
+            case 'add_certification': {
+                const name = str(c.name, 150);
+                if (name) changes.push({ type: 'add_certification', label, name, issuer: str(c.issuer, 150), year: str(c.year, 30) });
+                break;
+            }
+        }
+    }
+    return { reply: str(r.reply, 3000), changes };
+}

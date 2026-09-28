@@ -49,7 +49,7 @@ export default function PublicResumeView({ data, style, language, avatarUrl, lab
 
     const totalH = PAGE_H * pageCount + PAGE_GAP * (pageCount - 1);
     const srcDoc = `<!doctype html><html><head><meta charset="utf-8" /><link rel="stylesheet" href="${fontsHref(style.font)}" />
-        <style>html,body{margin:0;background:transparent;}.pdf-page{box-shadow:0 1px 3px rgba(0,0,0,.25);}.pdf-page + .pdf-page{margin-top:${PAGE_GAP}px !important;}</style></head><body>${html}</body></html>`;
+        <style>html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}html,body{margin:0;background:transparent;}.pdf-page{box-shadow:0 1px 3px rgba(0,0,0,.25);}.pdf-page + .pdf-page{margin-top:${PAGE_GAP}px !important;}</style></head><body>${html}</body></html>`;
 
     return (
         <div>

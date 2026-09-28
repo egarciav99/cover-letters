@@ -187,7 +187,7 @@
         "pro_f5": "Cv aangepast aan elke vacature en volledige matchanalyse",
         "free_f6": "Je cv importeren uit pdf en 15 sollicitaties volgen",
         "pro_f6": "Gespreksvoorbereiding met AI en onbeperkt sollicitaties",
-        "pro_f7": "AI-assistent in de cv-bouwer: beoordeling, suggesties en herschrijven van profiel en prestaties",
+        "pro_f7": "AI-assistent in de cv-bouwer: beoordeling, chat en herschrijven van profiel en prestaties",
         "pro_f8": "Online cv met eigen link en QR-code om te delen"
     },
     "footer": {
@@ -378,7 +378,27 @@
         "online_error_invalid_slug": "De link moet 3 tot 50 letters, cijfers of koppeltekens hebben.",
         "online_error_pro_only": "Het online cv hoort bij het Pro-abonnement.",
         "online_error_not_usable": "Voeg je naam en minstens één ervaring, opleiding of profiel toe voor je publiceert.",
-        "online_error_migration_missing": "De database is nog niet klaar voor het online cv (migratie 007)."
+        "online_error_migration_missing": "De database is nog niet klaar voor het online cv (migratie 007).",
+        "chat_open": "AI-chat",
+        "chat_title": "Je cv-assistent",
+        "chat_close": "Sluiten",
+        "chat_greeting": "Hoi! Vertel me wat je in je cv wilt veranderen of toevoegen en ik stel de tekst voor. Bijvoorbeeld: \"Ik wil toevoegen dat ik 2 jaar ober was bij Hotel X\".",
+        "chat_starter_experience": "Ik wil een ervaring toevoegen",
+        "chat_starter_summary": "Verbeter mijn profiel",
+        "chat_starter_skills": "Welke vaardigheden moet ik toevoegen?",
+        "chat_placeholder": "Typ je bericht…",
+        "chat_send": "Versturen",
+        "chat_note": "Elk bericht gebruikt één AI-tegoed. Controleer de wijzigingen voor je opslaat.",
+        "chat_locked": "Met Pro kun je met de AI chatten om je cv te verbeteren: vertel wat je wilt toevoegen of veranderen en de AI schrijft het voor je.",
+        "chat_change": "Voorgestelde wijziging",
+        "chat_changes_ready": "Hier zijn de voorgestelde wijzigingen.",
+        "section_custom": "Andere secties",
+        "custom_desc": "Voeg toe wat niet in de secties hierboven past: vrijwilligerswerk, projecten, publicaties, prijzen, interesses… Ze staan op het cv na de certificaten.",
+        "custom_title": "Titel van de sectie",
+        "custom_title_placeholder": "Bijv. Vrijwilligerswerk, Projecten, Prijzen",
+        "custom_content": "Inhoud (één item per regel)",
+        "custom_content_placeholder": "Bijv. Vrijwilliger bij het Rode Kruis (2022-2024): hulp bij voedselinzamelingen",
+        "add_custom": "Sectie toevoegen"
     },
     "match": {
         "title": "Past je cv bij deze vacature?",
