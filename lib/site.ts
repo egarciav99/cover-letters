@@ -10,7 +10,7 @@ export const SITE = {
         address: process.env.NEXT_PUBLIC_LEGAL_ADDRESS || '',
     },
     /** Fecha de la última revisión de los textos legales. */
-    legalUpdated: '2026-09-27',
+    legalUpdated: '2026-09-29',
 };
 
 export const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT || '';
