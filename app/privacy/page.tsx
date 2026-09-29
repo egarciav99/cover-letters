@@ -19,6 +19,7 @@ export default async function PrivacyPage() {
                     <li><strong>Cuenta:</strong> correo electrónico y contraseña (la contraseña se guarda cifrada por nuestro proveedor de autenticación; nunca la vemos).</li>
                     <li><strong>Perfil:</strong> nombre, teléfono, URL de LinkedIn y foto, si decides añadirlos.</li>
                     <li><strong>CV:</strong> los archivos PDF que subes, con los datos que contengan, y el CV que crees con nuestro editor (experiencia, formación, habilidades, idiomas y datos de contacto). Del CV creado generamos un PDF de texto que se guarda de forma privada para usarlo en tus cartas.</li>
+                    <li><strong>CV online (plan Pro, opcional):</strong> si decides publicar tu CV, cualquier persona con el enlace o el QR puede ver y descargar tu nombre, titular, foto (si la muestras), experiencia, formación y el resto del CV. El correo y el teléfono solo se muestran si activas esa opción. Contamos las visitas de forma anónima (solo un número, sin datos de quien visita).</li>
                     <li><strong>Ofertas y cartas:</strong> empresa, puesto, descripción de la oferta y las cartas generadas.</li>
                     <li><strong>Candidaturas:</strong> las que apuntas en el seguimiento (estado, fechas, enlace, notas) y, si la pides, la preparación de entrevista.</li>
                     <li><strong>Uso:</strong> fecha de cada carta generada, para aplicar el límite de tu plan.</li>
@@ -36,6 +37,7 @@ export default async function PrivacyPage() {
                         <tr><td>Cobrar el plan Pro y emitir facturas</td><td>Contrato y obligación legal (art. 6.1.b y 6.1.c)</td></tr>
                         <tr><td>Mostrar anuncios en el plan gratis</td><td>Anuncios personalizados: tu consentimiento (art. 6.1.a). Sin consentimiento, los anuncios no usan cookies de perfil.</td></tr>
                         <tr><td>Estadísticas de visitas agregadas y sin cookies</td><td>Interés legítimo (art. 6.1.f)</td></tr>
+                        <tr><td>Publicar tu CV online, solo si lo activas</td><td>Tu consentimiento (art. 6.1.a). Puedes retirarlo en cualquier momento despublicándolo.</td></tr>
                     </tbody>
                 </table>
                 <p>No vendemos tus datos ni los usamos para entrenar modelos de inteligencia artificial.</p>
@@ -57,6 +59,11 @@ export default async function PrivacyPage() {
                     Lo mismo ocurre si importas un CV en PDF (enviamos el PDF a Gemini para leerlo; los datos solo se
                     guardan cuando pulsas Guardar) o si preparas una entrevista (enviamos la oferta y tu CV).
                 </p>
+                <p>
+                    El asistente de IA del CV (revisión, "Mejorar con IA" y chat) envía a Gemini el contenido del CV que
+                    tienes en pantalla y, en el chat, los mensajes que escribes. Las conversaciones no se guardan: se
+                    pierden al cerrar la página. Los cambios que propone solo se aplican si pulsas Aplicar.
+                </p>
 
                 <h2>5. Con quién compartimos datos</h2>
                 <p>Solo con proveedores que nos prestan el servicio (encargados del tratamiento), con contrato conforme al RGPD:</p>
@@ -76,6 +83,7 @@ export default async function PrivacyPage() {
                 <h2>6. Cuánto tiempo los guardamos</h2>
                 <ul>
                     <li>Tus datos, CV y cartas: mientras tengas la cuenta. Puedes borrar cada CV o carta cuando quieras.</li>
+                    <li>CV online: deja de estar visible en cuanto lo despublicas, borras el CV, eliminas la cuenta o termina tu plan Pro.</li>
                     <li>Al eliminar tu cuenta, se borran de inmediato tu perfil, CV, cartas y registro de uso.</li>
                     <li>Datos de facturación del plan Pro: el tiempo que exige la ley (en general, 6 años).</li>
                 </ul>
@@ -117,6 +125,7 @@ export default async function PrivacyPage() {
                 <li><strong>Account:</strong> email address and password (the password is stored hashed by our authentication provider; we never see it).</li>
                 <li><strong>Profile:</strong> name, phone, LinkedIn URL and photo, if you choose to add them.</li>
                 <li><strong>CV:</strong> the PDF files you upload and the data they contain, and the CV you build with our editor (experience, education, skills, languages and contact details). From the CV you build we create a plain-text PDF, stored privately, to use for your letters.</li>
+                <li><strong>Online CV (Pro plan, optional):</strong> if you choose to publish your CV, anyone with the link or QR code can view and download your name, headline, photo (if shown), experience, education and the rest of the CV. Your email and phone are only shown if you turn that option on. We count visits anonymously (just a number, with no data about visitors).</li>
                 <li><strong>Job offers and letters:</strong> company, position, job description and the generated letters.</li>
                 <li><strong>Applications:</strong> the ones you track (status, dates, link, notes) and, if you ask for it, the interview prep.</li>
                 <li><strong>Usage:</strong> the date of each generated letter, to apply your plan&apos;s limit.</li>
@@ -134,6 +143,7 @@ export default async function PrivacyPage() {
                     <tr><td>Charge the Pro plan and issue invoices</td><td>Contract and legal obligation (Art. 6(1)(b) and (c))</td></tr>
                     <tr><td>Show ads on the free plan</td><td>Personalised ads: your consent (Art. 6(1)(a)). Without consent, ads do not use profiling cookies.</td></tr>
                     <tr><td>Aggregated, cookie-free visit statistics</td><td>Legitimate interest (Art. 6(1)(f))</td></tr>
+                    <tr><td>Publishing your CV online, only if you turn it on</td><td>Your consent (Art. 6(1)(a)). You can withdraw it at any time by unpublishing it.</td></tr>
                 </tbody>
             </table>
             <p>We do not sell your data or use it to train artificial intelligence models.</p>
@@ -152,6 +162,11 @@ export default async function PrivacyPage() {
             <p>
                 The same applies if you import a CV as a PDF (we send the PDF to Gemini to read it; the data is only saved
                 when you click Save) or prepare an interview (we send the job offer and your CV).
+            </p>
+            <p>
+                The CV AI assistant (review, "Improve with AI" and chat) sends Gemini the content of the CV on your screen
+                and, in the chat, the messages you write. Conversations are not stored: they are lost when you close the
+                page. Suggested changes are only applied if you click Apply.
             </p>
 
             <h2>5. Who we share data with</h2>
@@ -172,6 +187,7 @@ export default async function PrivacyPage() {
             <h2>6. How long we keep data</h2>
             <ul>
                 <li>Your data, CVs and letters: while you keep your account. You can delete any CV or letter at any time.</li>
+                <li>Online CV: it stops being visible as soon as you unpublish it, delete the CV, delete your account or your Pro plan ends.</li>
                 <li>When you delete your account, your profile, CVs, letters and usage records are deleted immediately.</li>
                 <li>Pro plan billing records: for as long as the law requires (generally 6 years).</li>
             </ul>
