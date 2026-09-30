@@ -30,6 +30,7 @@ export default function LandingPage() {
             <header className="page-header">
                 <span className="logo">CoverCraft</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Link href="/cv-guide" className="btn btn-ghost btn-sm hide-mobile">{t('footer.cv_guide')}</Link>
                     <Link href="/pricing" className="btn btn-ghost btn-sm hide-mobile">{t('footer.pricing')}</Link>
                     <LanguageSwitcher />
                     {!loading && (

@@ -199,7 +199,8 @@
         "legal": "Juridische informatie",
         "contact": "Contact",
         "cookie_settings": "Cookie-instellingen",
-        "created_by": "Gemaakt door"
+        "created_by": "Gemaakt door",
+        "cv_guide": "Cv-gids"
     },
     "legal_ui": {
         "back_to_home": "Terug naar home",
@@ -398,7 +399,9 @@
         "custom_title_placeholder": "Bijv. Vrijwilligerswerk, Projecten, Prijzen",
         "custom_content": "Inhoud (één item per regel)",
         "custom_content_placeholder": "Bijv. Vrijwilliger bij het Rode Kruis (2022-2024): hulp bij voedselinzamelingen",
-        "add_custom": "Sectie toevoegen"
+        "add_custom": "Sectie toevoegen",
+        "hint_headline_many": "Je titel combineert meerdere functies. Noem de exacte functie die je zoekt; zoek je twee soorten werk, maak dan twee cv's.",
+        "hint_languages_level": "Voeg het echte niveau van elke taal toe (A1 tot C2, of moedertaal) en zo mogelijk een certificaat of bewijs."
     },
     "match": {
         "title": "Past je cv bij deze vacature?",
@@ -526,5 +529,107 @@
         "unavailable_text": "De link bestaat niet of de eigenaar publiceert het niet meer.",
         "meta_fallback": "Online cv",
         "meta_description": "Cv van {name}, gemaakt met CoverCraft."
+    },
+    "cv_guide": {
+        "meta_title": "Een goed cv maken: 8 tips",
+        "meta_description": "Praktische gids voor een cv dat in 5 seconden duidelijk is: titel, profiel, resultaten met cijfers, opmaak, opleiding, talen en meer. Met voorbeelden.",
+        "title": "Een goed cv maken",
+        "intro": "Een recruiter besteedt een paar seconden aan elk cv. Deze 8 tips werken voor bijna elke functie en elk land: gebruik ze als checklist.",
+        "open": "Gids voor een goed cv",
+        "open_short": "Gids",
+        "close": "Sluiten",
+        "tip_help": "Tip: {title}",
+        "how": "Zo doe je het",
+        "bad": "Vermijd",
+        "good": "Beter",
+        "cta_title": "Pas het toe op je cv",
+        "cta_text": "De cv-bouwer van CoverCraft is gratis: strakke sjablonen, pdf-download en een ATS-vriendelijke versie.",
+        "cta_button": "Gratis mijn cv maken",
+        "cta_builder": "Naar mijn cv",
+        "full_guide": "Bekijk de volledige gids",
+        "tips": {
+            "headline": {
+                "title": "1. Een titel met de exacte functie",
+                "why": "Het eerste wat men na je naam leest. Het moet zeggen welke functie je zoekt, niet alles wat je kunt.",
+                "how": [
+                    "Eén titel per type functie: zoek je twee soorten werk, maak dan twee cv's.",
+                    "Voeg hooguit 2 of 3 specialismen of tools toe."
+                ],
+                "bad": "Ingenieur · Ontwikkelaar · Analist · Ondernemer",
+                "good": "Technicus industrieel onderhoud (PLC, pneumatiek)"
+            },
+            "summary": {
+                "title": "2. Een profiel dat je in 5 seconden leest",
+                "why": "Het profiel legt uit waarom je past. Een lang verhaal leest niemand uit.",
+                "how": [
+                    "Formule: wie je bent + je sterkste ervaring + je specialisme + wat je zoekt.",
+                    "2 tot 4 zinnen. Geen clichés als \"proactief\" of \"teamspeler\" zonder bewijs."
+                ],
+                "bad": "Al van kinds af aan ben ik gepassioneerd door technologie en nieuwe uitdagingen…",
+                "good": "Technicus met 6 jaar ervaring in onderhoud van productielijnen. Gespecialiseerd in PLC en pneumatiek. Op zoek naar een functie in preventief onderhoud."
+            },
+            "titles": {
+                "title": "3. Functietitels die men in dat land begrijpt",
+                "why": "Elk land noemt dezelfde functies anders. Herkent de recruiter je titel niet, dan weet hij niet wat je deed.",
+                "how": [
+                    "Gebruik het lokale equivalent van je functie, zonder op te blazen.",
+                    "Gebruik nooit een titel die je niet had; leg zo nodig de rol uit in de eerste regel."
+                ],
+                "bad": "\"Residente de obra\" (in een cv voor Nederland)",
+                "good": "Elektrotechnisch uitvoerder"
+            },
+            "design": {
+                "title": "4. Een rustige, leesbare opmaak",
+                "why": "Opmaak moet het lezen helpen, niet opvallen. Veel sollicitatiesystemen (ATS) lezen kolommen en grafieken slecht.",
+                "how": [
+                    "Leesbaar lettertype, ruime marges en duidelijke secties. Eén pagina bij minder dan 10 jaar ervaring.",
+                    "Een foto hangt af van het land: gebruikelijk in Nederland, Spanje en Mexico, niet in de VS of het VK.",
+                    "Stuur ook een ATS-versie (één kolom, echte tekst) als het bedrijf een sollicitatieportaal gebruikt."
+                ],
+                "bad": "Balkjes voor vaardigheidsniveau, overal iconen, gekleurde achtergronden",
+                "good": "Eén of twee rustige kolommen, één accentkleur"
+            },
+            "metrics": {
+                "title": "5. Resultaten met cijfers, geen taken",
+                "why": "\"Verantwoordelijk voor…\" zegt wat je moest doen; een resultaat zegt wat je bereikte.",
+                "how": [
+                    "Formule: werkwoord + wat je deed + meetbaar resultaat (mensen, geld, tijd, %).",
+                    "Heb je het exacte cijfer niet, gebruik dan een eerlijke schatting (\"ongeveer 40 mensen\"). Verzin nooit iets."
+                ],
+                "bad": "Verantwoordelijk voor materiaalbeheer",
+                "good": "Ruim 100 materiaalaanvragen afgehandeld en leveringsstops verminderd"
+            },
+            "relevance": {
+                "title": "6. Het meest relevante eerst",
+                "why": "De recruiter zoekt wat de vacature vraagt. Staat het op pagina twee, dan bestaat het niet.",
+                "how": [
+                    "Orden secties en resultaten per functie: wat het best past bovenaan.",
+                    "Is je bedrijf in dat land onbekend, voeg dan één regel context toe: sector, omvang of klanten."
+                ],
+                "bad": "Construcciones Norte S.A. de C.V. (verder niets)",
+                "good": "Construcciones Norte: industrieel bouwbedrijf in Noord-Mexico, ongeveer 300 medewerkers"
+            },
+            "education": {
+                "title": "7. Opleidingen en cursussen die iets toevoegen",
+                "why": "Elke regel die niets toevoegt, trekt aandacht weg van de regels die dat wel doen.",
+                "how": [
+                    "Hoogste diploma eerst. Laat de middelbare school weg als je een hogere opleiding hebt.",
+                    "Alleen cursussen die bij de functie passen.",
+                    "Vraagt de functie een officieel diploma, vermeld dan of het erkend is of in behandeling."
+                ],
+                "bad": "Tien online cursussen over losse onderwerpen",
+                "good": "Master Business Analytics en AI · beste van de lichting"
+            },
+            "languages": {
+                "title": "8. Talen en tools met echt niveau",
+                "why": "\"Engels: goed\" zegt niets. Een niveau en een bewijs wel.",
+                "how": [
+                    "Echt niveau (A1 tot C2, of moedertaal) en zo mogelijk een bewijs: certificaat of voorbeeld van gebruik.",
+                    "Tools die in dat land gebruikt worden; is de jouwe weinig bekend, noem dan het equivalent."
+                ],
+                "bad": "Engels: goed · Duits: basis",
+                "good": "Engels B2 (project in het Engels aan de klant gepresenteerd) · OPUS (vergelijkbaar met Presto)"
+            }
+        }
     }
 }

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowDown, ArrowUp, CheckCircle2, Download, FileText, FileUp, Plus, Save, Sparkles, Trash2, X } from 'lucide-react';
+import { ArrowLeft, ArrowDown, ArrowUp, BookOpen, CheckCircle2, Download, FileText, FileUp, Plus, Save, Sparkles, Trash2, X } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import DesignPanel from '@/components/editor/DesignPanel';
@@ -22,6 +22,9 @@ import ImproveButton from '@/components/resume/ImproveButton';
 import Hint from '@/components/resume/Hint';
 import OnlineResumePanel from '@/components/resume/OnlineResumePanel';
 import ResumeChat from '@/components/resume/ResumeChat';
+import CvGuideModal from '@/components/cvGuide/CvGuideModal';
+import TipButton from '@/components/cvGuide/TipButton';
+import type { CvGuideTip } from '@/lib/cvGuide';
 
 interface TailoredItem {
     id: string;
@@ -36,6 +39,8 @@ type ListKey = 'experience' | 'education' | 'languages' | 'certifications' | 'cu
 export default function ResumeBuilderPage() {
     const t = useTranslations('resume');
     const tc = useTranslations();
+    const tg = useTranslations('cv_guide');
+    const [guideTip, setGuideTip] = useState<CvGuideTip | 'all' | null>(null);
     const locale = useLocale();
     const router = useRouter();
     const supabase = createClient();
@@ -383,7 +388,11 @@ export default function ResumeBuilderPage() {
         </div>
     );
 
-    const sectionTitle = (text: string) => <h2 style={{ fontSize: '17px', fontWeight: 700, marginBottom: '16px' }}>{text}</h2>;
+    const sectionTitle = (text: string, tip?: CvGuideTip) => (
+        <h2 style={{ fontSize: '17px', fontWeight: 700, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            {text}{tip && <TipButton tip={tip} onOpen={setGuideTip} />}
+        </h2>
+    );
 
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
@@ -395,6 +404,9 @@ export default function ResumeBuilderPage() {
                     <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }} className="hide-mobile">{t('page_title')}</span>
                 </div>
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                    <button className="btn btn-ghost btn-sm" onClick={() => setGuideTip('all')} id="btn-cv-guide" title={tg('open')}>
+                        <BookOpen size={15} /> <span className="hide-mobile">{tg('open')}</span><span className="show-mobile-inline">{tg('open_short')}</span>
+                    </button>
                     <button className="btn btn-secondary btn-sm" onClick={handleDownloadAts} disabled={saving || !usable} title={t('ats_hint')} id="btn-resume-ats">
                         <FileText size={15} /> {t('download_ats')}
                     </button>
@@ -432,6 +444,9 @@ export default function ResumeBuilderPage() {
                     photoHint={t('photo_hint')}
                 >
                     <FitOnePage checked={style.fitOnePage} onChange={(fitOnePage) => updateStyle({ fitOnePage })} density={density} fits={fits} pageCount={pageCount} />
+                    <button type="button" onClick={() => setGuideTip('design')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'var(--accent-light)', fontSize: '13px', textAlign: 'left' }}>
+                        {tg('tip_help', { title: (tg.raw('tips.design') as { title: string }).title.replace(/^\d+\.\s*/, '') })}
+                    </button>
                 </DesignPanel>
 
                 <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -480,7 +495,7 @@ export default function ResumeBuilderPage() {
                     </section>
 
                     <section className="card">
-                        {sectionTitle(t('section_personal'))}
+                        {sectionTitle(t('section_personal'), 'headline')}
                         <div className="form-row">
                             {field(t('full_name'), p.fullName, (v) => setPersonal('fullName', v), { id: 'resume-name' })}
                             {field(t('headline'), p.headline, (v) => setPersonal('headline', v), { placeholder: t('headline_placeholder'), id: 'resume-headline' })}
@@ -502,14 +517,14 @@ export default function ResumeBuilderPage() {
                     </section>
 
                     <section className="card">
-                        {sectionTitle(t('section_summary'))}
+                        {sectionTitle(t('section_summary'), 'summary')}
                         <textarea className="input" value={data.summary} onChange={(e) => update({ summary: e.target.value })} placeholder={t('summary_placeholder')} style={{ minHeight: '110px' }} aria-label={t('section_summary')} />
                         <Hint hint={hints.summary} />
                         <ImproveButton field="summary" data={data} language={language} plan={plan} current={data.summary} onApply={(v) => update({ summary: v })} />
                     </section>
 
                     <section className="card">
-                        {sectionTitle(t('section_experience'))}
+                        {sectionTitle(t('section_experience'), 'metrics')}
                         {hints.experience && <div style={{ marginTop: '-8px', marginBottom: '12px' }}><Hint hint={hints.experience} /></div>}
                         {data.experience.map((x, i) => (
                             <div key={x.id} style={{ borderBottom: '1px solid var(--border)', paddingBottom: '16px', marginBottom: '16px' }}>
@@ -545,7 +560,7 @@ export default function ResumeBuilderPage() {
                     </section>
 
                     <section className="card">
-                        {sectionTitle(t('section_education'))}
+                        {sectionTitle(t('section_education'), 'education')}
                         {data.education.map((x, i) => (
                             <div key={x.id} style={{ borderBottom: '1px solid var(--border)', paddingBottom: '16px', marginBottom: '16px' }}>
                                 {itemTools('education', i, x.id, data.education.length)}
@@ -570,13 +585,13 @@ export default function ResumeBuilderPage() {
                     </section>
 
                     <section className="card">
-                        {sectionTitle(t('section_skills'))}
+                        {sectionTitle(t('section_skills'), 'languages')}
                         <textarea className="input" value={skillsText} onChange={(e) => updateSkills(e.target.value)} placeholder={t('skills_placeholder')} style={{ minHeight: '80px' }} aria-label={t('section_skills')} />
                         <Hint hint={hints.skills} />
                     </section>
 
                     <section className="card">
-                        {sectionTitle(t('section_languages'))}
+                        {sectionTitle(t('section_languages'), 'languages')}
                         {hints.languages && <div style={{ marginTop: '-8px', marginBottom: '12px' }}><Hint hint={hints.languages} /></div>}
                         {data.languages.map((x) => (
                             <div key={x.id} className="form-row" style={{ alignItems: 'flex-end' }}>
@@ -593,7 +608,7 @@ export default function ResumeBuilderPage() {
                     </section>
 
                     <section className="card">
-                        {sectionTitle(t('section_certifications'))}
+                        {sectionTitle(t('section_certifications'), 'education')}
                         {data.certifications.map((x, i) => (
                             <div key={x.id} style={{ borderBottom: '1px solid var(--border)', paddingBottom: '12px', marginBottom: '12px' }}>
                                 {itemTools('certifications', i, x.id, data.certifications.length)}
@@ -610,7 +625,7 @@ export default function ResumeBuilderPage() {
                     </section>
 
                     <section className="card">
-                        {sectionTitle(t('section_custom'))}
+                        {sectionTitle(t('section_custom'), 'relevance')}
                         <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '-8px', marginBottom: '14px', lineHeight: 1.5 }}>{t('custom_desc')}</p>
                         {data.custom.map((x, i) => (
                             <div key={x.id} style={{ borderBottom: '1px solid var(--border)', paddingBottom: '12px', marginBottom: '12px' }}>
@@ -664,6 +679,7 @@ export default function ResumeBuilderPage() {
             </div>
 
             <ResumeChat data={data} language={language} plan={plan} onApplyChange={applyChatChange} />
+            {guideTip && <CvGuideModal tip={guideTip} onClose={() => setGuideTip(null)} />}
         </div>
     );
 }

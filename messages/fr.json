@@ -199,7 +199,8 @@
         "legal": "Mentions légales",
         "contact": "Contact",
         "cookie_settings": "Paramètres des cookies",
-        "created_by": "Créé par"
+        "created_by": "Créé par",
+        "cv_guide": "Guide CV"
     },
     "legal_ui": {
         "back_to_home": "Retour à l'accueil",
@@ -398,7 +399,9 @@
         "custom_title_placeholder": "Ex. : Bénévolat, Projets, Prix",
         "custom_content": "Contenu (un élément par ligne)",
         "custom_content_placeholder": "Ex. : Bénévole à la Croix-Rouge (2022-2024) : aide aux collectes alimentaires",
-        "add_custom": "Ajouter une section"
+        "add_custom": "Ajouter une section",
+        "hint_headline_many": "Votre titre mélange plusieurs postes. Indiquez le poste exact visé ; si vous cherchez deux types d'emploi, faites deux CV.",
+        "hint_languages_level": "Ajoutez le niveau réel de chaque langue (A1 à C2, ou langue maternelle) et, si possible, un certificat ou une preuve."
     },
     "match": {
         "title": "Votre CV correspond-il à cette offre ?",
@@ -526,5 +529,107 @@
         "unavailable_text": "Le lien n'existe pas ou son propriétaire ne le publie plus.",
         "meta_fallback": "CV en ligne",
         "meta_description": "CV de {name}, créé avec CoverCraft."
+    },
+    "cv_guide": {
+        "meta_title": "Comment faire un bon CV : 8 clés",
+        "meta_description": "Guide pratique pour un CV compris en 5 secondes : titre, profil, réalisations chiffrées, mise en page, formation, langues et plus. Avec des exemples.",
+        "title": "Comment faire un bon CV",
+        "intro": "Un recruteur consacre quelques secondes à chaque CV. Ces 8 clés valent pour presque tous les postes et pays : utilisez-les comme liste de contrôle.",
+        "open": "Guide pour un bon CV",
+        "open_short": "Guide",
+        "close": "Fermer",
+        "tip_help": "Conseil : {title}",
+        "how": "Comment faire",
+        "bad": "À éviter",
+        "good": "Mieux",
+        "cta_title": "Appliquez-le à votre CV",
+        "cta_text": "Le créateur de CV de CoverCraft est gratuit : modèles sobres, téléchargement PDF et version adaptée aux ATS.",
+        "cta_button": "Créer mon CV gratuitement",
+        "cta_builder": "Aller à mon CV",
+        "full_guide": "Voir le guide complet",
+        "tips": {
+            "headline": {
+                "title": "1. Un titre avec le poste exact",
+                "why": "C'est la première chose lue après votre nom. Il doit dire quel poste vous visez, pas tout ce que vous savez faire.",
+                "how": [
+                    "Un titre par type de poste : si vous visez deux types d'emploi, faites deux CV.",
+                    "Ajoutez au maximum 2 ou 3 spécialités ou outils clés."
+                ],
+                "bad": "Ingénieur · Développeur · Analyste · Entrepreneur",
+                "good": "Technicien de maintenance industrielle (automates, pneumatique)"
+            },
+            "summary": {
+                "title": "2. Un profil lisible en 5 secondes",
+                "why": "Le profil explique pourquoi vous correspondez. S'il raconte une longue histoire, personne ne le lit jusqu'au bout.",
+                "how": [
+                    "Formule : qui vous êtes + votre expérience la plus forte + votre spécialité + ce que vous cherchez.",
+                    "De 2 à 4 phrases. Pas de clichés comme « proactif » ou « esprit d'équipe » sans preuve."
+                ],
+                "bad": "Depuis tout petit, je suis passionné par la technologie et les nouveaux défis…",
+                "good": "Technicien avec 6 ans en maintenance de lignes de production. Spécialisé en automates et pneumatique. Je cherche un poste de maintenance préventive en usine."
+            },
+            "titles": {
+                "title": "3. Des intitulés de poste compris dans le pays",
+                "why": "Chaque pays nomme différemment les mêmes postes. Si le recruteur ne reconnaît pas votre intitulé, il ne sait pas ce que vous faisiez.",
+                "how": [
+                    "Utilisez l'équivalent local de votre poste, sans le gonfler.",
+                    "N'indiquez jamais un poste que vous n'avez pas occupé ; si besoin, expliquez la fonction en première ligne."
+                ],
+                "bad": "« Residente de obra » (dans un CV pour la France)",
+                "good": "Technicien de chantier électrique"
+            },
+            "design": {
+                "title": "4. Une mise en page sobre et lisible",
+                "why": "La mise en page doit aider à lire, pas attirer l'œil. Beaucoup de logiciels de tri (ATS) lisent mal les colonnes et les graphiques.",
+                "how": [
+                    "Police lisible, marges propres et sections claires. Une page si vous avez moins de 10 ans d'expérience.",
+                    "La photo dépend du pays : courante en France, en Espagne et au Mexique, absente aux États-Unis et au Royaume-Uni.",
+                    "Envoyez aussi une version ATS (une colonne, texte réel) quand l'entreprise utilise un portail."
+                ],
+                "bad": "Barres de niveau, icônes partout, fonds colorés",
+                "good": "Une ou deux colonnes sobres, une seule couleur d'accent"
+            },
+            "metrics": {
+                "title": "5. Des réalisations chiffrées, pas des tâches",
+                "why": "« Responsable de… » dit ce que vous deviez faire ; une réalisation dit ce que vous avez obtenu.",
+                "how": [
+                    "Formule : verbe + ce que vous avez fait + résultat mesurable (personnes, argent, temps, %).",
+                    "Sans chiffre exact, utilisez une estimation honnête (« environ 40 personnes »). N'inventez jamais."
+                ],
+                "bad": "Responsable de la gestion des matériaux",
+                "good": "Géré plus de 100 demandes de matériel et réduit les ruptures d'approvisionnement"
+            },
+            "relevance": {
+                "title": "6. Le plus pertinent en premier",
+                "why": "Le recruteur cherche ce que demande l'offre. Si c'est en page deux, ça n'existe pas.",
+                "how": [
+                    "Ordonnez sections et réalisations selon le poste : le plus pertinent en haut.",
+                    "Si votre entreprise est inconnue dans le pays, ajoutez une ligne de contexte : secteur, taille ou clients."
+                ],
+                "bad": "Construcciones Norte S.A. de C.V. (sans plus)",
+                "good": "Construcciones Norte : entreprise de construction industrielle au nord du Mexique, environ 300 salariés"
+            },
+            "education": {
+                "title": "7. Des formations qui apportent quelque chose",
+                "why": "Chaque ligne inutile détourne l'attention des lignes utiles.",
+                "how": [
+                    "Le diplôme le plus élevé en premier. Pas le lycée si vous avez un diplôme supérieur.",
+                    "Seulement les formations liées au poste.",
+                    "Si le poste exige un diplôme officiel, indiquez s'il est reconnu ou en cours de reconnaissance."
+                ],
+                "bad": "Dix cours en ligne sans rapport",
+                "good": "Master en Business Analytics et IA · major de promotion"
+            },
+            "languages": {
+                "title": "8. Langues et outils avec un niveau réel",
+                "why": "« Anglais : bon » ne dit rien. Un niveau et une preuve, si.",
+                "how": [
+                    "Niveau réel (A1 à C2, ou langue maternelle) et, si possible, une preuve : certificat ou exemple d'usage.",
+                    "Des outils utilisés dans le pays ; si le vôtre est peu connu, ajoutez son équivalent."
+                ],
+                "bad": "Anglais : bon · Allemand : notions",
+                "good": "Anglais B2 (présentation d'un projet au client en anglais) · OPUS (équivalent de Presto)"
+            }
+        }
     }
 }

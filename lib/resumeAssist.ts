@@ -73,7 +73,7 @@ export function sanitizeReview(raw: unknown, data: ResumeData): AssistReview {
 export type HintKey =
     | 'hint_headline_empty' | 'hint_summary_empty' | 'hint_summary_long'
     | 'hint_experience_empty' | 'hint_bullets_empty' | 'hint_bullets_numbers' | 'hint_bullets_few'
-    | 'hint_skills_few' | 'hint_languages_empty';
+    | 'hint_skills_few' | 'hint_languages_empty' | 'hint_headline_many' | 'hint_languages_level';
 
 export interface QuickHints {
     headline?: HintKey;
@@ -88,7 +88,10 @@ export interface QuickHints {
 /** Consejos rápidos mientras se rellena el CV. No usan IA: reglas simples sobre lo escrito. */
 export function quickHints(data: ResumeData): QuickHints {
     const hints: QuickHints = { items: {} };
-    if (!data.personal.headline.trim()) hints.headline = 'hint_headline_empty';
+    const headline = data.personal.headline.trim();
+    if (!headline) hints.headline = 'hint_headline_empty';
+    // Varios puestos a la vez ("Ingeniero · Desarrollador · Analista"): mejor uno por CV.
+    else if (headline.split(/\s[·|/]\s|\s-\s/).filter((p) => p.trim()).length >= 3) hints.headline = 'hint_headline_many';
     const summary = data.summary.trim();
     if (!summary) hints.summary = 'hint_summary_empty';
     else if (summary.length > 700) hints.summary = 'hint_summary_long';
@@ -100,7 +103,9 @@ export function quickHints(data: ResumeData): QuickHints {
         else if (lines.length < 2) hints.items[e.id] = 'hint_bullets_few';
     }
     if (data.skills.length < 4) hints.skills = 'hint_skills_few';
-    if (!data.languages.some((l) => l.name.trim())) hints.languages = 'hint_languages_empty';
+    const langs = data.languages.filter((l) => l.name.trim());
+    if (!langs.length) hints.languages = 'hint_languages_empty';
+    else if (langs.some((l) => !l.level.trim())) hints.languages = 'hint_languages_level';
     return hints;
 }
 
