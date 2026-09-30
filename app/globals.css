@@ -383,8 +383,11 @@ textarea.input {
   .section { padding: 0 20px 70px; }
 }
 
+.show-mobile-inline { display: none; }
+
 @media (max-width: 600px) {
   .hide-mobile { display: none !important; }
+  .show-mobile-inline { display: inline; }
   .page-header { flex-wrap: wrap; gap: 10px; }
   .page-header > div { flex-wrap: wrap; justify-content: flex-end; }
 }

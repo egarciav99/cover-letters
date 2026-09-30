@@ -199,7 +199,8 @@
         "legal": "Legal notice",
         "contact": "Contact",
         "cookie_settings": "Cookie settings",
-        "created_by": "Created by"
+        "created_by": "Created by",
+        "cv_guide": "CV guide"
     },
     "legal_ui": {
         "back_to_home": "Back to Home",
@@ -398,7 +399,9 @@
         "custom_title_placeholder": "E.g. Volunteering, Projects, Awards",
         "custom_content": "Content (one item per line)",
         "custom_content_placeholder": "E.g. Red Cross volunteer (2022-2024): support in food collection campaigns",
-        "add_custom": "Add section"
+        "add_custom": "Add section",
+        "hint_headline_many": "Your headline mixes several roles. Put the exact job you want; if you are after two kinds of jobs, make two CVs.",
+        "hint_languages_level": "Add the real level of each language (A1 to C2, or native) and, if you can, a certificate or proof."
     },
     "match": {
         "title": "Does your CV fit this job?",
@@ -526,5 +529,107 @@
         "unavailable_text": "The link does not exist or its owner no longer publishes it.",
         "meta_fallback": "Online CV",
         "meta_description": "CV of {name}, created with CoverCraft."
+    },
+    "cv_guide": {
+        "meta_title": "How to write a good CV: 8 keys",
+        "meta_description": "Practical guide to a CV that makes sense in 5 seconds: headline, summary, achievements with numbers, design, education, languages and more. With examples.",
+        "title": "How to write a good CV",
+        "intro": "A recruiter spends a few seconds on each CV. These 8 keys work for almost any job and country: use them as a checklist.",
+        "open": "Guide to a good CV",
+        "open_short": "Guide",
+        "close": "Close",
+        "tip_help": "Tip: {title}",
+        "how": "How to do it",
+        "bad": "Avoid",
+        "good": "Better",
+        "cta_title": "Apply it to your CV",
+        "cta_text": "The CoverCraft CV builder is free: clean templates, PDF download and an ATS-friendly version.",
+        "cta_button": "Create my CV for free",
+        "cta_builder": "Go to my CV",
+        "full_guide": "See the full guide",
+        "tips": {
+            "headline": {
+                "title": "1. A headline with the exact job",
+                "why": "It is the first thing read after your name. It should say which job you want, not everything you can do.",
+                "how": [
+                    "One headline per type of job: if you are after two kinds of jobs, make two CVs.",
+                    "Add at most 2 or 3 key specialties or tools."
+                ],
+                "bad": "Engineer · Developer · Analyst · Entrepreneur",
+                "good": "Industrial Maintenance Technician (PLC, pneumatics)"
+            },
+            "summary": {
+                "title": "2. A summary you can read in 5 seconds",
+                "why": "The summary explains why you fit. If it tells a long story, nobody reaches the end.",
+                "how": [
+                    "Formula: what you are + your strongest experience + your specialty + what you are looking for.",
+                    "2 to 4 sentences. No clichés like \"proactive\" or \"team player\" unless you prove them."
+                ],
+                "bad": "Ever since I was a child I have been passionate about technology and new challenges…",
+                "good": "Technician with 6 years in production-line maintenance. Specialised in PLC and pneumatics. Looking for a preventive maintenance role in a plant."
+            },
+            "titles": {
+                "title": "3. Job titles people understand in that country",
+                "why": "Each country names the same jobs differently. If the recruiter does not recognise your title, they do not know what you did.",
+                "how": [
+                    "Use the local equivalent of your title, without inflating it.",
+                    "Never use a title you did not have; if needed, explain the role in the first line."
+                ],
+                "bad": "\"Residente de obra\" (in a CV for the UK)",
+                "good": "Electrical Site Technician"
+            },
+            "design": {
+                "title": "4. A clean, easy-to-read design",
+                "why": "Design should help reading, not grab attention. Many applicant tracking systems (ATS) do not read columns and graphics well.",
+                "how": [
+                    "Readable font, clean margins and clear sections. One page if you have under 10 years of experience.",
+                    "Photos depend on the country: common in Spain and Mexico, not used in the US or the UK.",
+                    "Also send an ATS version (one column, real text) when the company uses a job portal."
+                ],
+                "bad": "Skill-level bars, icons everywhere, coloured backgrounds",
+                "good": "One or two clean columns, a single accent colour"
+            },
+            "metrics": {
+                "title": "5. Achievements with numbers, not duties",
+                "why": "\"Responsible for…\" says what you were supposed to do; an achievement says what you got done.",
+                "how": [
+                    "Formula: verb + what you did + measurable result (people, money, time, %).",
+                    "If you do not have the exact figure, use an honest estimate (\"about 40 people\"). Never make it up."
+                ],
+                "bad": "Responsible for materials management",
+                "good": "Handled 100+ material requisitions and reduced supply stoppages"
+            },
+            "relevance": {
+                "title": "6. Most relevant first",
+                "why": "The recruiter looks for what the job asks for. If it is on page two, it does not exist.",
+                "how": [
+                    "Order sections and achievements for the job: the best fit goes on top.",
+                    "If your company is not known in that country, add one line of context: sector, size or clients."
+                ],
+                "bad": "Construcciones Norte S.A. de C.V. (nothing else)",
+                "good": "Construcciones Norte: industrial construction company in northern Mexico, about 300 employees"
+            },
+            "education": {
+                "title": "7. Education and courses that add value",
+                "why": "Every line that adds nothing takes attention away from the ones that do.",
+                "how": [
+                    "Highest degree first. Leave out secondary school if you have a degree.",
+                    "Only courses related to the job.",
+                    "If the job requires an official degree, say whether it is recognised or in progress."
+                ],
+                "bad": "Ten online courses on unrelated topics",
+                "good": "Master's in Business Analytics and AI · top of the class"
+            },
+            "languages": {
+                "title": "8. Languages and tools with a real level",
+                "why": "\"English: high\" says nothing. A level and some proof do.",
+                "how": [
+                    "Real level (A1 to C2, or native) and, if possible, proof: a certificate or an example of use.",
+                    "Tools used in that country; if yours is little known, add its equivalent."
+                ],
+                "bad": "English: high · German: basic",
+                "good": "English B2 (presented a project to the client in English) · OPUS (similar to Presto)"
+            }
+        }
     }
 }

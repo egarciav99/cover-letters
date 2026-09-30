@@ -11,6 +11,7 @@ export default function SiteFooter() {
                 <span>{SITE.name} © {new Date().getFullYear()}</span>
                 <nav aria-label={t('aria')}>
                     <Link href="/pricing">{t('pricing')}</Link>
+                    <Link href="/cv-guide">{t('cv_guide')}</Link>
                     <Link href="/terms">{t('terms')}</Link>
                     <Link href="/privacy">{t('privacy')}</Link>
                     <Link href="/cookies">{t('cookies')}</Link>

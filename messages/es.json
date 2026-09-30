@@ -199,7 +199,8 @@
         "legal": "Aviso legal",
         "contact": "Contacto",
         "cookie_settings": "Configuración de cookies",
-        "created_by": "Creado por"
+        "created_by": "Creado por",
+        "cv_guide": "Guía de CV"
     },
     "legal_ui": {
         "back_to_home": "Volver al inicio",
@@ -398,7 +399,9 @@
         "custom_title_placeholder": "Ej.: Voluntariado, Proyectos, Premios",
         "custom_content": "Contenido (un elemento por línea)",
         "custom_content_placeholder": "Ej.: Voluntario en Cruz Roja (2022-2024): apoyo en campañas de recogida de alimentos",
-        "add_custom": "Añadir sección"
+        "add_custom": "Añadir sección",
+        "hint_headline_many": "Tu titular mezcla varios puestos. Pon el puesto exacto que buscas; si buscas dos tipos de trabajo, haz dos CV.",
+        "hint_languages_level": "Añade el nivel real de cada idioma (A1 a C2, o nativo) y, si puedes, una prueba o certificado."
     },
     "match": {
         "title": "¿Encaja tu CV con esta oferta?",
@@ -526,5 +529,107 @@
         "unavailable_text": "El enlace no existe o su dueño ya no lo tiene publicado.",
         "meta_fallback": "CV online",
         "meta_description": "CV de {name}, creado con CoverCraft."
+    },
+    "cv_guide": {
+        "meta_title": "Cómo hacer un buen CV: 8 claves",
+        "meta_description": "Guía práctica para hacer un CV que se entiende en 5 segundos: titular, perfil, logros con cifras, diseño, formación, idiomas y más. Con ejemplos.",
+        "title": "Cómo hacer un buen CV",
+        "intro": "Un reclutador dedica pocos segundos a cada CV. Estas 8 claves sirven para casi cualquier puesto y país: úsalas como lista de comprobación.",
+        "open": "Guía para un buen CV",
+        "open_short": "Guía",
+        "close": "Cerrar",
+        "tip_help": "Consejo: {title}",
+        "how": "Cómo hacerlo",
+        "bad": "Evita",
+        "good": "Mejor",
+        "cta_title": "Aplícalo a tu CV",
+        "cta_text": "El creador de CV de CoverCraft es gratis: plantillas limpias, descarga en PDF y versión para filtros ATS.",
+        "cta_button": "Crear mi CV gratis",
+        "cta_builder": "Ir a mi CV",
+        "full_guide": "Ver la guía completa",
+        "tips": {
+            "headline": {
+                "title": "1. Un titular con el puesto exacto",
+                "why": "Lo primero que se lee después de tu nombre. Debe decir qué puesto buscas, no todo lo que sabes hacer.",
+                "how": [
+                    "Un titular por tipo de puesto: si buscas dos tipos de trabajo, haz dos CV.",
+                    "Añade, como mucho, 2 o 3 especialidades o herramientas clave."
+                ],
+                "bad": "Ingeniero · Desarrollador · Analista · Emprendedor",
+                "good": "Técnico de mantenimiento industrial (PLC, neumática)"
+            },
+            "summary": {
+                "title": "2. Un perfil que se lea en 5 segundos",
+                "why": "El perfil resume por qué encajas. Si cuenta una historia larga, nadie llega al final.",
+                "how": [
+                    "Fórmula: qué eres + tu experiencia más fuerte + tu especialidad + qué buscas.",
+                    "De 2 a 4 frases. Sin tópicos como \"proactivo\" o \"trabajo en equipo\" si no los demuestras."
+                ],
+                "bad": "Desde pequeño me apasiona la tecnología y siempre he buscado nuevos retos…",
+                "good": "Técnico con 6 años en mantenimiento de líneas de producción. Especializado en PLC y neumática. Busco un puesto de mantenimiento preventivo en planta."
+            },
+            "titles": {
+                "title": "3. Nombres de puesto que se entiendan en el país",
+                "why": "Cada país llama distinto a los mismos puestos. Si el reclutador no reconoce tu cargo, no sabe qué hacías.",
+                "how": [
+                    "Usa el equivalente local de tu puesto, sin inflarlo.",
+                    "Nunca pongas un cargo que no tuviste; si hace falta, explica la función en la primera línea."
+                ],
+                "bad": "Residente de obra (en un CV para España)",
+                "good": "Técnico de obra eléctrica"
+            },
+            "design": {
+                "title": "4. Un diseño sobrio y fácil de leer",
+                "why": "El diseño debe ayudar a leer, no llamar la atención. Muchos filtros automáticos (ATS) no leen bien columnas y gráficos.",
+                "how": [
+                    "Letra legible, márgenes limpios y secciones claras. Una página si tienes menos de 10 años de experiencia.",
+                    "La foto depende del país: habitual en España y México, pero no se usa en EE. UU. o Reino Unido.",
+                    "Envía además una versión ATS (una columna, texto real) cuando la empresa use un portal de empleo."
+                ],
+                "bad": "Barras de nivel de habilidades, iconos por todas partes, fondos de color",
+                "good": "Una o dos columnas limpias, un solo color de acento"
+            },
+            "metrics": {
+                "title": "5. Logros con cifras, no tareas",
+                "why": "\"Encargado de…\" dice qué debías hacer; un logro dice qué conseguiste.",
+                "how": [
+                    "Fórmula: verbo + qué hiciste + resultado medible (personas, dinero, tiempo, %).",
+                    "Si no tienes el dato exacto, usa un aproximado honesto (\"unas 40 personas\"). Nunca inventes."
+                ],
+                "bad": "Responsable de la gestión de materiales",
+                "good": "Gestioné más de 100 requisiciones de material y reduje los paros de suministro"
+            },
+            "relevance": {
+                "title": "6. Lo más relevante, primero",
+                "why": "El reclutador busca lo que pide la oferta. Si está en la segunda página, no existe.",
+                "how": [
+                    "Ordena secciones y logros según el puesto: lo que más encaja, arriba.",
+                    "Si tu empresa no es conocida en el país, añade una línea de contexto: sector, tamaño o clientes."
+                ],
+                "bad": "Construcciones Norte S.A. de C.V. (sin más)",
+                "good": "Construcciones Norte: constructora industrial en el norte de México, unos 300 empleados"
+            },
+            "education": {
+                "title": "7. Formación y cursos que aporten",
+                "why": "Cada línea que no aporta quita atención a las que sí.",
+                "how": [
+                    "El título más alto primero. Sin estudios de secundaria si tienes estudios superiores.",
+                    "Solo cursos relacionados con el puesto.",
+                    "Si el puesto exige título oficial, indica si está homologado o en trámite."
+                ],
+                "bad": "Diez cursos online de temas variados",
+                "good": "Máster en Business Analytics e IA · mejor expediente de la promoción"
+            },
+            "languages": {
+                "title": "8. Idiomas y herramientas con nivel real",
+                "why": "\"Inglés: alto\" no dice nada. Un nivel y una prueba, sí.",
+                "how": [
+                    "Nivel real (A1 a C2, o nativo) y, si puedes, una prueba: certificado o un ejemplo de uso.",
+                    "Herramientas que se usen en el país; si usas una poco conocida, añade su equivalente."
+                ],
+                "bad": "Inglés: alto · Alemán: básico",
+                "good": "Inglés B2 (presenté un proyecto en inglés al cliente) · OPUS (equivalente a Presto)"
+            }
+        }
     }
 }
